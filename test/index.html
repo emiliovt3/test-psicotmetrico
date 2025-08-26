@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Evaluación Psicométrica - Anuncios Luminosos</title>
+    
+    <style>
+        /* Reset y base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #066fd1;
+        }
+        
+        .header h1 {
+            color: #066fd1;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .header h2 {
+            color: #666;
+            font-size: 18px;
+            font-weight: 400;
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #e9ecef;
+            z-index: 1000;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #066fd1, #2fb344);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* Candidate info */
+        .candidate-info {
+            background: #e8f4f8;
+            border-left: 4px solid #066fd1;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        .candidate-info h3 {
+            color: #066fd1;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .info-value {
+            color: #666;
+        }
+        
+        /* Instructions */
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instructions ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        .instructions li {
+            margin-bottom: 5px;
+        }
+        
+        /* Sections */
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        .section-header {
+            background: #066fd1;
+            color: white;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .section-counter {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+        
+        /* Questions */
+        .question {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .question-number {
+            color: #066fd1;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .question-text {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        /* CLEAVER specific styles */
+        .cleaver-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .cleaver-option {
+            background: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px 12px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .option-letter {
+            background: #066fd1;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .option-word {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* Estado cuando está seleccionado como MÁS */
+        .cleaver-option.selected-mas {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: #066fd1;
+        }
+        
+        .cleaver-option.selected-mas .option-word {
+            color: #066fd1;
+        }
+        
+        /* Estado cuando está seleccionado como MENOS */
+        .cleaver-option.selected-menos {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%);
+            border-color: #e91e63;
+        }
+        
+        .cleaver-option.selected-menos .option-word {
+            color: #e91e63;
+        }
+        
+        /* Estado cuando está seleccionado como AMBOS (MÁS y MENOS) */
+        .cleaver-option.selected-both {
+            background: linear-gradient(45deg, #e3f2fd 0%, #e3f2fd 50%, #fce4ec 50%, #fce4ec 100%);
+            border-color: #ff9800;
+            border-width: 3px;
+        }
+        
+        .cleaver-option.selected-both .option-word {
+            color: #333;
+            font-weight: 700;
+        }
+        
+        /* Compact choices layout */
+        .cleaver-choices-compact {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            position: relative;
+        }
+        
+        .cleaver-choices-compact::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: linear-gradient(to bottom, #dee2e6, #adb5bd, #dee2e6);
+            transform: translateX(-50%);
+        }
+        
+        .choice-compact {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            max-width: 45%;
+        }
+        
+        .choice-label {
+            font-weight: 700;
+            font-size: 16px;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: white;
+            border: 3px solid #dee2e6;
+            min-width: 90px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .choice-compact:first-child .choice-label {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-color: #066fd1;
+            color: #066fd1;
+            box-shadow: 0 3px 6px rgba(6, 111, 209, 0.2);
+        }
+        
+        .choice-compact:last-child .choice-label {
+            background: linear-gradient(135deg, #fce4ec, #f8bbd9);
+            border-color: #e91e63;
+            color: #e91e63;
+            box-shadow: 0 3px 6px rgba(233, 30, 99, 0.2);
+        }
+        
+        .choice-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .choice-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .choice-btn:hover {
+            background: #f0f0f0;
+            border-color: #066fd1;
+            transform: scale(1.1);
+        }
+        
+        .choice-btn input {
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        .choice-btn input:checked + span,
+        .choice-btn:has(input:checked) {
+            background: #066fd1;
+            color: white;
+            border-color: #066fd1;
+            transform: scale(1.1);
+        }
+        
+        .choice-compact:last-child .choice-btn input:checked + span,
+        .choice-compact:last-child .choice-btn:has(input:checked) {
+            background: #e91e63;
+            border-color: #e91e63;
+        }
+        
+        /* Radio buttons and checkboxes */
+        input[type="radio"], input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+        }
+        
+        /* Likert scale for KOSTICK */
+        .likert-scale {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .likert-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            padding: 10px 5px;
+        }
+        
+        .likert-option input {
+            margin: 0;
+        }
+        
+        .likert-label {
+            font-size: 12px;
+            text-align: center;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        /* Mobile optimized likert */
+        @media (max-width: 600px) {
+            .likert-label {
+                font-size: 10px;
+            }
+            
+            .likert-option {
+                padding: 8px 2px;
+            }
+        }
+        
+        /* Situation scenarios */
+        .scenario-box {
+            background: #f0f8ff;
+            border-left: 4px solid #066fd1;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 0 5px 5px 0;
+            font-style: italic;
+        }
+        
+        .scenario-options {
+            margin-top: 15px;
+        }
+        
+        .scenario-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .scenario-option:hover {
+            background: #f8f9fa;
+            border-color: #066fd1;
+        }
+        
+        .scenario-option input {
+            margin-top: 2px;
+        }
+        
+        .scenario-option label {
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        /* Input fields */
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-field:focus {
+            outline: none;
+            border-color: #066fd1;
+            box-shadow: 0 0 0 3px rgba(6, 111, 209, 0.1);
+        }
+        
+        /* Navigation buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 48px;
+        }
+        
+        .btn-primary {
+            background: #066fd1;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0556b3;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .btn-success {
+            background: #2fb344;
+            color: white;
+            font-size: 18px;
+            padding: 15px 30px;
+        }
+        
+        .btn-success:hover {
+            background: #25a03a;
+        }
+        
+        .btn:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        /* Signature canvas */
+        .signature-container {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #fdfdfe;
+        }
+        
+        .signature-canvas {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: crosshair;
+            display: block;
+            margin: 0 auto;
+            background: white;
+        }
+        
+        .signature-controls {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        /* Auto-save indicator */
+        .autosave-indicator {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #2fb344;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .autosave-indicator.show {
+            opacity: 1;
+        }
+        
+        /* Validation errors */
+        .error {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1) !important;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #066fd1;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .section-header {
+                padding: 12px 15px;
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+            
+            .question {
+                padding: 15px;
+            }
+            
+            .cleaver-options {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            
+            .cleaver-option {
+                padding: 12px 8px;
+                font-size: 14px;
+                min-height: 55px;
+            }
+            
+            .option-letter {
+                width: 20px;
+                height: 20px;
+                font-size: 12px;
+            }
+            
+            .cleaver-choices-compact {
+                gap: 20px;
+                padding: 15px 12px;
+                justify-content: space-between;
+            }
+            
+            .cleaver-choices-compact::before {
+                /* Mantener línea separadora visible en tablet */
+                width: 2px;
+                background: linear-gradient(to bottom, #dee2e6, #868e96, #dee2e6);
+            }
+            
+            .choice-compact {
+                max-width: 47%;
+                min-width: 47%;
+            }
+            
+            .choice-label {
+                font-size: 13px;
+                padding: 5px 8px;
+                min-width: 70px;
+            }
+            
+            .choice-buttons {
+                gap: 6px;
+            }
+            
+            .choice-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 13px;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        /* Very small screens */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .question {
+                padding: 12px;
+            }
+            
+            .cleaver-options {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .cleaver-option {
+                min-height: 50px;
+                padding: 12px 8px;
+                font-size: 13px;
+            }
+            
+            .option-letter {
+                width: 18px;
+                height: 18px;
+                font-size: 11px;
+            }
+            
+            .cleaver-choices-compact {
+                /* Mantener diseño horizontal en móvil para separación clara */
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 15px 8px;
+                margin-top: 20px;
+            }
+            
+            .cleaver-choices-compact::before {
+                /* Línea separadora más prominente en móvil */
+                width: 3px;
+                background: linear-gradient(to bottom, #dee2e6, #6c757d, #dee2e6);
+                box-shadow: 0 0 4px rgba(0,0,0,0.1);
+            }
+            
+            .choice-compact {
+                /* Ajustar ancho para móvil manteniendo separación */
+                max-width: 47%;
+                min-width: 47%;
+            }
+            
+            .choice-label {
+                font-size: 12px;
+                padding: 6px 8px;
+                margin-bottom: 8px;
+                text-align: center;
+                font-weight: 600;
+                border-radius: 6px;
+            }
+            
+            /* Colores más distintivos en móvil */
+            .choice-compact:first-child .choice-label {
+                background: linear-gradient(135deg, #066fd1, #0056b3);
+                color: white;
+                border: 2px solid #004085;
+            }
+            
+            .choice-compact:last-child .choice-label {
+                background: linear-gradient(135deg, #e91e63, #c2185b);
+                color: white;
+                border: 2px solid #ad1457;
+            }
+            
+            .choice-buttons {
+                gap: 3px;
+                flex-wrap: wrap;
+            }
+            
+            .choice-btn {
+                flex: 1;
+                min-width: 35px;
+                width: 35px;
+                height: 35px;
+                padding: 8px 4px;
+                font-size: 11px;
+                margin: 1px;
+            }
+            
+            .signature-canvas {
+                max-width: 100%;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .progress-container,
+            .nav-buttons,
+            .autosave-indicator {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress bar -->
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+    
+    <!-- Auto-save indicator -->
+    <div class="autosave-indicator" id="autosaveIndicator">
+        ✓ Guardado automático
+    </div>
+    
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+    
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Evaluación Psicométrica</h1>
+            <h2>Empresa de Anuncios Luminosos</h2>
+        </div>
+        
+        <!-- Candidate information (will be populated by JavaScript) -->
+        <div class="candidate-info" id="candidateInfo" style="display: none;">
+            <h3>Información del Candidato</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Nombre:</span>
+                    <span class="info-value" id="candidateName">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Puesto:</span>
+                    <span class="info-value" id="candidatePosition">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Fecha:</span>
+                    <span class="info-value" id="testDate">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Tiempo límite:</span>
+                    <span class="info-value" id="timeLimit">60 minutos</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main form -->
+        <form id="evaluationForm">
+            
+            <!-- Section 1: CLEAVER Test -->
+            <div class="section" id="section1">
+                <div class="section-header">
+                    <h2 class="section-title">Sección 1: Perfil de Comportamiento</h2>
+                    <div class="section-counter">1/4</div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>📋 Instrucciones:</h3>
+                    <ul>
+                        <li>Para cada grupo de palabras, marque <strong>🔵 MÁS</strong> (la que mejor lo describe) y <strong>🔴 MENOS</strong> (la que menos lo describe)</li>
+                        <li>Debe marcar exactamente una opción en cada columna</li>
+                    </ul>
+                </div>
+                
+                <!-- CLEAVER questions will be generated by JavaScript -->
+                <div id="cleaverQuestions"></div>
+            </div>
+            
+            <!-- Section 2: KOSTICK Test -->
+            <div class="section" id="section2" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">Sección 2: Preferencias Laborales</h2>
+                    <div class="section-counter">2/4</div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>📋 Instrucciones:</h3>
+                    <ul>
+                        <li>Lea cada afirmación cuidadosamente</li>
+                        <li>Marque qué tan de acuerdo está con ella</li>
+                        <li><strong>TD</strong> = Totalmente en Desacuerdo</li>
+                        <li><strong>D</strong> = En Desacuerdo</li>
+                        <li><strong>N</strong> = Neutral</li>
+                        <li><strong>A</strong> = De Acuerdo</li>
+                        <li><strong>TA</strong> = Totalmente de Acuerdo</li>
+                    </ul>
+                </div>
+                
+                <!-- KOSTICK questions will be generated by JavaScript -->
+                <div id="kostickQuestions"></div>
+            </div>
+            
+            <!-- Section 3: Situaciones Laborales -->
+            <div class="section" id="section3" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">Sección 3: Situaciones Laborales</h2>
+                    <div class="section-counter">3/4</div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>📋 Instrucciones:</h3>
+                    <ul>
+                        <li>Lea cada situación cuidadosamente</li>
+                        <li>Seleccione la opción que mejor representa lo que usted haría</li>
+                        <li>Responda con honestidad basándose en su comportamiento real</li>
+                        <li>Marque solo UNA opción por situación</li>
+                    </ul>
+                </div>
+                
+                <!-- Situaciones questions will be generated by JavaScript -->
+                <div id="situationsQuestions"></div>
+            </div>
+            
+            <!-- Section 4: Aptitudes Técnicas -->
+            <div class="section" id="section4" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">Sección 4: Aptitudes y Razonamiento</h2>
+                    <div class="section-counter">4/4</div>
+                </div>
+                
+                <div class="instructions">
+                    <h3>📋 Instrucciones:</h3>
+                    <ul>
+                        <li>Resuelva los siguientes problemas lo mejor que pueda</li>
+                        <li>Si no sabe una respuesta, puede dejarla en blanco</li>
+                        <li>Use la calculadora de su teléfono si es necesario</li>
+                        <li>Las preguntas de seguridad son muy importantes</li>
+                    </ul>
+                </div>
+                
+                <!-- Aptitudes questions will be generated by JavaScript -->
+                <div id="aptitudesQuestions"></div>
+            </div>
+            
+            <!-- Final section: Firma -->
+            <div class="section" id="section5" style="display: none;">
+                <div class="section-header">
+                    <h2 class="section-title">Declaración y Firma</h2>
+                    <div class="section-counter">✓</div>
+                </div>
+                
+                <div class="question">
+                    <div class="question-text">
+                        <strong>Declaración de Veracidad:</strong>
+                        <br><br>
+                        Declaro que todas las respuestas proporcionadas en este test son verdaderas y reflejan honestamente mis capacidades, preferencias y forma de actuar en situaciones laborales.
+                        <br><br>
+                        Entiendo que la información proporcionada será utilizada únicamente para fines de evaluación laboral y que cualquier falsedad puede ser motivo de descalificación del proceso de selección.
+                    </div>
+                    
+                    <div style="margin: 20px 0;">
+                        <label class="input-label">
+                            <input type="checkbox" id="acceptDeclaration" required style="width: 20px; height: 20px; margin-right: 10px;">
+                            Acepto y confirmo la declaración anterior
+                        </label>
+                    </div>
+                    
+                    <div class="signature-container">
+                        <h4 style="margin-bottom: 15px;">Firma Digital:</h4>
+                        <canvas id="signatureCanvas" class="signature-canvas" width="400" height="200"></canvas>
+                        <div class="signature-controls">
+                            <button type="button" class="btn btn-secondary" onclick="clearSignature()">Limpiar</button>
+                            <button type="button" class="btn btn-secondary" onclick="undoSignature()" disabled id="undoBtn">Deshacer</button>
+                        </div>
+                        <div class="error-message" id="signatureError" style="display: none;">
+                            ⚠️ Por favor, proporcione su firma digital
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation will be added by JavaScript -->
+            <div class="nav-buttons" id="navigationButtons">
+                <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousSection()" disabled>
+                    ← Anterior
+                </button>
+                <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextSection()">
+                    Siguiente →
+                </button>
+                <button type="button" class="btn btn-success" id="submitBtn" onclick="submitForm()" style="display: none;">
+                    📤 Enviar Evaluación
+                </button>
+            </div>
+            
+        </form>
+    </div>
+    
+    <!-- JavaScript will be added here -->
+    <script>
+        // Configuration and data
+        const CLEAVER_QUESTIONS = [
+            { A: 'Cuidadoso', B: 'Decidido', C: 'Sociable', D: 'Preciso' },
+            { A: 'Persistente', B: 'Aventurero', C: 'Receptivo', D: 'Metódico' },
+            { A: 'Paciente', B: 'Persuasivo', C: 'Competitivo', D: 'Detallista' },
+            { A: 'Respetuoso', B: 'Optimista', C: 'Rápido', D: 'Cauteloso' },
+            { A: 'Disciplinado', B: 'Entusiasta', C: 'Directo', D: 'Considerado' },
+            { A: 'Confiable', B: 'Innovador', C: 'Independiente', D: 'Constante' },
+            { A: 'Organizado', B: 'Expresivo', C: 'Arriesgado', D: 'Colaborador' },
+            { A: 'Obediente', B: 'Tolerante', C: 'Original', D: 'Firme' },
+            { A: 'Puntual', B: 'Animado', C: 'Exigente', D: 'Servicial' },
+            { A: 'Estable', B: 'Analítico', C: 'Enérgico', D: 'Amigable' }
+        ];
+
+        const KOSTICK_QUESTIONS = [
+            'Prefiero tener instrucciones detalladas antes de comenzar un trabajo',
+            'Me siento cómodo trabajando en equipo para completar proyectos',
+            'Siempre termino lo que empiezo, sin importar las dificultades',
+            'Disfruto aprender nuevas técnicas y habilidades en mi trabajo',
+            'Respeto todas las normas de seguridad, aunque parezcan excesivas', // Critical #5
+            'Prefiero un trabajo estable con rutinas claras',
+            'Si veo un problema, busco solucionarlo aunque no sea mi responsabilidad',
+            'Reviso mi trabajo varias veces antes de darlo por terminado',
+            'Me siento cómodo trabajando en alturas con el equipo de seguridad adecuado',
+            'Prefiero pedir ayuda antes que arriesgarme a cometer un error costoso',
+            'Reportaría a un compañero que no sigue las normas de seguridad', // Critical #11
+            'Puedo mantener la concentración en tareas repetitivas',
+            'Devolvería herramientas o materiales extras aunque nadie lo notara', // Critical #13
+            'Me gusta que reconozcan mi trabajo bien hecho',
+            'Puedo trabajar bajo presión sin perder la calidad'
+        ];
+
+        const SITUATIONS = [
+            {
+                scenario: 'Un cliente le ofrece $1,000 pesos extra para hacer una instalación sin factura, fuera del horario de trabajo.',
+                options: {
+                    A: 'Acepto, es dinero extra y no afecta a nadie',
+                    B: 'Le digo que lo consultaré con mi supervisor',
+                    C: 'Rechazo cortésmente y explico que solo trabajo con factura',
+                    D: 'Le sugiero que hable directamente con la empresa para un descuento'
+                },
+                critical: true // Critical situation #1
+            },
+            {
+                scenario: 'Ve a un compañero soldando sin careta de protección porque dice que "así ve mejor".',
+                options: {
+                    A: 'No digo nada, es su responsabilidad',
+                    B: 'Le sugiero amigablemente que use la protección',
+                    C: 'Le advierto sobre los riesgos y si no hace caso, aviso al supervisor',
+                    D: 'Reporto inmediatamente al supervisor'
+                }
+            },
+            {
+                scenario: 'Su supervisor le pide instalar un anuncio que usted sabe que no cumple con el código eléctrico local.',
+                options: {
+                    A: 'Lo instalo sin cuestionar, el supervisor sabe lo que hace',
+                    B: 'Le comento mi preocupación respetuosamente',
+                    C: 'Me niego a instalarlo y explico los riesgos legales',
+                    D: 'Lo instalo pero documento todo por escrito'
+                }
+            },
+            {
+                scenario: 'Al final del día sobran 5 metros de cable que no se usaron en el proyecto.',
+                options: {
+                    A: 'Me lo llevo, es material que sobró',
+                    B: 'Lo dejo en mi área de trabajo para el próximo proyecto',
+                    C: 'Lo reporto y lo devuelvo al almacén',
+                    D: 'Pregunto si puedo quedármelo'
+                },
+                critical: true // Critical situation #4
+            },
+            {
+                scenario: 'Un compañero nuevo está teniendo dificultades con una tarea que usted domina, pero pedir ayuda retrasaría su propio trabajo.',
+                options: {
+                    A: 'Continúo con mi trabajo, no es mi responsabilidad',
+                    B: 'Le doy consejos rápidos sin detenerme',
+                    C: 'Paro un momento para enseñarle bien',
+                    D: 'Le digo que pregunte al supervisor'
+                }
+            }
+        ];
+
+        const APTITUDES_QUESTIONS = [
+            {
+                type: 'numeric',
+                question: 'Un anuncio luminoso necesita 24 focos LED. Si cada caja trae 6 focos, ¿cuántas cajas necesita comprar?',
+                answer: '4',
+                unit: 'cajas'
+            },
+            {
+                type: 'numeric',
+                question: 'Un electricista cobra $150 por hora. Si trabajó de 8:30 am a 2:00 pm, ¿cuánto debe cobrar?',
+                answer: '825',
+                unit: 'pesos ($)',
+                showCalculation: true
+            },
+            {
+                type: 'numeric',
+                question: 'Si 2 soldadores terminan una estructura en 6 horas, ¿cuánto tardarán 3 soldadores trabajando al mismo ritmo?',
+                answer: '4',
+                unit: 'horas',
+                showCalculation: true
+            },
+            {
+                type: 'numeric',
+                question: 'Un letrero mide 3.5 metros de largo. Si necesita cortarse en 5 partes iguales, ¿cuánto medirá cada parte?',
+                answer: '0.7',
+                unit: 'metros'
+            },
+            {
+                type: 'numeric',
+                question: 'El material para un anuncio cuesta $8,400. Si el cliente paga 30% de anticipo, ¿cuánto debe pagar?',
+                answer: '2520',
+                unit: 'pesos ($)'
+            },
+            {
+                type: 'multiple',
+                question: '¿De qué color es típicamente el cable de tierra en una instalación eléctrica?',
+                options: {
+                    A: 'Rojo',
+                    B: 'Negro',
+                    C: 'Verde o verde/amarillo',
+                    D: 'Blanco'
+                },
+                correct: 'C'
+            },
+            {
+                type: 'multiple',
+                question: '¿Cuál es el equipo de protección personal MÁS importante al soldar?',
+                options: {
+                    A: 'Guantes',
+                    B: 'Careta o máscara de soldar',
+                    C: 'Botas de seguridad',
+                    D: 'Overol'
+                },
+                correct: 'B'
+            },
+            {
+                type: 'multiple',
+                question: 'Antes de trabajar en una instalación eléctrica, lo PRIMERO que debe hacer es:',
+                options: {
+                    A: 'Ponerse los guantes',
+                    B: 'Verificar que no haya corriente/desenergizar',
+                    C: 'Revisar las herramientas',
+                    D: 'Informar al supervisor'
+                },
+                correct: 'B'
+            }
+        ];
+        
+        // Global variables
+        let currentSection = 1;
+        let formData = {};
+        let autosaveTimer;
+        
+        // Global variables
+        let signaturePad;
+        let signatureHistory = [];
+        
+        // Initialize form
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeForm();
+            loadSavedData();
+            generateAllQuestions();
+            updateProgress();
+            setupAutosave();
+            initializeSignaturePad();
+        });
+        
+        function initializeForm() {
+            // Get candidate info from URL parameters (if available)
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            if (token) {
+                // In real implementation, validate token with Supabase
+                console.log('Token:', token);
+                
+                // Show candidate info (placeholder data)
+                document.getElementById('candidateInfo').style.display = 'block';
+                document.getElementById('testDate').textContent = new Date().toLocaleDateString('es-ES');
+            }
+        }
+        
+        function generateAllQuestions() {
+            generateCleaverQuestions();
+            generateKostickQuestions();
+            generateSituationsQuestions();
+            generateAptitudesQuestions();
+        }
+        
+        function generateCleaverQuestions() {
+            const container = document.getElementById('cleaverQuestions');
+            
+            CLEAVER_QUESTIONS.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                questionDiv.innerHTML = `
+                    <div class="question-number">Pregunta ${index + 1}</div>
+                    
+                    <div class="cleaver-options">
+                        <div class="cleaver-option" data-option="A" data-question="${index}">
+                            <span class="option-letter">A</span>
+                            <span class="option-word">${question.A}</span>
+                        </div>
+                        <div class="cleaver-option" data-option="B" data-question="${index}">
+                            <span class="option-letter">B</span>
+                            <span class="option-word">${question.B}</span>
+                        </div>
+                        <div class="cleaver-option" data-option="C" data-question="${index}">
+                            <span class="option-letter">C</span>
+                            <span class="option-word">${question.C}</span>
+                        </div>
+                        <div class="cleaver-option" data-option="D" data-question="${index}">
+                            <span class="option-letter">D</span>
+                            <span class="option-word">${question.D}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cleaver-choices-compact">
+                        <div class="choice-compact">
+                            <span class="choice-label">🔵 MÁS</span>
+                            <div class="choice-buttons">
+                                <label class="choice-btn" onclick="selectCleaverOption(${index}, 'mas', 'A')">
+                                    <input type="radio" name="cleaver_${index}_mas" value="A" onchange="updateCleaverChoice(${index}, 'mas', 'A')">
+                                    A
+                                </label>
+                                <label class="choice-btn" onclick="selectCleaverOption(${index}, 'mas', 'B')">
+                                    <input type="radio" name="cleaver_${index}_mas" value="B" onchange="updateCleaverChoice(${index}, 'mas', 'B')">
+                                    B
+                                </label>
+                                <label class="choice-btn" onclick="selectCleaverOption(${index}, 'mas', 'C')">
+                                    <input type="radio" name="cleaver_${index}_mas" value="C" onchange="updateCleaverChoice(${index}, 'mas', 'C')">
+                                    C
+                                </label>
+                                <label class="choice-btn" onclick="selectCleaverOption(${index}, 'mas', 'D')">
+                                    <input type="radio" name="cleaver_${index}_mas" value="D" onchange="updateCleaverChoice(${index}, 'mas', 'D')">
+                                    D
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="choice-compact">
+                            <span class="choice-label">🔴 MENOS</span>
+                            <div class="choice-buttons">
+                                <label class="choice-btn" onclick="selectCleaverOption(${index}, 'menos', 'A')">
+                                    <input type="radio" name="cleaver_${index}_menos" value="A" onchange="updateCleaverChoice(${index}, 'menos', 'A')">
+                                    A
+                                </label>
+                                <label class="choice-btn" onclick="selectCleaverOption(${index}, 'menos', 'B')">
+                                    <input type="radio" name="cleaver_${index}_menos" value="B" onchange="updateCleaverChoice(${index}, 'menos', 'B')">
+                                    B
+                                </label>
+                                <label class="choice-btn" onclick="selectCleaverOption(${index}, 'menos', 'C')">
+                                    <input type="radio" name="cleaver_${index}_menos" value="C" onchange="updateCleaverChoice(${index}, 'menos', 'C')">
+                                    C
+                                </label>
+                                <label class="choice-btn" onclick="selectCleaverOption(${index}, 'menos', 'D')">
+                                    <input type="radio" name="cleaver_${index}_menos" value="D" onchange="updateCleaverChoice(${index}, 'menos', 'D')">
+                                    D
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+        
+        function generateKostickQuestions() {
+            const container = document.getElementById('kostickQuestions');
+            
+            KOSTICK_QUESTIONS.forEach((question, index) => {
+                const isCritical = [4, 10, 12].includes(index); // Questions 5, 11, 13 (0-indexed)
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                if (isCritical) {
+                    questionDiv.style.borderLeft = '4px solid #ffc107';
+                }
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">
+                        Pregunta ${index + 1}
+                        ${isCritical ? '<span style="color: #ffc107; margin-left: 10px;">⚠️ Importante</span>' : ''}
+                    </div>
+                    <div class="question-text">${question}</div>
+                    
+                    <div class="likert-scale">
+                        <div class="likert-option">
+                            <input type="radio" name="kostick_${index}" value="TD" onchange="updateKostickChoice(${index}, 'TD')">
+                            <span class="likert-label">TD<br>Totalmente<br>Desacuerdo</span>
+                        </div>
+                        <div class="likert-option">
+                            <input type="radio" name="kostick_${index}" value="D" onchange="updateKostickChoice(${index}, 'D')">
+                            <span class="likert-label">D<br>Desacuerdo</span>
+                        </div>
+                        <div class="likert-option">
+                            <input type="radio" name="kostick_${index}" value="N" onchange="updateKostickChoice(${index}, 'N')">
+                            <span class="likert-label">N<br>Neutral</span>
+                        </div>
+                        <div class="likert-option">
+                            <input type="radio" name="kostick_${index}" value="A" onchange="updateKostickChoice(${index}, 'A')">
+                            <span class="likert-label">A<br>Acuerdo</span>
+                        </div>
+                        <div class="likert-option">
+                            <input type="radio" name="kostick_${index}" value="TA" onchange="updateKostickChoice(${index}, 'TA')">
+                            <span class="likert-label">TA<br>Totalmente<br>Acuerdo</span>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+        
+        function generateSituationsQuestions() {
+            const container = document.getElementById('situationsQuestions');
+            
+            SITUATIONS.forEach((situation, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                if (situation.critical) {
+                    questionDiv.style.borderLeft = '4px solid #dc3545';
+                }
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">
+                        Situación ${index + 1}
+                        ${situation.critical ? '<span style="color: #dc3545; margin-left: 10px;">🚨 Crítica</span>' : ''}
+                    </div>
+                    
+                    <div class="scenario-box">
+                        ${situation.scenario}
+                    </div>
+                    
+                    <div class="question-text"><strong>¿Qué haría?</strong></div>
+                    
+                    <div class="scenario-options">
+                        <div class="scenario-option" onclick="selectScenarioOption(${index}, 'A')">
+                            <input type="radio" name="situation_${index}" value="A" onchange="updateSituationChoice(${index}, 'A')">
+                            <label>A) ${situation.options.A}</label>
+                        </div>
+                        <div class="scenario-option" onclick="selectScenarioOption(${index}, 'B')">
+                            <input type="radio" name="situation_${index}" value="B" onchange="updateSituationChoice(${index}, 'B')">
+                            <label>B) ${situation.options.B}</label>
+                        </div>
+                        <div class="scenario-option" onclick="selectScenarioOption(${index}, 'C')">
+                            <input type="radio" name="situation_${index}" value="C" onchange="updateSituationChoice(${index}, 'C')">
+                            <label>C) ${situation.options.C}</label>
+                        </div>
+                        <div class="scenario-option" onclick="selectScenarioOption(${index}, 'D')">
+                            <input type="radio" name="situation_${index}" value="D" onchange="updateSituationChoice(${index}, 'D')">
+                            <label>D) ${situation.options.D}</label>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+        
+        function generateAptitudesQuestions() {
+            const container = document.getElementById('aptitudesQuestions');
+            
+            APTITUDES_QUESTIONS.forEach((question, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                let inputHtml = '';
+                if (question.type === 'numeric') {
+                    inputHtml = `
+                        <div class="input-group">
+                            <label class="input-label">Respuesta:</label>
+                            <input type="number" 
+                                   class="input-field" 
+                                   name="aptitud_${index}" 
+                                   placeholder="Ingrese su respuesta"
+                                   step="0.1"
+                                   onchange="updateAptitudChoice(${index}, this.value)">
+                            <small style="color: #666; margin-top: 5px;">Unidad: ${question.unit}</small>
+                        </div>
+                    `;
+                } else if (question.type === 'multiple') {
+                    inputHtml = `
+                        <div style="margin-top: 15px;">
+                            <div class="scenario-option" onclick="selectAptitudOption(${index}, 'A')">
+                                <input type="radio" name="aptitud_${index}" value="A" onchange="updateAptitudChoice(${index}, 'A')">
+                                <label>A) ${question.options.A}</label>
+                            </div>
+                            <div class="scenario-option" onclick="selectAptitudOption(${index}, 'B')">
+                                <input type="radio" name="aptitud_${index}" value="B" onchange="updateAptitudChoice(${index}, 'B')">
+                                <label>B) ${question.options.B}</label>
+                            </div>
+                            <div class="scenario-option" onclick="selectAptitudOption(${index}, 'C')">
+                                <input type="radio" name="aptitud_${index}" value="C" onchange="updateAptitudChoice(${index}, 'C')">
+                                <label>C) ${question.options.C}</label>
+                            </div>
+                            <div class="scenario-option" onclick="selectAptitudOption(${index}, 'D')">
+                                <input type="radio" name="aptitud_${index}" value="D" onchange="updateAptitudChoice(${index}, 'D')">
+                                <label>D) ${question.options.D}</label>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                questionDiv.innerHTML = `
+                    <div class="question-number">Pregunta ${index + 1}</div>
+                    <div class="question-text">${question.question}</div>
+                    ${inputHtml}
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+        
+        function selectCleaverOption(questionIndex, type, value) {
+            // Marcar el radio button correspondiente
+            const radio = document.querySelector(`input[name="cleaver_${questionIndex}_${type}"][value="${value}"]`);
+            if (radio) {
+                radio.checked = true;
+                updateCleaverChoice(questionIndex, type, value);
+            }
+        }
+        
+        function updateCleaverChoice(questionIndex, type, value) {
+            if (!formData.cleaver) formData.cleaver = {};
+            if (!formData.cleaver[questionIndex]) formData.cleaver[questionIndex] = {};
+            
+            formData.cleaver[questionIndex][type] = value;
+            
+            // Actualizar visualización
+            updateCleaverVisualFeedback(questionIndex);
+            
+            // Validación: alertar si seleccionan la misma opción para MÁS y MENOS
+            const currentData = formData.cleaver[questionIndex];
+            if (currentData.mas && currentData.menos && currentData.mas === currentData.menos) {
+                // Mostrar alerta amigable
+                setTimeout(() => {
+                    if (confirm('¡Atención! Ha seleccionado la misma palabra para MÁS y MENOS.\n\n¿Está seguro? Normalmente debe seleccionar palabras diferentes.\n\nPresione "Aceptar" para mantener esta selección o "Cancelar" para cambiarla.')) {
+                        // Mantener la selección
+                        updateCleaverVisualFeedback(questionIndex);
+                    } else {
+                        // Limpiar la selección actual
+                        if (type === 'mas') {
+                            document.querySelector(`input[name="cleaver_${questionIndex}_mas"][value="${value}"]`).checked = false;
+                            delete formData.cleaver[questionIndex].mas;
+                        } else {
+                            document.querySelector(`input[name="cleaver_${questionIndex}_menos"][value="${value}"]`).checked = false;
+                            delete formData.cleaver[questionIndex].menos;
+                        }
+                        updateCleaverVisualFeedback(questionIndex);
+                    }
+                }, 300);
+            }
+            
+            saveData();
+        }
+        
+        function updateCleaverVisualFeedback(questionIndex) {
+            const questionDiv = document.querySelector(`#cleaverQuestions .question:nth-child(${questionIndex + 1})`);
+            const options = questionDiv.querySelectorAll('.cleaver-option');
+            
+            // Limpiar todos los estados visuales
+            options.forEach(option => {
+                option.classList.remove('selected-mas', 'selected-menos', 'selected-both');
+            });
+            
+            const currentData = formData.cleaver[questionIndex] || {};
+            
+            // Aplicar estados visuales
+            if (currentData.mas && currentData.menos) {
+                if (currentData.mas === currentData.menos) {
+                    // Misma opción seleccionada para ambos
+                    const bothOption = questionDiv.querySelector(`.cleaver-option[data-option="${currentData.mas}"]`);
+                    if (bothOption) {
+                        bothOption.classList.add('selected-both');
+                    }
+                } else {
+                    // Opciones diferentes
+                    const masOption = questionDiv.querySelector(`.cleaver-option[data-option="${currentData.mas}"]`);
+                    const menosOption = questionDiv.querySelector(`.cleaver-option[data-option="${currentData.menos}"]`);
+                    
+                    if (masOption) masOption.classList.add('selected-mas');
+                    if (menosOption) menosOption.classList.add('selected-menos');
+                }
+            } else {
+                // Solo una selección
+                if (currentData.mas) {
+                    const masOption = questionDiv.querySelector(`.cleaver-option[data-option="${currentData.mas}"]`);
+                    if (masOption) masOption.classList.add('selected-mas');
+                }
+                if (currentData.menos) {
+                    const menosOption = questionDiv.querySelector(`.cleaver-option[data-option="${currentData.menos}"]`);
+                    if (menosOption) menosOption.classList.add('selected-menos');
+                }
+            }
+        }
+        
+        function nextSection() {
+            // Validation will be added here
+            currentSection++;
+            updateProgress();
+            // Load next section content
+        }
+        
+        function previousSection() {
+            if (currentSection > 1) {
+                currentSection--;
+                updateProgress();
+                // Load previous section content
+            }
+        }
+        
+        function updateProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const progress = (currentSection - 1) / 3 * 100; // 4 sections total
+            progressBar.style.width = progress + '%';
+            
+            // Update navigation buttons
+            document.getElementById('prevBtn').disabled = currentSection === 1;
+        }
+        
+        function setupAutosave() {
+            autosaveTimer = setInterval(() => {
+                saveData();
+                showAutosaveIndicator();
+            }, 30000); // Auto-save every 30 seconds
+        }
+        
+        function saveData() {
+            try {
+                localStorage.setItem('evaluationFormData', JSON.stringify({
+                    data: formData,
+                    section: currentSection,
+                    timestamp: new Date().toISOString()
+                }));
+            } catch (error) {
+                console.error('Error saving data:', error);
+            }
+        }
+        
+        function loadSavedData() {
+            try {
+                const saved = localStorage.getItem('evaluationFormData');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    formData = parsed.data || {};
+                    currentSection = parsed.section || 1;
+                    
+                    // Show recovery message
+                    if (Object.keys(formData).length > 0) {
+                        if (confirm('Se encontraron respuestas guardadas anteriormente. ¿Desea continuar donde se quedó?')) {
+                            // Restore form state
+                            restoreFormState();
+                        } else {
+                            // Clear saved data
+                            localStorage.removeItem('evaluationFormData');
+                            formData = {};
+                            currentSection = 1;
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading saved data:', error);
+            }
+        }
+        
+        function restoreFormState() {
+            // Implementation will be added to restore form fields
+            updateProgress();
+        }
+        
+        function showAutosaveIndicator() {
+            const indicator = document.getElementById('autosaveIndicator');
+            indicator.classList.add('show');
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+        
+        // Cleanup
+        window.addEventListener('beforeunload', function() {
+            saveData();
+            if (autosaveTimer) {
+                clearInterval(autosaveTimer);
+            }
+        });
+        
+        // Prevent accidental navigation away
+        window.addEventListener('beforeunload', function(e) {
+            if (Object.keys(formData).length > 0) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+        
+    </script>
+</body>
+</html>

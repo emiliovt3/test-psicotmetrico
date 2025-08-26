@@ -1,0 +1,98 @@
+/* Custom theme styles for Sistema de Evaluación Psicométrica */
+
+/* Light theme customizations */
+[data-bs-theme="light"] {
+  --tblr-primary: #066fd1;
+}
+
+/* Dark theme customizations */
+[data-bs-theme="dark"] {
+  --tblr-body-bg: #1e1e2e;
+  --tblr-surface: #2d2d42;
+  --tblr-border-color: #43435c;
+  --tblr-text-color: #e6e6f2;
+  --tblr-text-secondary: #b4b4c8;
+  
+  /* Custom badge colors for dark mode */
+  .badge-score-high { 
+    background-color: #2fb344 !important; 
+    color: white !important;
+  }
+  .badge-score-medium { 
+    background-color: #fab005 !important; 
+    color: white !important;
+  }
+  .badge-score-low { 
+    background-color: #d63939 !important; 
+    color: white !important;
+  }
+  
+  /* Red flag indicator for dark mode */
+  .red-flag-indicator {
+    background-color: #f56565 !important;
+    border: 1px solid #fc8181;
+  }
+  
+  /* Card improvements for dark mode */
+  .card {
+    background-color: var(--tblr-surface);
+    border-color: var(--tblr-border-color);
+  }
+  
+  /* Table improvements */
+  .table > :not(caption) > * > * {
+    border-bottom-color: var(--tblr-border-color);
+  }
+  
+  .table-responsive {
+    border-color: var(--tblr-border-color);
+  }
+  
+  /* DataTables dark mode improvements */
+  .dataTables_wrapper .dataTables_filter input {
+    background-color: var(--tblr-surface);
+    border-color: var(--tblr-border-color);
+    color: var(--tblr-text-color);
+  }
+  
+  .dataTables_wrapper .dataTables_length select {
+    background-color: var(--tblr-surface);
+    border-color: var(--tblr-border-color);
+    color: var(--tblr-text-color);
+  }
+  
+  /* Modal dark mode */
+  .modal-content {
+    background-color: var(--tblr-surface);
+    border-color: var(--tblr-border-color);
+  }
+  
+  .modal-header {
+    border-bottom-color: var(--tblr-border-color);
+  }
+  
+  .modal-footer {
+    border-top-color: var(--tblr-border-color);
+  }
+}
+
+/* Theme toggle button improvements */
+.theme-toggle-icon {
+  transition: transform 0.3s ease;
+}
+
+.theme-toggle-icon:hover {
+  transform: rotate(15deg);
+}
+
+/* Smooth theme transition */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Override transition for specific elements that shouldn't animate */
+.progress-bar,
+.avatar,
+.badge {
+  transition: none;
+}

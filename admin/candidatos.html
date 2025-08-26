@@ -1,0 +1,723 @@
+<!doctype html>
+<!--
+* Sistema de Evaluación Psicométrica
+* Basado en Tabler v1.4.0
+-->
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Candidatos - Sistema de Evaluación Psicométrica</title>
+    <!-- CSS Files -->
+    <link href="./dist/css/tabler.css" rel="stylesheet" />
+    <link href="./dist/css/tabler-flags.css" rel="stylesheet" />
+    <link href="./dist/css/tabler-payments.css" rel="stylesheet" />
+    <link href="./dist/css/tabler-vendors.css" rel="stylesheet" />
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    
+    <!-- Custom Theme CSS -->
+    <link href="./dist/css/theme-custom.css" rel="stylesheet">
+    
+    <style>
+      @import url("https://rsms.me/inter/inter.css");
+      
+      /* Estilos personalizados para semáforo de calificación */
+      .badge-score-high { background-color: #2fb344; }
+      .badge-score-medium { background-color: #fab005; }
+      .badge-score-low { background-color: #d63939; }
+      
+      /* Estados de evaluación */
+      .status-pending { color: #fab005; }
+      .status-completed { color: #2fb344; }
+      .status-expired { color: #6c757d; }
+      
+      /* Banderas rojas */
+      .red-flag-indicator {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-color: #d63939;
+        border-radius: 50%;
+        margin-left: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="./dist/js/tabler-theme.min.js"></script>
+    <div class="page">
+      <!-- Navbar -->
+      <header class="navbar navbar-expand-md d-print-none">
+        <div class="container-xl">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+            <a href="./dashboard.html">
+              Sistema de Evaluación Psicométrica
+            </a>
+          </h1>
+          <div class="navbar-nav flex-row order-md-last">
+            <div class="nav-item d-none d-md-flex me-3">
+              <div class="btn-list">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-generar-link">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M12 5l0 14" />
+                    <path d="M5 12l14 0" />
+                  </svg>
+                  Generar Link
+                </button>
+              </div>
+            </div>
+            <!-- Dark/Light Mode Toggle -->
+            <div class="nav-item dropdown d-none d-md-flex me-3">
+              <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Toggle theme">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon theme-toggle-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                  <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+                </svg>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <a href="#" class="dropdown-item" data-bs-theme-value="light">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                    <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+                  </svg>
+                  Modo Claro
+                </a>
+                <a href="#" class="dropdown-item" data-bs-theme-value="dark">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+                  </svg>
+                  Modo Oscuro
+                </a>
+                <a href="#" class="dropdown-item" data-bs-theme-value="auto">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon dropdown-item-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M3 5a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-14z" />
+                    <path d="M6 8h.01" />
+                    <path d="M9 8h.01" />
+                    <path d="M12 8h.01" />
+                    <path d="M6 11h.01" />
+                    <path d="M9 11h.01" />
+                    <path d="M12 11h.01" />
+                    <path d="M6 14h.01" />
+                    <path d="M9 14h.01" />
+                    <path d="M12 14h.01" />
+                  </svg>
+                  Automático
+                </a>
+              </div>
+            </div>
+            
+            <div class="nav-item dropdown">
+              <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown">
+                <span class="avatar avatar-sm">RH</span>
+                <div class="d-none d-xl-block ps-2">
+                  <div>Admin RH</div>
+                  <div class="mt-1 small text-secondary">Recursos Humanos</div>
+                </div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <a href="./configuracion.html" class="dropdown-item">Configuración</a>
+                <div class="dropdown-divider"></div>
+                <a href="./logout.html" class="dropdown-item">Cerrar sesión</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <!-- Menu de navegación -->
+      <header class="navbar-expand-md">
+        <div class="collapse navbar-collapse" id="navbar-menu">
+          <div class="navbar">
+            <div class="container-xl">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link" href="./dashboard.html">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M5 12l-2 0l9 -9l9 9l-2 0" />
+                        <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+                        <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+                      </svg>
+                    </span>
+                    <span class="nav-link-title">Dashboard</span>
+                  </a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" href="./candidatos.html">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                        <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+                      </svg>
+                    </span>
+                    <span class="nav-link-title">Candidatos</span>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="./reportes.html">
+                    <span class="nav-link-icon d-md-none d-lg-inline-block">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M3 12m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M9 8m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M15 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M4 20l14 0" />
+                      </svg>
+                    </span>
+                    <span class="nav-link-title">Reportes</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </header>
+      
+      <!-- Page header -->
+      <div class="page-wrapper">
+        <div class="page-header d-print-none">
+          <div class="container-xl">
+            <div class="row g-2 align-items-center">
+              <div class="col">
+                <div class="page-pretitle">Vista general</div>
+                <h2 class="page-title">Candidatos Evaluados</h2>
+              </div>
+              <div class="col-auto ms-auto d-print-none">
+                <div class="btn-list">
+                  <span class="d-none d-sm-inline">
+                    <button class="btn" onclick="exportarExcel()">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                        <path d="M10 12l4 0" />
+                        <path d="M10 15l4 0" />
+                        <path d="M10 9l1 0" />
+                      </svg>
+                      Exportar Excel
+                    </button>
+                  </span>
+                  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modal-generar-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                      <path d="M12 5l0 14" />
+                      <path d="M5 12l14 0" />
+                    </svg>
+                    Nuevo Candidato
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Page body -->
+        <div class="page-body">
+          <div class="container-xl">
+            
+            <!-- Tarjetas de resumen -->
+            <div class="row row-deck row-cards mb-4">
+              <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">Evaluaciones Totales</div>
+                    </div>
+                    <div class="h1 mb-3">247</div>
+                    <div class="d-flex mb-2">
+                      <div>Últimos 30 días</div>
+                      <div class="ms-auto">
+                        <span class="text-green d-inline-flex align-items-center lh-1">
+                          8%
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M3 17l6 -6l4 4l8 -8" />
+                            <path d="M14 7l7 0l0 7" />
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">Tasa de Aprobación</div>
+                    </div>
+                    <div class="h1 mb-3">68%</div>
+                    <div class="d-flex mb-2">
+                      <div>Recomendados</div>
+                      <div class="ms-auto">
+                        <span class="text-green d-inline-flex align-items-center lh-1">
+                          Bueno
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">Pendientes</div>
+                    </div>
+                    <div class="h1 mb-3">12</div>
+                    <div class="d-flex mb-2">
+                      <div>Por completar</div>
+                      <div class="ms-auto">
+                        <span class="text-yellow d-inline-flex align-items-center lh-1">
+                          5 expiran hoy
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex align-items-center">
+                      <div class="subheader">Banderas Rojas</div>
+                    </div>
+                    <div class="h1 mb-3">23</div>
+                    <div class="d-flex mb-2">
+                      <div>Detectadas este mes</div>
+                      <div class="ms-auto">
+                        <span class="text-red d-inline-flex align-items-center lh-1">
+                          9.3%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Tabla de candidatos -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Lista de Candidatos</h3>
+              </div>
+              <div class="card-body border-bottom py-3">
+                <div class="d-flex">
+                  <div class="text-secondary">
+                    Mostrar
+                    <div class="mx-2 d-inline-block">
+                      <select id="entries-select" class="form-select form-select-sm">
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                      </select>
+                    </div>
+                    entradas
+                  </div>
+                  <div class="ms-auto text-secondary">
+                    Buscar:
+                    <div class="ms-2 d-inline-block">
+                      <input type="text" id="search-input" class="form-control form-control-sm" aria-label="Buscar candidato">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table id="tabla-candidatos" class="table card-table table-vcenter text-nowrap datatable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Nombre</th>
+                      <th>Puesto</th>
+                      <th>Fecha</th>
+                      <th>Estado</th>
+                      <th>Puntaje</th>
+                      <th>DISC</th>
+                      <th>Recomendación</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Datos de ejemplo - serán reemplazados por datos de Supabase -->
+                    <tr>
+                      <td><span class="text-secondary">001</span></td>
+                      <td>
+                        <div class="d-flex py-1 align-items-center">
+                          <span class="avatar me-2">JM</span>
+                          <div class="flex-fill">
+                            <div class="font-weight-medium">José Martínez</div>
+                            <div class="text-secondary"><a href="#" class="text-reset">jose.martinez@email.com</a></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>Soldador</td>
+                      <td>2024-01-15</td>
+                      <td>
+                        <span class="badge bg-success me-1"></span> Completado
+                      </td>
+                      <td>
+                        <span class="badge badge-score-high">77%</span>
+                      </td>
+                      <td>
+                        <span class="text-secondary" title="D:3 I:5 S:8 C:7">S8-C7</span>
+                      </td>
+                      <td>
+                        <span class="badge bg-green-lt">CONTRATAR</span>
+                      </td>
+                      <td class="text-end">
+                        <div class="dropdown">
+                          <button class="btn btn-ghost-secondary btn-icon" data-bs-toggle="dropdown">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                            </svg>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="resultado.html?id=001">Ver detalle</a>
+                            <a class="dropdown-item" href="#">Descargar PDF</a>
+                            <a class="dropdown-item" href="#">Reenviar link</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-red" href="#">Eliminar</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="text-secondary">002</span></td>
+                      <td>
+                        <div class="d-flex py-1 align-items-center">
+                          <span class="avatar me-2">CR</span>
+                          <div class="flex-fill">
+                            <div class="font-weight-medium">Carlos Ramírez <span class="red-flag-indicator" title="Banderas rojas detectadas"></span></div>
+                            <div class="text-secondary"><a href="#" class="text-reset">carlos.r@email.com</a></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>Electricista</td>
+                      <td>2024-01-14</td>
+                      <td>
+                        <span class="badge bg-success me-1"></span> Completado
+                      </td>
+                      <td>
+                        <span class="badge badge-score-low">42%</span>
+                      </td>
+                      <td>
+                        <span class="text-secondary" title="D:8 I:2 S:4 C:3">D8-I2</span>
+                      </td>
+                      <td>
+                        <span class="badge bg-red-lt">NO CONTRATAR</span>
+                      </td>
+                      <td class="text-end">
+                        <div class="dropdown">
+                          <button class="btn btn-ghost-secondary btn-icon" data-bs-toggle="dropdown">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                            </svg>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="resultado.html?id=002">Ver detalle</a>
+                            <a class="dropdown-item" href="#">Descargar PDF</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-red" href="#">Eliminar</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    <tr>
+                      <td><span class="text-secondary">003</span></td>
+                      <td>
+                        <div class="d-flex py-1 align-items-center">
+                          <span class="avatar me-2">MG</span>
+                          <div class="flex-fill">
+                            <div class="font-weight-medium">María García</div>
+                            <div class="text-secondary"><a href="#" class="text-reset">maria.garcia@email.com</a></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td>Obrero</td>
+                      <td>2024-01-16</td>
+                      <td>
+                        <span class="badge bg-warning me-1"></span> Pendiente
+                      </td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td>-</td>
+                      <td class="text-end">
+                        <div class="dropdown">
+                          <button class="btn btn-ghost-secondary btn-icon" data-bs-toggle="dropdown">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+                            </svg>
+                          </button>
+                          <div class="dropdown-menu dropdown-menu-end">
+                            <a class="dropdown-item" href="#">Reenviar link</a>
+                            <a class="dropdown-item" href="#">Copiar link</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-red" href="#">Cancelar</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                  </tbody>
+                </table>
+              </div>
+              <div class="card-footer d-flex align-items-center">
+                <p class="m-0 text-secondary">Mostrando <span>1</span> a <span>3</span> de <span>247</span> entradas</p>
+                <ul class="pagination m-0 ms-auto">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M15 6l-6 6l6 6" />
+                      </svg>
+                      anterior
+                    </a>
+                  </li>
+                  <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                  <li class="page-item"><a class="page-link" href="#">2</a></li>
+                  <li class="page-item"><a class="page-link" href="#">3</a></li>
+                  <li class="page-item">
+                    <a class="page-link" href="#">
+                      siguiente
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M9 6l6 6l-6 6" />
+                      </svg>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <footer class="footer footer-transparent d-print-none">
+          <div class="container-xl">
+            <div class="row text-center align-items-center flex-row-reverse">
+              <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                <ul class="list-inline list-inline-dots mb-0">
+                  <li class="list-inline-item">
+                    Sistema de Evaluación Psicométrica v1.0
+                  </li>
+                </ul>
+              </div>
+              <div class="col-lg-auto ms-lg-auto">
+                <ul class="list-inline list-inline-dots mb-0">
+                  <li class="list-inline-item">
+                    &copy; 2024 Empresa de Anuncios Luminosos
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    
+    <!-- Modal Generar Link -->
+    <div class="modal modal-blur fade" id="modal-generar-link" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Generar Link de Evaluación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="form-generar-link">
+              <div class="mb-3">
+                <label class="form-label">Nombre completo</label>
+                <input type="text" class="form-control" name="nombre" placeholder="Ej: Juan Pérez García" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-control" name="email" placeholder="correo@ejemplo.com" required>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Teléfono</label>
+                <input type="tel" class="form-control" name="telefono" placeholder="555-123-4567">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Puesto solicitado</label>
+                <select class="form-select" name="puesto" required>
+                  <option value="">Seleccione...</option>
+                  <option value="Soldador">Soldador</option>
+                  <option value="Electricista">Electricista</option>
+                  <option value="Obrero">Obrero General</option>
+                  <option value="Ayudante">Ayudante</option>
+                  <option value="Supervisor">Supervisor</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Tiempo de expiración</label>
+                <select class="form-select" name="expiracion">
+                  <option value="48">48 horas (recomendado)</option>
+                  <option value="24">24 horas</option>
+                  <option value="72">72 horas</option>
+                  <option value="168">1 semana</option>
+                </select>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn me-auto" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" onclick="generarLink()">Generar y Enviar Link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Libs JS -->
+    <script src="./dist/js/tabler.min.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+      // Inicialización de DataTable cuando el documento esté listo
+      $(document).ready(function() {
+        $('#tabla-candidatos').DataTable({
+          language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json'
+          },
+          order: [[3, 'desc']], // Ordenar por fecha descendente
+          responsive: true,
+          pageLength: 25,
+          dom: 'rtip', // Simplificar controles
+          columnDefs: [
+            { orderable: false, targets: -1 } // Última columna (acciones) no ordenable
+          ]
+        });
+        
+        // Sincronizar controles personalizados con DataTable
+        var table = $('#tabla-candidatos').DataTable();
+        
+        $('#search-input').on('keyup', function() {
+          table.search(this.value).draw();
+        });
+        
+        $('#entries-select').on('change', function() {
+          table.page.len(this.value).draw();
+        });
+      });
+      
+      // Función para generar link
+      function generarLink() {
+        const form = document.getElementById('form-generar-link');
+        const formData = new FormData(form);
+        
+        // Aquí irá la lógica de conexión con Supabase
+        console.log('Generando link para:', Object.fromEntries(formData));
+        
+        // Por ahora, solo simulamos
+        alert('Link generado y enviado por email');
+        
+        // Cerrar modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modal-generar-link'));
+        modal.hide();
+        
+        // Recargar tabla
+        location.reload();
+      }
+      
+      // Función para exportar a Excel
+      function exportarExcel() {
+        // Por implementar con librería como SheetJS
+        alert('Función de exportación en desarrollo');
+      }
+      
+      // Theme Toggle Functionality
+      document.addEventListener('DOMContentLoaded', function() {
+        const themeDropdownItems = document.querySelectorAll('[data-bs-theme-value]');
+        
+        themeDropdownItems.forEach(item => {
+          item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const theme = this.getAttribute('data-bs-theme-value');
+            
+            if (theme === 'auto') {
+              // Detectar preferencia del sistema
+              const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+              document.documentElement.setAttribute('data-bs-theme', systemTheme);
+              localStorage.setItem('theme', 'auto');
+            } else {
+              document.documentElement.setAttribute('data-bs-theme', theme);
+              localStorage.setItem('theme', theme);
+            }
+            
+            // Actualizar ícono del toggle
+            updateThemeIcon();
+          });
+        });
+        
+        // Función para actualizar el ícono del toggle
+        function updateThemeIcon() {
+          const currentTheme = document.documentElement.getAttribute('data-bs-theme');
+          const toggleIcon = document.querySelector('[data-bs-toggle="dropdown"][aria-label="Toggle theme"] svg');
+          
+          if (currentTheme === 'dark') {
+            toggleIcon.innerHTML = `
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+            `;
+          } else {
+            toggleIcon.innerHTML = `
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+              <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+            `;
+          }
+        }
+        
+        // Cargar tema guardado al inicializar
+        const savedTheme = localStorage.getItem('theme') || 'auto';
+        if (savedTheme === 'auto') {
+          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-bs-theme', systemTheme);
+          
+          // Escuchar cambios en preferencia del sistema
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (localStorage.getItem('theme') === 'auto') {
+              document.documentElement.setAttribute('data-bs-theme', e.matches ? 'dark' : 'light');
+              updateThemeIcon();
+            }
+          });
+        } else {
+          document.documentElement.setAttribute('data-bs-theme', savedTheme);
+        }
+        
+        // Inicializar ícono
+        updateThemeIcon();
+      });
+    </script>
+  </body>
+</html>

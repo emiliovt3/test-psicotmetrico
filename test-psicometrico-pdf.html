@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Evaluación de Personal - Anuncios Luminosos</title>
+    <style>
+        @media print {
+            .no-print { display: none; }
+            .page-break { page-break-after: always; }
+            body { margin: 0; }
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 24px;
+        }
+        
+        .header h2 {
+            margin: 10px 0;
+            color: #34495e;
+            font-size: 18px;
+            font-weight: normal;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+        
+        .info-box table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .info-box td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .info-box td:first-child {
+            font-weight: bold;
+            width: 150px;
+        }
+        
+        .instructions {
+            background: #e8f4f8;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .instructions h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-header {
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+            margin: 20px 0 15px 0;
+            border-radius: 5px;
+        }
+        
+        .section-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        
+        table.test-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        table.test-table th {
+            background: #ecf0f1;
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #bdc3c7;
+            font-weight: bold;
+        }
+        
+        table.test-table td {
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+        }
+        
+        table.test-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .response-box {
+            width: 40px;
+            height: 25px;
+            border: 1px solid #999;
+            display: inline-block;
+            margin: 0 5px;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #666;
+            display: inline-block;
+            margin: 0 5px;
+            vertical-align: middle;
+        }
+        
+        .likert-scale {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background: #f9f9f9;
+        }
+        
+        .likert-option {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .likert-option .checkbox {
+            display: block;
+            margin: 5px auto;
+        }
+        
+        .math-problem {
+            background: #fff;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .answer-line {
+            border-bottom: 1px solid #999;
+            display: inline-block;
+            width: 200px;
+            margin-left: 10px;
+        }
+        
+        .warning-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        
+        .warning-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+            text-align: center;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .score-table {
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .score-table th {
+            background: #2c3e50;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .score-table td {
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+        
+        @media print {
+            body {
+                font-size: 11pt;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+        
+        .print-button {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+        }
+        
+        .print-button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <button class="print-button no-print" onclick="window.print()">🖨️ Imprimir Test</button>
+    
+    <div class="header">
+        <h1>TEST DE EVALUACIÓN DE PERSONAL</h1>
+        <h2>Industria de Anuncios Luminosos</h2>
+        <p style="margin: 10px 0; color: #666;">Evaluación Integral: Personalidad, Aptitudes y Competencias Técnicas</p>
+    </div>
+
+    <div class="info-box">
+        <table>
+            <tr>
+                <td>Nombre completo:</td>
+                <td>_____________________________________________</td>
+            </tr>
+            <tr>
+                <td>Fecha:</td>
+                <td>_____________________________________________</td>
+            </tr>
+            <tr>
+                <td>Puesto solicitado:</td>
+                <td>_____________________________________________</td>
+            </tr>
+            <tr>
+                <td>Edad:</td>
+                <td>_________________ Teléfono: _____________________</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="warning-box">
+        <strong>⚠️ IMPORTANTE - INSTRUCCIONES GENERALES:</strong>
+        • Este test consta de 4 secciones y tiene una duración aproximada de 45-60 minutos<br>
+        • No hay respuestas correctas o incorrectas en las secciones de personalidad<br>
+        • Responda con honestidad - las respuestas inconsistentes serán detectadas<br>
+        • Use tinta azul o negra. No use corrector<br>
+        • Si se equivoca, tache con una X y marque la respuesta correcta
+    </div>
+
+    <!-- SECCIÓN 1: CLEAVER ADAPTADO -->
+    <div class="section">
+        <div class="section-header">
+            <h3>SECCIÓN 1: PERFIL DE COMPORTAMIENTO (Cleaver Adaptado)</h3>
+        </div>
+        
+        <div class="instructions">
+            <h3>Instrucciones:</h3>
+            <p>En cada grupo de 4 palabras, marque:</p>
+            <ul>
+                <li><strong>M (Más)</strong> = La palabra que MEJOR lo describe</li>
+                <li><strong>L (Menos)</strong> = La palabra que MENOS lo describe</li>
+            </ul>
+            <p><em>Debe marcar una M y una L en cada grupo. No puede marcar la misma palabra para ambas.</em></p>
+        </div>
+
+        <table class="test-table">
+            <thead>
+                <tr>
+                    <th width="5%">#</th>
+                    <th width="20%">Opción A</th>
+                    <th width="20%">Opción B</th>
+                    <th width="20%">Opción C</th>
+                    <th width="20%">Opción D</th>
+                    <th width="7.5%">Más (M)</th>
+                    <th width="7.5%">Menos (L)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Cuidadoso</td>
+                    <td>Decidido</td>
+                    <td>Sociable</td>
+                    <td>Preciso</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Persistente</td>
+                    <td>Aventurero</td>
+                    <td>Receptivo</td>
+                    <td>Metódico</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Paciente</td>
+                    <td>Persuasivo</td>
+                    <td>Competitivo</td>
+                    <td>Detallista</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Respetuoso</td>
+                    <td>Optimista</td>
+                    <td>Rápido</td>
+                    <td>Cauteloso</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Disciplinado</td>
+                    <td>Entusiasta</td>
+                    <td>Directo</td>
+                    <td>Considerado</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Confiable</td>
+                    <td>Innovador</td>
+                    <td>Independiente</td>
+                    <td>Constante</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Organizado</td>
+                    <td>Expresivo</td>
+                    <td>Arriesgado</td>
+                    <td>Colaborador</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Obediente</td>
+                    <td>Tolerante</td>
+                    <td>Original</td>
+                    <td>Firme</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Puntual</td>
+                    <td>Animado</td>
+                    <td>Exigente</td>
+                    <td>Servicial</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Estable</td>
+                    <td>Analítico</td>
+                    <td>Enérgico</td>
+                    <td>Amigable</td>
+                    <td><span class="response-box"></span></td>
+                    <td><span class="response-box"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN 2: KOSTICK ADAPTADO -->
+    <div class="section page-break">
+        <div class="section-header">
+            <h3>SECCIÓN 2: PREFERENCIAS LABORALES (Kostick Adaptado)</h3>
+        </div>
+        
+        <div class="instructions">
+            <h3>Instrucciones:</h3>
+            <p>Lea cada afirmación y marque qué tan de acuerdo está con ella.</p>
+            <p>Use la siguiente escala:</p>
+            <ul>
+                <li><strong>TA</strong> = Totalmente de Acuerdo</li>
+                <li><strong>A</strong> = De Acuerdo</li>
+                <li><strong>N</strong> = Neutral</li>
+                <li><strong>D</strong> = En Desacuerdo</li>
+                <li><strong>TD</strong> = Totalmente en Desacuerdo</li>
+            </ul>
+        </div>
+
+        <table class="test-table">
+            <thead>
+                <tr>
+                    <th width="5%">#</th>
+                    <th width="65%">Afirmación</th>
+                    <th width="6%">TD</th>
+                    <th width="6%">D</th>
+                    <th width="6%">N</th>
+                    <th width="6%">A</th>
+                    <th width="6%">TA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Prefiero tener instrucciones detalladas antes de comenzar un trabajo</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Me siento cómodo trabajando en equipo para completar proyectos</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Siempre termino lo que empiezo, sin importar las dificultades</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Disfruto aprender nuevas técnicas y habilidades en mi trabajo</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Respeto todas las normas de seguridad, aunque parezcan excesivas</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Prefiero un trabajo estable con rutinas claras</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Si veo un problema, busco solucionarlo aunque no sea mi responsabilidad</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Reviso mi trabajo varias veces antes de darlo por terminado</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Me siento cómodo trabajando en alturas con el equipo de seguridad adecuado</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Prefiero pedir ayuda antes que arriesgarme a cometer un error costoso</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td>Reportaría a un compañero que no sigue las normas de seguridad</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>Puedo mantener la concentración en tareas repetitivas</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>13</td>
+                    <td>Devolvería herramientas o materiales extras aunque nadie lo notara</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td>Me gusta que reconozcan mi trabajo bien hecho</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td>Puedo trabajar bajo presión sin perder la calidad</td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                    <td><span class="checkbox"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SECCIÓN 3: SITUACIONES LABORALES -->
+    <div class="section page-break">
+        <div class="section-header">
+            <h3>SECCIÓN 3: SITUACIONES LABORALES ESPECÍFICAS</h3>
+        </div>
+        
+        <div class="instructions">
+            <h3>Instrucciones:</h3>
+            <p>Lea cada situación y elija la opción que mejor representa lo que usted haría.</p>
+            <p>Marque solo UNA opción por situación.</p>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h4>Situación 1:</h4>
+            <p style="background: #f9f9f9; padding: 10px; border-left: 3px solid #3498db;">
+                Un cliente le ofrece $1,000 pesos extra para hacer una instalación sin factura, fuera del horario de trabajo.
+            </p>
+            <p>¿Qué haría?</p>
+            <div style="margin-left: 20px;">
+                <p><span class="checkbox"></span> A) Acepto, es dinero extra y no afecta a nadie</p>
+                <p><span class="checkbox"></span> B) Le digo que lo consultaré con mi supervisor</p>
+                <p><span class="checkbox"></span> C) Rechazo cortésmente y explico que solo trabajo con factura</p>
+                <p><span class="checkbox"></span> D) Le sugiero que hable directamente con la empresa para un descuento</p>
+            </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h4>Situación 2:</h4>
+            <p style="background: #f9f9f9; padding: 10px; border-left: 3px solid #3498db;">
+                Ve a un compañero soldando sin careta de protección porque dice que "así ve mejor".
+            </p>
+            <p>¿Qué haría?</p>
+            <div style="margin-left: 20px;">
+                <p><span class="checkbox"></span> A) No digo nada, es su responsabilidad</p>
+                <p><span class="checkbox"></span> B) Le sugiero amigablemente que use la protección</p>
+                <p><span class="checkbox"></span> C) Le advierto sobre los riesgos y si no hace caso, aviso al supervisor</p>
+                <p><span class="checkbox"></span> D) Reporto inmediatamente al supervisor</p>
+            </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h4>Situación 3:</h4>
+            <p style="background: #f9f9f9; padding: 10px; border-left: 3px solid #3498db;">
+                Su supervisor le pide instalar un anuncio que usted sabe que no cumple con el código eléctrico local.
+            </p>
+            <p>¿Qué haría?</p>
+            <div style="margin-left: 20px;">
+                <p><span class="checkbox"></span> A) Lo instalo sin cuestionar, el supervisor sabe lo que hace</p>
+                <p><span class="checkbox"></span> B) Le comento mi preocupación respetuosamente</p>
+                <p><span class="checkbox"></span> C) Me niego a instalarlo y explico los riesgos legales</p>
+                <p><span class="checkbox"></span> D) Lo instalo pero documento todo por escrito</p>
+            </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h4>Situación 4:</h4>
+            <p style="background: #f9f9f9; padding: 10px; border-left: 3px solid #3498db;">
+                Al final del día sobran 5 metros de cable que no se usaron en el proyecto.
+            </p>
+            <p>¿Qué haría?</p>
+            <div style="margin-left: 20px;">
+                <p><span class="checkbox"></span> A) Me lo llevo, es material que sobró</p>
+                <p><span class="checkbox"></span> B) Lo dejo en mi área de trabajo para el próximo proyecto</p>
+                <p><span class="checkbox"></span> C) Lo reporto y lo devuelvo al almacén</p>
+                <p><span class="checkbox"></span> D) Pregunto si puedo quedármelo</p>
+            </div>
+        </div>
+
+        <div style="margin: 20px 0;">
+            <h4>Situación 5:</h4>
+            <p style="background: #f9f9f9; padding: 10px; border-left: 3px solid #3498db;">
+                Un compañero nuevo está teniendo dificultades con una tarea que usted domina, pero pedir ayuda retrasaría su propio trabajo.
+            </p>
+            <p>¿Qué haría?</p>
+            <div style="margin-left: 20px;">
+                <p><span class="checkbox"></span> A) Continúo con mi trabajo, no es mi responsabilidad</p>
+                <p><span class="checkbox"></span> B) Le doy consejos rápidos sin detenerme</p>
+                <p><span class="checkbox"></span> C) Paro un momento para enseñarle bien</p>
+                <p><span class="checkbox"></span> D) Le digo que pregunte al supervisor</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 4: APTITUDES (TERMAN MERRILL ADAPTADO) -->
+    <div class="section page-break">
+        <div class="section-header">
+            <h3>SECCIÓN 4: APTITUDES Y RAZONAMIENTO</h3>
+        </div>
+        
+        <div class="instructions">
+            <h3>Instrucciones:</h3>
+            <p>Resuelva los siguientes problemas. Muestre su procedimiento cuando sea posible.</p>
+            <p>Si no sabe una respuesta, puede dejarla en blanco y continuar con la siguiente.</p>
+        </div>
+
+        <h4 style="background: #ecf0f1; padding: 10px; margin-top: 20px;">A. Razonamiento Numérico</h4>
+        
+        <div class="math-problem">
+            <strong>1.</strong> Un anuncio luminoso necesita 24 focos LED. Si cada caja trae 6 focos, ¿cuántas cajas necesita comprar?
+            <br><br>
+            Respuesta: <span class="answer-line"></span> cajas
+        </div>
+
+        <div class="math-problem">
+            <strong>2.</strong> Un electricista cobra $150 por hora. Si trabajó de 8:30 am a 2:00 pm, ¿cuánto debe cobrar?
+            <br><br>
+            Procedimiento: _______________________________________
+            <br><br>
+            Respuesta: $ <span class="answer-line"></span>
+        </div>
+
+        <div class="math-problem">
+            <strong>3.</strong> Si 2 soldadores terminan una estructura en 6 horas, ¿cuánto tardarán 3 soldadores trabajando al mismo ritmo?
+            <br><br>
+            Procedimiento: _______________________________________
+            <br><br>
+            Respuesta: <span class="answer-line"></span> horas
+        </div>
+
+        <div class="math-problem">
+            <strong>4.</strong> Un letrero mide 3.5 metros de largo. Si necesita cortarse en 5 partes iguales, ¿cuánto medirá cada parte?
+            <br><br>
+            Respuesta: <span class="answer-line"></span> metros
+        </div>
+
+        <div class="math-problem">
+            <strong>5.</strong> El material para un anuncio cuesta $8,400. Si el cliente paga 30% de anticipo, ¿cuánto debe pagar?
+            <br><br>
+            Respuesta: $ <span class="answer-line"></span>
+        </div>
+
+        <h4 style="background: #ecf0f1; padding: 10px; margin-top: 20px;">B. Comprensión de Instrucciones</h4>
+        
+        <div class="math-problem">
+            <strong>6.</strong> Si el manual dice: "Conecte el cable rojo al positivo antes de conectar el negro al negativo", ¿cuál cable se conecta primero?
+            <br><br>
+            Respuesta: <span class="answer-line"></span>
+        </div>
+
+        <div class="math-problem">
+            <strong>7.</strong> Las instrucciones dicen: "Aplique 3 capas de pintura, esperando 2 horas entre cada capa". Si empieza a las 8:00 am, ¿a qué hora puede aplicar la tercera capa?
+            <br><br>
+            Respuesta: <span class="answer-line"></span>
+        </div>
+
+        <h4 style="background: #ecf0f1; padding: 10px; margin-top: 20px;">C. Razonamiento Espacial</h4>
+        
+        <div class="math-problem">
+            <strong>8.</strong> Un anuncio rectangular mide 4m x 2m. ¿Cuál es su área total?
+            <br><br>
+            Respuesta: <span class="answer-line"></span> m²
+        </div>
+
+        <div class="math-problem">
+            <strong>9.</strong> Si un tubo de 6 metros se corta en 3 partes: la primera de 2.5m, la segunda de 1.5m, ¿cuánto mide la tercera parte?
+            <br><br>
+            Respuesta: <span class="answer-line"></span> metros
+        </div>
+
+        <h4 style="background: #ecf0f1; padding: 10px; margin-top: 20px;">D. Seguridad y Conocimiento Técnico Básico</h4>
+        
+        <div class="math-problem">
+            <strong>10.</strong> ¿De qué color es típicamente el cable de tierra en una instalación eléctrica?
+            <br><br>
+            <span class="checkbox"></span> A) Rojo
+            <span class="checkbox"></span> B) Negro  
+            <span class="checkbox"></span> C) Verde o verde/amarillo
+            <span class="checkbox"></span> D) Blanco
+        </div>
+
+        <div class="math-problem">
+            <strong>11.</strong> ¿Cuál es el equipo de protección personal MÁS importante al soldar?
+            <br><br>
+            <span class="checkbox"></span> A) Guantes
+            <span class="checkbox"></span> B) Careta o máscara de soldar
+            <span class="checkbox"></span> C) Botas de seguridad
+            <span class="checkbox"></span> D) Overol
+        </div>
+
+        <div class="math-problem">
+            <strong>12.</strong> Antes de trabajar en una instalación eléctrica, lo PRIMERO que debe hacer es:
+            <br><br>
+            <span class="checkbox"></span> A) Ponerse los guantes
+            <span class="checkbox"></span> B) Verificar que no haya corriente/desenergizar
+            <span class="checkbox"></span> C) Revisar las herramientas
+            <span class="checkbox"></span> D) Informar al supervisor
+        </div>
+    </div>
+
+    <!-- SECCIÓN FINAL -->
+    <div class="section page-break">
+        <div class="section-header">
+            <h3>DECLARACIÓN DE VERACIDAD</h3>
+        </div>
+        
+        <div style="background: #f9f9f9; padding: 20px; margin: 20px 0; border: 1px solid #ddd;">
+            <p>Declaro que todas las respuestas proporcionadas en este test son verdaderas y reflejan honestamente mis capacidades, preferencias y forma de actuar en situaciones laborales.</p>
+            
+            <p>Entiendo que la información proporcionada será utilizada únicamente para fines de evaluación laboral y que cualquier falsedad puede ser motivo de descalificación del proceso de selección.</p>
+            
+            <div style="margin-top: 30px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; padding: 20px;">
+                            <p>Firma del candidato:</p>
+                            <p style="border-bottom: 1px solid #000; margin-top: 40px;"></p>
+                        </td>
+                        <td style="width: 50%; padding: 20px;">
+                            <p>Fecha:</p>
+                            <p style="border-bottom: 1px solid #000; margin-top: 40px;"></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="warning-box">
+            <strong>PARA USO EXCLUSIVO DEL EVALUADOR</strong>
+            No escriba en esta sección
+        </div>
+
+        <table class="score-table">
+            <thead>
+                <tr>
+                    <th>Sección</th>
+                    <th>Puntaje Obtenido</th>
+                    <th>Puntaje Máximo</th>
+                    <th>Porcentaje</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1. Perfil Comportamiento</td>
+                    <td>______</td>
+                    <td>10</td>
+                    <td>______%</td>
+                    <td>_________________________</td>
+                </tr>
+                <tr>
+                    <td>2. Preferencias Laborales</td>
+                    <td>______</td>
+                    <td>75</td>
+                    <td>______%</td>
+                    <td>_________________________</td>
+                </tr>
+                <tr>
+                    <td>3. Situaciones Laborales</td>
+                    <td>______</td>
+                    <td>25</td>
+                    <td>______%</td>
+                    <td>_________________________</td>
+                </tr>
+                <tr>
+                    <td>4. Aptitudes</td>
+                    <td>______</td>
+                    <td>12</td>
+                    <td>______%</td>
+                    <td>_________________________</td>
+                </tr>
+                <tr style="background: #ecf0f1; font-weight: bold;">
+                    <td>TOTAL GENERAL</td>
+                    <td>______</td>
+                    <td>122</td>
+                    <td>______%</td>
+                    <td>_________________________</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 30px; padding: 20px; border: 2px solid #2c3e50;">
+            <h4>Recomendación Final del Evaluador:</h4>
+            <div style="margin: 20px 0;">
+                <p><span class="checkbox"></span> <strong>Altamente Recomendable</strong> (90-100%)</p>
+                <p><span class="checkbox"></span> <strong>Recomendable</strong> (75-89%)</p>
+                <p><span class="checkbox"></span> <strong>Recomendable con Reservas</strong> (60-74%)</p>
+                <p><span class="checkbox"></span> <strong>No Recomendable</strong> (menos de 60%)</p>
+            </div>
+            
+            <p><strong>Comentarios adicionales:</strong></p>
+            <div style="border: 1px solid #999; height: 100px; margin-top: 10px;"></div>
+            
+            <div style="margin-top: 30px;">
+                <table style="width: 100%;">
+                    <tr>
+                        <td style="width: 50%; padding: 20px;">
+                            <p>Nombre del evaluador:</p>
+                            <p style="border-bottom: 1px solid #000; margin-top: 30px;"></p>
+                        </td>
+                        <td style="width: 50%; padding: 20px;">
+                            <p>Firma del evaluador:</p>
+                            <p style="border-bottom: 1px solid #000; margin-top: 30px;"></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>CONFIDENCIAL</strong> - Este documento contiene información sensible y debe ser manejado con discreción</p>
+        <p>© 2024 - Test de Evaluación para Industria de Anuncios Luminosos - Todos los derechos reservados</p>
+    </div>
+</body>
+</html>

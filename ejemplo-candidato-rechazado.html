@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Evaluación - Carlos Ramírez [NO RECOMENDADO]</title>
+    <style>
+        @media print {
+            .no-print { display: none; }
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #2c3e50;
+            background: #f8f9fa;
+        }
+        
+        .report-header {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(220,53,69,0.3);
+            position: relative;
+        }
+        
+        .report-header::before {
+            content: "⚠️";
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 48px;
+            opacity: 0.5;
+        }
+        
+        .report-header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        
+        .candidate-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .info-item {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .section {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .score-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .score-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .score-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .score-card.danger {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+        }
+        
+        .score-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .score-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 5px 0;
+        }
+        
+        .score-value.danger {
+            color: #dc3545;
+        }
+        
+        .score-max {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #dc3545;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-fill.warning {
+            background: #ffc107;
+        }
+        
+        .progress-fill.danger {
+            background: #dc3545;
+        }
+        
+        .recommendation-box {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .recommendation-box.reject {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            border: 3px solid #dc3545;
+        }
+        
+        .recommendation-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .recommendation-text {
+            font-size: 16px;
+        }
+        
+        .disc-profile {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .disc-factor {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .disc-letter {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .disc-name {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .disc-bar {
+            width: 100%;
+            height: 100px;
+            background: #e9ecef;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .disc-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: #667eea;
+            border-radius: 5px;
+            transition: height 0.3s ease;
+        }
+        
+        .disc-fill.high { background: #28a745; }
+        .disc-fill.medium { background: #ffc107; }
+        .disc-fill.low { background: #dc3545; }
+        .disc-fill.danger { background: #dc3545; }
+        
+        .disc-percentage {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-correct {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-incorrect {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-neutral {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-critical {
+            background: #dc3545;
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .alert-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .alert-danger {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .alert-critical {
+            background: #dc3545;
+            color: white;
+            font-weight: bold;
+            border: 2px solid #c82333;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+        
+        .red-flags-section {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .red-flag-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #dc3545;
+            border-radius: 5px;
+        }
+        
+        .red-flag-title {
+            font-weight: bold;
+            color: #dc3545;
+            margin-bottom: 5px;
+        }
+        
+        .strengths-weaknesses {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .strengths, .weaknesses {
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .strengths {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .weaknesses {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .strengths h4, .weaknesses h4 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .strengths ul, .weaknesses ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .strengths li, .weaknesses li {
+            margin-bottom: 8px;
+        }
+        
+        .raw-responses {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 15px 0;
+        }
+        
+        .disqualification-stamp {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 72px;
+            font-weight: bold;
+            color: rgba(220, 53, 69, 0.3);
+            text-align: center;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .comparison-table th {
+            background: #dc3545;
+            color: white;
+            text-align: center;
+        }
+        
+        .comparison-table td {
+            text-align: center;
+        }
+        
+        .big-x {
+            font-size: 48px;
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .big-check {
+            font-size: 48px;
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="report-header">
+        <h1>REPORTE DE EVALUACIÓN PSICOMÉTRICA</h1>
+        <p style="margin: 5px 0; opacity: 0.9;">Evaluación Integral para Industria de Anuncios Luminosos</p>
+        <div class="candidate-info">
+            <div class="info-item">
+                <div class="info-label">Candidato</div>
+                <div class="info-value">Carlos Ramírez López</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Puesto Solicitado</div>
+                <div class="info-value">Soldador</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Fecha de Evaluación</div>
+                <div class="info-value">15/01/2024</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESUMEN EJECUTIVO -->
+    <div class="section" style="position: relative;">
+        <div class="disqualification-stamp">NO CONTRATAR</div>
+        <div class="section-title">📊 RESUMEN EJECUTIVO</div>
+        
+        <div class="score-summary">
+            <div class="score-card danger">
+                <div class="score-label">Puntaje Total</div>
+                <div class="score-value danger">51</div>
+                <div class="score-max">de 122 puntos (42%)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill danger" style="width: 42%;"></div>
+                </div>
+            </div>
+            
+            <div class="score-card danger">
+                <div class="score-label">Perfil Conductual</div>
+                <div class="score-value danger">3/10</div>
+                <div class="score-max">Alta D - Problemático</div>
+                <div class="progress-bar">
+                    <div class="progress-fill danger" style="width: 30%;"></div>
+                </div>
+            </div>
+            
+            <div class="score-card warning">
+                <div class="score-label">Preferencias Laborales</div>
+                <div class="score-value">35/75</div>
+                <div class="score-max">47% alineación</div>
+                <div class="progress-bar">
+                    <div class="progress-fill warning" style="width: 47%;"></div>
+                </div>
+            </div>
+            
+            <div class="score-card danger">
+                <div class="score-label">Situaciones Éticas</div>
+                <div class="score-value danger">5/25</div>
+                <div class="score-max">🚨 MÚLTIPLES BANDERAS ROJAS</div>
+                <div class="progress-bar">
+                    <div class="progress-fill danger" style="width: 20%;"></div>
+                </div>
+            </div>
+            
+            <div class="score-card danger">
+                <div class="score-label">Aptitudes Técnicas</div>
+                <div class="score-value danger">8/12</div>
+                <div class="score-max">67% - Fallas en seguridad</div>
+                <div class="progress-bar">
+                    <div class="progress-fill warning" style="width: 67%;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="recommendation-box reject">
+            <div class="recommendation-title">❌ RECOMENDACIÓN: NO CONTRATAR</div>
+            <div class="recommendation-text">
+                Candidato presenta MÚLTIPLES DESCALIFICADORES CRÍTICOS: Deshonestidad comprobada,
+                actitud negativa hacia la seguridad, perfil altamente conflictivo y resistencia a la autoridad.
+                ALTO RIESGO para la empresa.
+            </div>
+        </div>
+    </div>
+
+    <!-- BANDERAS ROJAS CRÍTICAS -->
+    <div class="red-flags-section">
+        <h3 style="color: #dc3545; text-align: center; margin-top: 0;">🚨 BANDERAS ROJAS CRÍTICAS DETECTADAS 🚨</h3>
+        
+        <div class="red-flag-item">
+            <div class="red-flag-title">1. DESHONESTIDAD - DESCALIFICANTE AUTOMÁTICO</div>
+            <p>✗ Acepta trabajo sin factura por dinero extra (Situación 1 - Respuesta A)</p>
+            <p>✗ Se quedaría con material sobrante sin reportar (Situación 4 - Respuesta A)</p>
+            <p><strong>Implicación:</strong> Alto riesgo de robo de materiales y herramientas</p>
+        </div>
+        
+        <div class="red-flag-item">
+            <div class="red-flag-title">2. NEGLIGENCIA EN SEGURIDAD</div>
+            <p>✗ No interviene cuando ve compañeros en riesgo (Situación 2 - Respuesta A)</p>
+            <p>✗ Instalaría sin cuestionar algo fuera de código (Situación 3 - Respuesta A)</p>
+            <p>✗ Desacuerdo con respetar TODAS las normas de seguridad (Kostick #5)</p>
+            <p><strong>Implicación:</strong> Riesgo de accidentes graves y responsabilidad legal</p>
+        </div>
+        
+        <div class="red-flag-item">
+            <div class="red-flag-title">3. PERFIL DOMINANTE-CONFLICTIVO</div>
+            <p>✗ Alta Dominancia (70%) - Cuestionará constantemente la autoridad</p>
+            <p>✗ Baja Estabilidad (20%) - Impaciente y volátil</p>
+            <p>✗ Bajo Cumplimiento (30%) - No respeta procedimientos</p>
+            <p><strong>Implicación:</strong> Generará conflictos constantes con supervisores y compañeros</p>
+        </div>
+        
+        <div class="red-flag-item">
+            <div class="red-flag-title">4. ACTITUD INDIVIDUALISTA</div>
+            <p>✗ No ayuda a compañeros nuevos (Situación 5 - Respuesta A)</p>
+            <p>✗ Desacuerdo con trabajo en equipo (Kostick #2)</p>
+            <p><strong>Implicación:</strong> Destruirá la cohesión del equipo de trabajo</p>
+        </div>
+    </div>
+
+    <!-- ANÁLISIS DISC -->
+    <div class="section">
+        <div class="section-title">🎯 PERFIL DE COMPORTAMIENTO DISC - PROBLEMÁTICO</div>
+        
+        <div class="disc-profile">
+            <div class="disc-factor">
+                <div class="disc-letter" style="color: #dc3545;">D</div>
+                <div class="disc-name">Dominancia</div>
+                <div class="disc-bar">
+                    <div class="disc-fill danger" style="height: 70%;"></div>
+                </div>
+                <div class="disc-percentage" style="color: #dc3545;">70%</div>
+                <small style="color: #dc3545;">MUY ALTO ⚠️</small>
+            </div>
+            
+            <div class="disc-factor">
+                <div class="disc-letter" style="color: #ffc107;">I</div>
+                <div class="disc-name">Influencia</div>
+                <div class="disc-bar">
+                    <div class="disc-fill medium" style="height: 60%;"></div>
+                </div>
+                <div class="disc-percentage">60%</div>
+                <small>Alto</small>
+            </div>
+            
+            <div class="disc-factor">
+                <div class="disc-letter" style="color: #dc3545;">S</div>
+                <div class="disc-name">Estabilidad</div>
+                <div class="disc-bar">
+                    <div class="disc-fill danger" style="height: 20%;"></div>
+                </div>
+                <div class="disc-percentage" style="color: #dc3545;">20%</div>
+                <small style="color: #dc3545;">MUY BAJO ⚠️</small>
+            </div>
+            
+            <div class="disc-factor">
+                <div class="disc-letter" style="color: #dc3545;">C</div>
+                <div class="disc-name">Cumplimiento</div>
+                <div class="disc-bar">
+                    <div class="disc-fill danger" style="height: 30%;"></div>
+                </div>
+                <div class="disc-percentage" style="color: #dc3545;">30%</div>
+                <small style="color: #dc3545;">BAJO ⚠️</small>
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Más me describe</th>
+                    <th>Factor</th>
+                    <th>Menos me describe</th>
+                    <th>Factor</th>
+                    <th>Análisis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background: #f8d7da;">
+                    <td>1</td>
+                    <td>B - Decidido</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>A - Cuidadoso</td>
+                    <td><span class="status-badge status-critical">S ✗✗</span></td>
+                    <td>Problemático</td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td>2</td>
+                    <td>B - Aventurero</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>D - Metódico</td>
+                    <td><span class="status-badge status-critical">C ✗✗</span></td>
+                    <td>Muy malo</td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td>3</td>
+                    <td>C - Competitivo</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>A - Paciente</td>
+                    <td><span class="status-badge status-critical">S ✗✗</span></td>
+                    <td>Crítico</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>C - Rápido</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>D - Cauteloso</td>
+                    <td><span class="status-badge status-critical">C ✗✗</span></td>
+                    <td>Peligroso</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>C - Directo</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>A - Disciplinado</td>
+                    <td><span class="status-badge status-critical">C ✗✗</span></td>
+                    <td>Muy malo</td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td>6</td>
+                    <td>C - Independiente</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>A - Confiable</td>
+                    <td><span class="status-badge status-critical">S ✗✗</span></td>
+                    <td>Crítico</td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>C - Arriesgado</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>D - Colaborador</td>
+                    <td><span class="status-badge status-critical">S ✗✗</span></td>
+                    <td>Inaceptable</td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>D - Firme</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>A - Obediente</td>
+                    <td><span class="status-badge status-critical">C ✗✗</span></td>
+                    <td>Problemático</td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>B - Animado</td>
+                    <td><span class="status-badge status-neutral">I</span></td>
+                    <td>A - Puntual</td>
+                    <td><span class="status-badge status-critical">C ✗✗</span></td>
+                    <td>Malo</td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>C - Enérgico</td>
+                    <td><span class="status-badge status-incorrect">D ✗</span></td>
+                    <td>A - Estable</td>
+                    <td><span class="status-badge status-critical">S ✗✗</span></td>
+                    <td>Crítico</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="alert-box alert-critical">
+            <strong>⚠️ PERFIL DISC ALTAMENTE PROBLEMÁTICO:</strong>
+            <p>Carlos presenta un perfil DI (Dominante-Influyente) que es el OPUESTO a lo que necesitas. Es confrontacional, no sigue reglas, impaciente, y rechaza la supervisión. Este perfil tiene alta probabilidad de:</p>
+            <ul style="margin: 10px 0; padding-left: 20px;">
+                <li>Cuestionar constantemente las órdenes</li>
+                <li>Tomar atajos peligrosos</li>
+                <li>Generar conflictos con supervisores</li>
+                <li>Influenciar negativamente a otros trabajadores</li>
+                <li>Abandonar el trabajo sin previo aviso</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PREFERENCIAS LABORALES -->
+    <div class="section">
+        <div class="section-title">💼 PREFERENCIAS LABORALES (KOSTICK) - MÚLTIPLES PROBLEMAS</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th width="5%">#</th>
+                    <th width="50%">Afirmación</th>
+                    <th width="15%">Respuesta</th>
+                    <th width="10%">Puntos</th>
+                    <th width="20%">Evaluación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Prefiero tener instrucciones detalladas...</td>
+                    <td><strong>D</strong></td>
+                    <td>1/5</td>
+                    <td><span class="status-badge status-incorrect">Problemático ✗</span></td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td>2</td>
+                    <td>Me siento cómodo trabajando en equipo...</td>
+                    <td><strong>TD</strong></td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">CRÍTICO ✗✗</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Siempre termino lo que empiezo...</td>
+                    <td><strong>N</strong></td>
+                    <td>2/5</td>
+                    <td><span class="status-badge status-incorrect">Malo ✗</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Disfruto aprender nuevas técnicas...</td>
+                    <td><strong>D</strong></td>
+                    <td>1/5</td>
+                    <td><span class="status-badge status-incorrect">Malo ✗</span></td>
+                </tr>
+                <tr style="background: #dc3545; color: white;">
+                    <td>5</td>
+                    <td><strong>Respeto todas las normas de seguridad... (CRÍTICO)</strong></td>
+                    <td><strong>D</strong></td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">DESCALIFICANTE ✗✗✗</span></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Prefiero un trabajo estable con rutinas...</td>
+                    <td><strong>TD</strong></td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-incorrect">Problemático ✗</span></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Si veo un problema, busco solucionarlo...</td>
+                    <td><strong>TA</strong></td>
+                    <td>5/5</td>
+                    <td><span class="status-badge status-neutral">OK pero...</span></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Reviso mi trabajo varias veces...</td>
+                    <td><strong>D</strong></td>
+                    <td>1/5</td>
+                    <td><span class="status-badge status-incorrect">Malo ✗</span></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Me siento cómodo trabajando en alturas...</td>
+                    <td><strong>TA</strong></td>
+                    <td>5/5</td>
+                    <td><span class="status-badge status-neutral">OK</span></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td>Prefiero pedir ayuda antes que arriesgarme...</td>
+                    <td><strong>TD</strong></td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">Peligroso ✗✗</span></td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td>11</td>
+                    <td><strong>Reportaría a un compañero que no sigue normas... (CRÍTICO)</strong></td>
+                    <td><strong>TD</strong></td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">CRÍTICO ✗✗</span></td>
+                </tr>
+                <tr>
+                    <td>12</td>
+                    <td>Puedo mantener concentración en tareas repetitivas...</td>
+                    <td><strong>D</strong></td>
+                    <td>1/5</td>
+                    <td><span class="status-badge status-incorrect">Malo ✗</span></td>
+                </tr>
+                <tr style="background: #dc3545; color: white;">
+                    <td>13</td>
+                    <td><strong>Devolvería herramientas o materiales extras... (CRÍTICO)</strong></td>
+                    <td><strong>TD</strong></td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">DESHONESTIDAD ✗✗✗</span></td>
+                </tr>
+                <tr>
+                    <td>14</td>
+                    <td>Me gusta que reconozcan mi trabajo...</td>
+                    <td><strong>TA</strong></td>
+                    <td>5/5</td>
+                    <td><span class="status-badge status-neutral">Alto ego</span></td>
+                </tr>
+                <tr>
+                    <td>15</td>
+                    <td>Puedo trabajar bajo presión sin perder calidad...</td>
+                    <td><strong>TA</strong></td>
+                    <td>5/5</td>
+                    <td><span class="status-badge status-neutral">Contradictorio</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="alert-box alert-danger">
+            <strong>Análisis de Preferencias Laborales:</strong>
+            <p>Carlos obtuvo solo 35/75 puntos (47%). Falló en TODOS los ítems críticos. No respeta la seguridad, no trabajaría en equipo, no devolvería materiales (indicador de robo), y no reportaría situaciones peligrosas. Su alta necesidad de reconocimiento combinada con rechazo a la autoridad es una combinación peligrosa.</p>
+        </div>
+    </div>
+
+    <!-- SITUACIONES LABORALES -->
+    <div class="section">
+        <div class="section-title">⚖️ SITUACIONES LABORALES ÉTICAS - DESCALIFICADO</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Situación</th>
+                    <th>Respuesta del Candidato</th>
+                    <th>Puntos</th>
+                    <th>Evaluación</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="background: #dc3545; color: white;">
+                    <td><strong>1. Cliente ofrece trabajo sin factura</strong></td>
+                    <td>A - Acepto, es dinero extra y no afecta a nadie</td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">DESCALIFICANTE ✗✗✗</span></td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td><strong>2. Compañero sin protección</strong></td>
+                    <td>A - No digo nada, es su responsabilidad</td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">NEGLIGENTE ✗✗</span></td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td><strong>3. Instalación fuera de código</strong></td>
+                    <td>A - Lo instalo sin cuestionar, el supervisor sabe</td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">PELIGROSO ✗✗</span></td>
+                </tr>
+                <tr style="background: #dc3545; color: white;">
+                    <td><strong>4. Material sobrante</strong></td>
+                    <td>A - Me lo llevo, es material que sobró</td>
+                    <td>0/5</td>
+                    <td><span class="status-badge status-critical">ROBO - DESCALIFICANTE ✗✗✗</span></td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td><strong>5. Compañero necesita ayuda</strong></td>
+                    <td>A - Continúo con mi trabajo, no es mi responsabilidad</td>
+                    <td>1/5</td>
+                    <td><span class="status-badge status-incorrect">EGOÍSTA ✗</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="alert-box alert-critical">
+            <strong>🚨 DESCALIFICACIÓN AUTOMÁTICA POR DESHONESTIDAD 🚨</strong>
+            <p>Carlos presentó DOS respuestas que indican DESHONESTIDAD DIRECTA:</p>
+            <ol>
+                <li>Aceptaría trabajo sin factura = EVASIÓN FISCAL y falta de lealtad a la empresa</li>
+                <li>Se llevaría material sobrante = ROBO DIRECTO</li>
+            </ol>
+            <p><strong>CUALQUIERA DE ESTAS RESPUESTAS ES MOTIVO SUFICIENTE PARA NO CONTRATAR.</strong></p>
+        </div>
+    </div>
+
+    <!-- APTITUDES TÉCNICAS -->
+    <div class="section">
+        <div class="section-title">🧮 APTITUDES Y RAZONAMIENTO</div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Pregunta</th>
+                    <th>Respuesta Candidato</th>
+                    <th>Respuesta Correcta</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Cajas de focos (24÷6)</td>
+                    <td>5 cajas</td>
+                    <td>4 cajas</td>
+                    <td><span class="status-badge status-incorrect">✗</span></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Cobro por horas</td>
+                    <td>$825</td>
+                    <td>$825</td>
+                    <td><span class="status-badge status-correct">✓</span></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Tiempo con 3 soldadores</td>
+                    <td>4 horas</td>
+                    <td>4 horas</td>
+                    <td><span class="status-badge status-correct">✓</span></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>División del letrero</td>
+                    <td>70 cm</td>
+                    <td>0.7 metros</td>
+                    <td><span class="status-badge status-correct">✓</span></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>Anticipo 30%</td>
+                    <td>$2,520</td>
+                    <td>$2,520</td>
+                    <td><span class="status-badge status-correct">✓</span></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td>Cable primero</td>
+                    <td>Negro</td>
+                    <td>Rojo</td>
+                    <td><span class="status-badge status-incorrect">✗</span></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td>Tercera capa de pintura</td>
+                    <td>12:00 pm</td>
+                    <td>12:00 pm</td>
+                    <td><span class="status-badge status-correct">✓</span></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td>Área del anuncio</td>
+                    <td>8 m²</td>
+                    <td>8 m²</td>
+                    <td><span class="status-badge status-correct">✓</span></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td>Tercera parte del tubo</td>
+                    <td>2 metros</td>
+                    <td>2 metros</td>
+                    <td><span class="status-badge status-correct">✓</span></td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td>10</td>
+                    <td><strong>Color cable tierra (SEGURIDAD)</strong></td>
+                    <td>A - Rojo</td>
+                    <td>C - Verde/amarillo</td>
+                    <td><span class="status-badge status-critical">✗ CRÍTICO</span></td>
+                </tr>
+                <tr>
+                    <td>11</td>
+                    <td><strong>EPP para soldar (SEGURIDAD)</strong></td>
+                    <td>B - Careta</td>
+                    <td>B - Careta</td>
+                    <td><span class="status-badge status-correct">✓</span></td>
+                </tr>
+                <tr style="background: #f8d7da;">
+                    <td>12</td>
+                    <td><strong>Antes de trabajar eléctrico (SEGURIDAD)</strong></td>
+                    <td>C - Revisar herramientas</td>
+                    <td>B - Verificar/desenergizar</td>
+                    <td><span class="status-badge status-critical">✗ CRÍTICO</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="alert-box alert-danger">
+            <strong>Análisis de Aptitudes:</strong>
+            <p>Aunque obtuvo 8/12 (67%), falló en 2 de 3 preguntas críticas de seguridad. No conoce el código de colores eléctrico básico y no sigue el protocolo fundamental de verificar energía. Combinado con su actitud negligente hacia la seguridad, representa un RIESGO INACEPTABLE.</p>
+        </div>
+    </div>
+
+    <!-- COMPARACIÓN CON PERFIL IDEAL -->
+    <div class="section">
+        <div class="section-title">📊 COMPARACIÓN CON PERFIL IDEAL</div>
+        
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Criterio</th>
+                    <th>Perfil Ideal</th>
+                    <th>Carlos Ramírez</th>
+                    <th>Cumple</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Honestidad</strong></td>
+                    <td>100% integridad</td>
+                    <td>Acepta trabajo sin factura, robaría material</td>
+                    <td><span class="big-x">✗</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Seguridad</strong></td>
+                    <td>Respeta todas las normas</td>
+                    <td>No respeta normas, negligente</td>
+                    <td><span class="big-x">✗</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Trabajo en equipo</strong></td>
+                    <td>Colaborativo</td>
+                    <td>Totalmente en desacuerdo</td>
+                    <td><span class="big-x">✗</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Seguimiento de órdenes</strong></td>
+                    <td>Alta obediencia</td>
+                    <td>Rechaza instrucciones</td>
+                    <td><span class="big-x">✗</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Estabilidad emocional</strong></td>
+                    <td>Paciente y constante</td>
+                    <td>Impaciente y volátil</td>
+                    <td><span class="big-x">✗</span></td>
+                </tr>
+                <tr>
+                    <td><strong>Cumplimiento de normas</strong></td>
+                    <td>Alto respeto por reglas</td>
+                    <td>Bajo cumplimiento</td>
+                    <td><span class="big-x">✗</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- RIESGOS PARA LA EMPRESA -->
+    <div class="section">
+        <div class="section-title">⚠️ RIESGOS ESPECÍFICOS PARA TU EMPRESA</div>
+        
+        <div class="strengths-weaknesses">
+            <div class="strengths" style="background: #fff3cd; border-color: #ffc107;">
+                <h4>📝 Pocas Fortalezas</h4>
+                <ul>
+                    <li>Dice trabajar bien bajo presión</li>
+                    <li>No teme a las alturas</li>
+                    <li>Algunas aptitudes matemáticas básicas</li>
+                </ul>
+            </div>
+            
+            <div class="weaknesses">
+                <h4>🚨 MÚLTIPLES RIESGOS CRÍTICOS</h4>
+                <ul>
+                    <li><strong>ROBO:</strong> Alta probabilidad de sustraer materiales y herramientas</li>
+                    <li><strong>ACCIDENTES:</strong> No respeta protocolos de seguridad</li>
+                    <li><strong>CONFLICTOS:</strong> Generará problemas con supervisores constantemente</li>
+                    <li><strong>MAL EJEMPLO:</strong> Influenciará negativamente a otros trabajadores</li>
+                    <li><strong>RESPONSABILIDAD LEGAL:</strong> Podría hacer trabajos fuera de código</li>
+                    <li><strong>DAÑO REPUTACIONAL:</strong> Podría hacer trabajos privados usando el nombre de tu empresa</li>
+                    <li><strong>ROTACIÓN:</strong> Alta probabilidad de abandono sin aviso</li>
+                    <li><strong>SABOTAJE:</strong> Perfil vengativo si se le corrige o disciplina</li>
+                    <li><strong>CLIENTE INSATISFECHO:</strong> Su actitud problemática afectará el servicio</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONCLUSIÓN FINAL -->
+    <div class="section" style="border: 3px solid #dc3545; background: #f8d7da;">
+        <div class="section-title" style="color: #dc3545;">❌ CONCLUSIÓN Y DECISIÓN FINAL</div>
+        
+        <div style="text-align: center; padding: 20px;">
+            <h2 style="color: #dc3545; font-size: 36px; margin: 20px 0;">NO CONTRATAR BAJO NINGUNA CIRCUNSTANCIA</h2>
+            
+            <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h3 style="color: #dc3545;">Razones de Descalificación Automática:</h3>
+                <ol style="text-align: left; max-width: 600px; margin: 0 auto;">
+                    <li><strong>DESHONESTIDAD COMPROBADA</strong> - Robaría materiales</li>
+                    <li><strong>TRABAJO SIN FACTURA</strong> - Evasión y deslealtad</li>
+                    <li><strong>NEGLIGENCIA EN SEGURIDAD</strong> - Riesgo de accidentes graves</li>
+                    <li><strong>PERFIL ALTAMENTE CONFLICTIVO</strong> - Destruirá el ambiente laboral</li>
+                    <li><strong>RECHAZO AL TRABAJO EN EQUIPO</strong> - Incompatible con la operación</li>
+                </ol>
+            </div>
+            
+            <p style="font-size: 18px; color: #721c24; font-weight: bold; margin: 20px 0;">
+                Este candidato representa un RIESGO EXTREMO para la empresa.<br>
+                La contratación resultaría en pérdidas económicas, problemas legales,<br>
+                accidentes laborales y deterioro del ambiente de trabajo.
+            </p>
+            
+            <div style="background: #dc3545; color: white; padding: 15px; border-radius: 10px; margin: 20px auto; max-width: 500px;">
+                <strong>RECOMENDACIÓN ALTERNATIVA:</strong><br>
+                Continuar el proceso de búsqueda.<br>
+                Es preferible operar con menos personal<br>
+                que contratar a alguien con este perfil.
+            </div>
+        </div>
+    </div>
+
+    <!-- DATOS CRUDOS -->
+    <div class="section">
+        <div class="section-title">📋 RESPUESTAS ORIGINALES DEL CANDIDATO</div>
+        
+        <div class="raw-responses">
+<pre>
+NOMBRE DEL CANDIDATO: Carlos Ramírez López
+PUESTO: Soldador
+FECHA: 15/01/2024
+
+=== SECCIÓN 1: CLEAVER ===
+1. M:B L:A  (Decidido vs Cuidadoso)
+2. M:B L:D  (Aventurero vs Metódico)
+3. M:C L:A  (Competitivo vs Paciente)
+4. M:C L:D  (Rápido vs Cauteloso)
+5. M:C L:A  (Directo vs Disciplinado)
+6. M:C L:A  (Independiente vs Confiable)
+7. M:C L:D  (Arriesgado vs Colaborador)
+8. M:D L:A  (Firme vs Obediente)
+9. M:B L:A  (Animado vs Puntual)
+10. M:C L:A (Enérgico vs Estable)
+
+=== SECCIÓN 2: KOSTICK ===
+1. D   (Desacuerdo con instrucciones)
+2. TD  (Totalmente en desacuerdo - trabajo en equipo)
+3. N   (Neutral - terminar tareas)
+4. D   (Desacuerdo - aprender)
+5. D   (DESACUERDO - NORMAS DE SEGURIDAD)
+6. TD  (Totalmente en desacuerdo - estabilidad)
+7. TA  (Totalmente de acuerdo - resolver solo)
+8. D   (Desacuerdo - revisar trabajo)
+9. TA  (Totalmente de acuerdo - alturas)
+10. TD (Totalmente en desacuerdo - pedir ayuda)
+11. TD (Totalmente en desacuerdo - reportar)
+12. D  (Desacuerdo - tareas repetitivas)
+13. TD (TOTALMENTE EN DESACUERDO - DEVOLVER MATERIAL)
+14. TA (Totalmente de acuerdo - reconocimiento)
+15. TA (Totalmente de acuerdo - presión)
+
+=== SECCIÓN 3: SITUACIONES ===
+1. A (Acepta trabajo sin factura)
+2. A (No dice nada sobre seguridad)
+3. A (Instala sin cuestionar)
+4. A (Se lleva material)
+5. A (No ayuda a compañero)
+
+=== SECCIÓN 4: APTITUDES ===
+1. 5 cajas
+2. $825
+3. 4 horas
+4. 70 cm
+5. $2,520
+6. Negro
+7. 12:00 pm
+8. 8 m²
+9. 2 metros
+10. A (Rojo - INCORRECTO)
+11. B (Careta)
+12. C (Revisar herramientas - INCORRECTO)
+</pre>
+        </div>
+        
+        <div style="background: #dc3545; color: white; padding: 20px; border-radius: 10px; margin-top: 20px; text-align: center;">
+            <strong style="font-size: 20px;">ARCHIVO ESTE REPORTE</strong><br>
+            Si el candidato insiste o regresa en el futuro,<br>
+            tiene documentación de por qué no fue contratado.
+        </div>
+    </div>
+</body>
+</html>
