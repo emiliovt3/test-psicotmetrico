@@ -1,43 +1,87 @@
 <!doctype html>
-<!--
-* Tabler - Premium and Open Source dashboard template with responsive and high quality UI.
-* @version 1.4.0
-* @link https://tabler.io
-* Copyright 2018-2025 The Tabler Authors
-* Copyright 2018-2025 codecalm.net Paweł Kuna
-* Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
--->
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Sign in - Tabler - Premium and Open Source dashboard template with responsive and high quality UI.</title>
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
-    <link href="./dist/css/tabler.css?1752393270" rel="stylesheet" />
-    <!-- END GLOBAL MANDATORY STYLES -->
-    <!-- BEGIN PLUGINS STYLES -->
-    <link href="./dist/css/tabler-flags.css?1752393270" rel="stylesheet" />
-    <link href="./dist/css/tabler-socials.css?1752393270" rel="stylesheet" />
-    <link href="./dist/css/tabler-payments.css?1752393270" rel="stylesheet" />
-    <link href="./dist/css/tabler-vendors.css?1752393270" rel="stylesheet" />
-    <link href="./dist/css/tabler-marketing.css?1752393270" rel="stylesheet" />
-    <link href="./dist/css/tabler-themes.css?1752393270" rel="stylesheet" />
-    <!-- END PLUGINS STYLES -->
-    <!-- BEGIN DEMO STYLES -->
-    <link href="./preview/css/demo.css?1752393270" rel="stylesheet" />
-    <!-- END DEMO STYLES -->
-    <!-- BEGIN CUSTOM FONT -->
+    <title>Iniciar Sesión - Sistema de Evaluación Psicométrica</title>
+    <!-- CSS Files -->
+    <link href="../Tabler/tabler-1.4.0/dashboard/dist/css/tabler.min.css" rel="stylesheet" />
+    <link href="../Tabler/tabler-1.4.0/dashboard/dist/css/tabler-flags.min.css" rel="stylesheet" />
+    <link href="../Tabler/tabler-1.4.0/dashboard/dist/css/tabler-payments.min.css" rel="stylesheet" />
+    <link href="../Tabler/tabler-1.4.0/dashboard/dist/css/tabler-vendors.min.css" rel="stylesheet" />
     <style>
       @import url("https://rsms.me/inter/inter.css");
+      :root {
+        --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+      }
+      body {
+        font-feature-settings: "cv03", "cv04", "cv11";
+      }
+      .page-center {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      [data-bs-theme="dark"] .page-center {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      }
+      .card {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      [data-bs-theme="dark"] .login-logo {
+        background: #1e293b;
+      }
+      [data-bs-theme="dark"] .login-logo svg {
+        color: #818cf8;
+      }
+      .login-logo {
+        width: 100px;
+        height: 100px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 2rem;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+      .login-logo svg {
+        width: 60px;
+        height: 60px;
+        color: #667eea;
+      }
     </style>
-    <!-- END CUSTOM FONT -->
+    <script>
+      // Theme detection and initialization
+      (function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', theme);
+      })();
+    </script>
   </head>
   <body>
-    <!-- BEGIN GLOBAL THEME SCRIPT -->
-    <script src="./dist/js/tabler-theme.min.js?1752393270"></script>
-    <!-- END GLOBAL THEME SCRIPT -->
+    <script src="../Tabler/tabler-1.4.0/dashboard/dist/js/demo-theme.min.js"></script>
+    <script>
+      // Apply theme on load
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-bs-theme', currentTheme);
+      });
+    </script>
     <div class="page page-center">
+      <!-- Theme toggle button -->
+      <div style="position: fixed; top: 1rem; right: 1rem; z-index: 1000;">
+        <button class="btn btn-icon btn-ghost-light" id="themeToggle" title="Cambiar tema">
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sun" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <circle cx="12" cy="12" r="4" />
+            <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-moon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+          </svg>
+        </button>
+      </div>
       <div class="container container-tight py-4">
         <div class="text-center mb-4">
           <!-- BEGIN NAVBAR LOGO --><a href="." aria-label="Tabler" class="navbar-brand navbar-brand-autodark"
@@ -468,6 +512,39 @@
           window.history.pushState({}, "", url);
         });
         checkItems();
+      });
+    </script>
+    <!-- Theme Toggle Script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = themeToggle.querySelector('.icon-sun');
+        const moonIcon = themeToggle.querySelector('.icon-moon');
+        
+        function updateIcons(theme) {
+          if (theme === 'dark') {
+            sunIcon.style.display = 'none';
+            moonIcon.style.display = 'block';
+          } else {
+            sunIcon.style.display = 'block';
+            moonIcon.style.display = 'none';
+          }
+        }
+        
+        // Set initial icon
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        updateIcons(currentTheme);
+        
+        // Toggle theme
+        themeToggle.addEventListener('click', function() {
+          const current = document.body.getAttribute('data-bs-theme') || 'light';
+          const newTheme = current === 'dark' ? 'light' : 'dark';
+          
+          localStorage.setItem('theme', newTheme);
+          document.documentElement.setAttribute('data-bs-theme', newTheme);
+          document.body.setAttribute('data-bs-theme', newTheme);
+          updateIcons(newTheme);
+        });
       });
     </script>
     <!-- END PAGE SCRIPTS -->

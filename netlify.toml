@@ -1,0 +1,70 @@
+# Configuración de Netlify
+# Este archivo configura el comportamiento del sitio en Netlify
+
+[build]
+  # Directorio de publicación
+  publish = "."
+  
+  # Directorio de funciones
+  functions = "netlify/functions"
+
+# Headers de seguridad y CORS
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Headers específicos para API
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+
+# Redirects para SPA (si se necesita)
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Redirect para el test con token
+[[redirects]]
+  from = "/test"
+  to = "/test/index-tabler.html"
+  status = 200
+  query = {token = ":token"}
+
+# Redirect para admin
+[[redirects]]
+  from = "/admin"
+  to = "/admin/dashboard.html"
+  status = 200
+
+# Variables de entorno (configurar en el panel de Netlify)
+[build.environment]
+  NODE_VERSION = "18"
+
+# Contexto de producción
+[context.production]
+  environment = { NODE_ENV = "production" }
+
+# Contexto de desarrollo
+[context.develop]
+  environment = { NODE_ENV = "development" }
+
+# Plugins de Netlify (opcional)
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+  
+  [plugins.inputs]
+    output_path = "lighthouse-reports"
+    
+  [plugins.inputs.thresholds]
+    performance = 0.8
+    accessibility = 0.9
+    best-practices = 0.9
+    seo = 0.9

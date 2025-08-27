@@ -38,6 +38,41 @@
             display: none;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { 
+                transform: translateX(100%); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateX(0); 
+                opacity: 1; 
+            }
+        }
+        
+        /* Loading states */
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        /* Results card animations */
+        .card {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Badge improvements */
+        .badge-lg {
+            font-size: 0.9rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
         }
         
         /* Section progress */
@@ -421,14 +456,115 @@
         ✓ Guardado automáticamente
     </div>
     
+    <!-- Network status indicator -->
+    <div class="save-indicator" id="networkIndicator" style="background: var(--warning-color); color: #000; display: none; right: 20px; top: 60px;">
+        ⚠️ Sin conexión - Guardando localmente
+    </div>
+    
+    <!-- Loading screen -->
+    <div class="page page-center" id="loadingScreen">
+        <div class="container py-4">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <h3>Verificando credenciales...</h3>
+                <p class="text-secondary">Por favor espere mientras validamos su token de acceso</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error screen -->
+    <div class="page page-center" id="errorScreen" style="display: none;">
+        <div class="container py-4">
+            <div class="text-center">
+                <div class="mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-danger" width="64" height="64" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
+                        <circle cx="12" cy="12" r="9"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                </div>
+                <h3 class="text-danger">Error de Acceso</h3>
+                <p class="text-secondary mb-3" id="errorMessage">Token inválido o expirado</p>
+                <div class="alert alert-warning">
+                    <strong>¿Qué hacer?</strong><br>
+                    • Verifique que el enlace sea correcto<br>
+                    • Solicite un nuevo enlace a su supervisor<br>
+                    • Contacte al departamento de recursos humanos
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success screen -->
+    <div class="page page-center" id="successScreen" style="display: none;">
+        <div class="container py-4">
+            <div class="text-center">
+                <div class="mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg text-success" width="64" height="64" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
+                        <circle cx="12" cy="12" r="9"/>
+                        <path d="m9 12l2 2l4 -4"/>
+                    </svg>
+                </div>
+                <h3 class="text-success">Evaluación Completada</h3>
+                <p class="text-secondary mb-4">Su evaluación ha sido enviada exitosamente</p>
+                
+                <div class="card" id="resultsCard" style="display: none;">
+                    <div class="card-header">
+                        <h4 class="card-title">Resultados Preliminares</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="text-center">
+                                    <h2 class="text-primary mb-1" id="scoreDisplay">--</h2>
+                                    <p class="text-secondary mb-0">Puntuación Total</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-center">
+                                    <span class="badge badge-lg" id="recommendationBadge">--</span>
+                                    <p class="text-secondary mb-0 mt-2">Recomendación</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3" id="profileDisplay">
+                            <strong>Perfil DISC:</strong>
+                            <span id="discProfile">--</span>
+                        </div>
+                        <div class="mt-2" id="detailsDisplay" style="display: none;">
+                            <small class="text-secondary">
+                                Los resultados detallados serán enviados por correo electrónico
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-secondary mt-4">
+                    <strong>¡Gracias por completar la evaluación!</strong><br>
+                    Los resultados han sido registrados en nuestro sistema.
+                </p>
+            </div>
+        </div>
+    </div>
+    
     <!-- Main layout -->
-    <div class="page page-center">
+    <div class="page page-center" id="testScreen" style="display: none;">
         <div class="container py-4" style="max-width: 1200px;">
             
             <!-- Logo/Brand -->
             <div class="text-center mb-4">
                 <h1 class="h2 text-primary mb-0">Sistema de Evaluación</h1>
                 <p class="text-secondary">Anuncios Luminosos</p>
+                <div class="text-center mt-2">
+                    <small class="text-secondary">
+                        Candidato: <strong id="candidateName">--</strong> | 
+                        Puesto: <strong id="candidatePosition">--</strong>
+                    </small>
+                </div>
             </div>
             
             <!-- Main card -->
@@ -576,9 +712,17 @@
     
     <!-- JavaScript -->
     <script>
+        // API Configuration
+        const API_BASE_URL = '/.netlify/functions';
+        
         // Current section tracking
         let currentSection = 1;
         let totalSections = 4;
+        let startTime = Date.now();
+        
+        // Token and candidate info
+        let candidateToken = null;
+        let candidateInfo = null;
         
         // Test data storage
         let testData = {
@@ -587,6 +731,145 @@
             situations: {},
             aptitudes: {}
         };
+        
+        // API utility functions
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            try {
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `HTTP error! status: ${response.status}`);
+                }
+                
+                return data;
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+        
+        // Extract token from URL
+        function getTokenFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('token');
+        }
+        
+        // Validate token and load candidate info
+        async function validateTokenAndLoadCandidate() {
+            candidateToken = getTokenFromURL();
+            
+            if (!candidateToken) {
+                showError('Token no encontrado en la URL. Por favor acceda a través del enlace proporcionado por el departamento de recursos humanos.');
+                return false;
+            }
+            
+            try {
+                const response = await apiCall(`/validate-token?token=${encodeURIComponent(candidateToken)}`);
+                candidateInfo = response.candidate;
+                
+                // Update UI with candidate info
+                document.getElementById('candidateName').textContent = candidateInfo.nombre || '--';
+                document.getElementById('candidatePosition').textContent = candidateInfo.puesto || '--';
+                
+                // Load any saved progress
+                if (response.respuestasGuardadas) {
+                    testData = response.respuestasGuardadas;
+                }
+                
+                return true;
+            } catch (error) {
+                console.error('Token validation failed:', error);
+                showError(error.message || 'Token inválido o expirado');
+                return false;
+            }
+        }
+        
+        // Show error screen
+        function showError(message) {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('testScreen').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'none';
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorScreen').style.display = 'block';
+        }
+        
+        // Show test screen
+        function showTestScreen() {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('errorScreen').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'none';
+            document.getElementById('testScreen').style.display = 'block';
+        }
+        
+        // Show success screen with results
+        function showSuccessScreen(results = null) {
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('errorScreen').style.display = 'none';
+            document.getElementById('testScreen').style.display = 'none';
+            
+            if (results) {
+                // Display results
+                document.getElementById('scoreDisplay').textContent = `${results.puntajeTotal}%`;
+                document.getElementById('discProfile').textContent = results.perfilDISC || '--';
+                
+                // Set recommendation badge
+                const badge = document.getElementById('recommendationBadge');
+                switch (results.recomendacion) {
+                    case 'CONTRATAR':
+                        badge.className = 'badge badge-lg bg-success';
+                        badge.textContent = '✅ CONTRATAR';
+                        break;
+                    case 'SEGUNDA_ENTREVISTA':
+                        badge.className = 'badge badge-lg bg-warning text-dark';
+                        badge.textContent = '⚠️ SEGUNDA ENTREVISTA';
+                        break;
+                    case 'EVALUAR':
+                        badge.className = 'badge badge-lg bg-info';
+                        badge.textContent = '🤔 EVALUAR';
+                        break;
+                    case 'RECHAZAR':
+                        badge.className = 'badge badge-lg bg-danger';
+                        badge.textContent = '❌ RECHAZAR';
+                        break;
+                    default:
+                        badge.className = 'badge badge-lg bg-secondary';
+                        badge.textContent = 'PROCESANDO';
+                }
+                
+                document.getElementById('resultsCard').style.display = 'block';
+                document.getElementById('detailsDisplay').style.display = 'block';
+            }
+            
+            document.getElementById('successScreen').style.display = 'block';
+        }
+        
+        // Auto-save to API
+        async function saveToAPI() {
+            if (!candidateToken) return false;
+            
+            try {
+                await apiCall('/auto-save', 'POST', {
+                    token: candidateToken,
+                    respuestas: testData
+                });
+                return true;
+            } catch (error) {
+                console.error('API save failed:', error);
+                return false;
+            }
+        }
         
         // CLEAVER questions data
         const CLEAVER_QUESTIONS = [
@@ -676,13 +959,30 @@
         ];
         
         // Initialize form
-        function initializeForm() {
+        async function initializeForm() {
+            // First validate token and load candidate info
+            const isValid = await validateTokenAndLoadCandidate();
+            
+            if (!isValid) {
+                return; // Error screen will be shown
+            }
+            
+            // Generate all questions
             generateCleaverQuestions();
             generateKostickQuestions();
             generateSituationsQuestions();
             generateAptitudesQuestions();
-            loadSavedData();
+            
+            // Restore UI state if we have saved data
+            if (testData && Object.keys(testData).length > 0) {
+                restoreUIState();
+            }
+            
+            // Start auto-save
             startAutoSave();
+            
+            // Show the test screen
+            showTestScreen();
         }
         
         // Generate CLEAVER questions
@@ -1171,24 +1471,49 @@
             setInterval(saveData, 30000); // Save every 30 seconds
         }
         
-        function saveData() {
+        async function saveData() {
+            let saveSuccess = false;
+            
+            // Show saving indicator
+            showSaveIndicator(true);
+            
+            // Always save to localStorage as backup
             try {
                 localStorage.setItem('evaluacion_psicometrica', JSON.stringify(testData));
-                showSaveIndicator();
+                saveSuccess = true;
             } catch (error) {
-                console.error('Error saving data:', error);
+                console.error('Error saving to localStorage:', error);
+            }
+            
+            // Try to save to API
+            if (candidateToken && navigator.onLine) {
+                try {
+                    await saveToAPI();
+                    saveSuccess = true;
+                } catch (error) {
+                    console.error('Error saving to API:', error);
+                    // Don't show error to user, localStorage backup is available
+                }
+            }
+            
+            if (saveSuccess) {
+                showSaveIndicator(false);
+            } else {
+                // Hide saving indicator if failed
+                document.getElementById('saveIndicator').style.display = 'none';
             }
         }
         
         function loadSavedData() {
+            // This function is now handled in validateTokenAndLoadCandidate
+            // keeping for backward compatibility
             try {
                 const saved = localStorage.getItem('evaluacion_psicometrica');
-                if (saved) {
+                if (saved && (!testData || Object.keys(testData).length === 0)) {
                     testData = JSON.parse(saved);
-                    restoreUIState();
                 }
             } catch (error) {
-                console.error('Error loading data:', error);
+                console.error('Error loading localStorage data:', error);
             }
         }
         
@@ -1232,15 +1557,25 @@
             });
         }
         
-        function showSaveIndicator() {
+        function showSaveIndicator(saving = false) {
             const indicator = document.getElementById('saveIndicator');
-            indicator.style.display = 'block';
-            setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 2000);
+            
+            if (saving) {
+                indicator.innerHTML = '💾 Guardando...';
+                indicator.style.background = 'var(--primary-color)';
+                indicator.style.display = 'block';
+            } else {
+                indicator.innerHTML = '✓ Guardado automáticamente';
+                indicator.style.background = 'var(--success-color)';
+                indicator.style.display = 'block';
+                
+                setTimeout(() => {
+                    indicator.style.display = 'none';
+                }, 2000);
+            }
         }
         
-        function submitForm() {
+        async function submitForm() {
             // Final validation
             if (!validateCurrentSection()) {
                 return;
@@ -1249,37 +1584,128 @@
             // Show completion confirmation
             const confirmSubmit = confirm('¿Está seguro de que desea finalizar la evaluación? No podrá hacer cambios después de enviarla.');
             
-            if (confirmSubmit) {
-                // Prepare data for submission
+            if (!confirmSubmit) {
+                return;
+            }
+            
+            // Calculate total time spent
+            const tiempoTotal = Math.round((Date.now() - startTime) / 1000); // in seconds
+            
+            // Prepare personal data
+            const datosPersonales = {
+                nombre: candidateInfo?.nombre || 'No especificado',
+                email: candidateInfo?.email || '',
+                puesto: candidateInfo?.puesto || 'No especificado',
+                fechaEvaluacion: new Date().toISOString()
+            };
+            
+            // Show loading state
+            const submitBtn = document.querySelector('[onclick="submitForm()"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                Enviando...
+            `;
+            
+            try {
+                // Submit to API
+                const response = await apiCall('/submit-test', 'POST', {
+                    token: candidateToken,
+                    respuestas: testData,
+                    datosPersonales: datosPersonales,
+                    tiempoTotal: tiempoTotal
+                });
+                
+                // Save final submission to localStorage as backup
                 const submissionData = {
                     timestamp: new Date().toISOString(),
                     cleaver: testData.cleaver,
                     kostick: testData.kostick,
                     situations: testData.situations,
                     aptitudes: testData.aptitudes,
+                    datosPersonales: datosPersonales,
+                    tiempoTotal: tiempoTotal,
                     metadata: {
                         userAgent: navigator.userAgent,
                         screenResolution: `${screen.width}x${screen.height}`,
                         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
-                    }
+                    },
+                    results: response.results || null
                 };
                 
-                // Save final submission
                 localStorage.setItem('evaluacion_psicometrica_final', JSON.stringify(submissionData));
                 
-                // Show success message
-                alert('✅ Evaluación completada exitosamente. Gracias por su tiempo.');
+                // Show success screen with results
+                showSuccessScreen(response.results);
                 
-                // Here you would normally submit to server
-                console.log('Submission data:', submissionData);
+            } catch (error) {
+                console.error('Submission failed:', error);
                 
-                // Optional: redirect to thank you page
-                // window.location.href = 'gracias.html';
+                // Restore button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                
+                // Show error but offer offline backup
+                const retrySubmit = confirm(
+                    `❌ Error al enviar la evaluación: ${error.message}\n\n` +
+                    `¿Desea intentar nuevamente?\n\n` +
+                    `• Sí: Intentar envío nuevamente\n` +
+                    `• No: Guardar localmente y contactar soporte`
+                );
+                
+                if (retrySubmit) {
+                    // Retry submission
+                    submitForm();
+                } else {
+                    // Save locally and show instructions
+                    const backupData = {
+                        timestamp: new Date().toISOString(),
+                        token: candidateToken,
+                        respuestas: testData,
+                        datosPersonales: datosPersonales,
+                        tiempoTotal: tiempoTotal,
+                        error: error.message
+                    };
+                    
+                    localStorage.setItem('evaluacion_psicometrica_backup', JSON.stringify(backupData));
+                    
+                    alert(
+                        `💾 Sus respuestas han sido guardadas localmente.\n\n` +
+                        `Por favor contacte a soporte técnico con el siguiente código:\n` +
+                        `ERROR-${Date.now()}\n\n` +
+                        `📧 Correo: rrhh@anunciosluminosos.com\n` +
+                        `📞 Teléfono: [NÚMERO DE SOPORTE]`
+                    );
+                }
             }
         }
         
+        // Network monitoring
+        function monitorNetworkStatus() {
+            const networkIndicator = document.getElementById('networkIndicator');
+            
+            function updateNetworkStatus() {
+                if (!navigator.onLine) {
+                    networkIndicator.style.display = 'block';
+                } else {
+                    networkIndicator.style.display = 'none';
+                }
+            }
+            
+            // Check initial status
+            updateNetworkStatus();
+            
+            // Listen for network changes
+            window.addEventListener('online', updateNetworkStatus);
+            window.addEventListener('offline', updateNetworkStatus);
+        }
+        
         // Initialize when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initializeForm);
+        document.addEventListener('DOMContentLoaded', () => {
+            monitorNetworkStatus();
+            initializeForm();
+        });
     </script>
 </body>
 </html>

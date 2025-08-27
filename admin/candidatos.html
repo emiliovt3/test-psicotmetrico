@@ -1,8 +1,4 @@
 <!doctype html>
-<!--
-* Sistema de Evaluación Psicométrica
-* Basado en Tabler v1.4.0
--->
 <html lang="es">
   <head>
     <meta charset="utf-8" />
@@ -10,43 +6,79 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Candidatos - Sistema de Evaluación Psicométrica</title>
     <!-- CSS Files -->
-    <link href="./dist/css/tabler.css" rel="stylesheet" />
-    <link href="./dist/css/tabler-flags.css" rel="stylesheet" />
-    <link href="./dist/css/tabler-payments.css" rel="stylesheet" />
-    <link href="./dist/css/tabler-vendors.css" rel="stylesheet" />
-    
+    <link href="../Tabler/tabler-1.4.0/dashboard/dist/css/tabler.min.css" rel="stylesheet" />
+    <link href="../Tabler/tabler-1.4.0/dashboard/dist/css/tabler-flags.min.css" rel="stylesheet" />
+    <link href="../Tabler/tabler-1.4.0/dashboard/dist/css/tabler-payments.min.css" rel="stylesheet" />
+    <link href="../Tabler/tabler-1.4.0/dashboard/dist/css/tabler-vendors.min.css" rel="stylesheet" />
     <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
-    
-    <!-- Custom Theme CSS -->
-    <link href="./dist/css/theme-custom.css" rel="stylesheet">
-    
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <style>
       @import url("https://rsms.me/inter/inter.css");
-      
-      /* Estilos personalizados para semáforo de calificación */
-      .badge-score-high { background-color: #2fb344; }
-      .badge-score-medium { background-color: #fab005; }
-      .badge-score-low { background-color: #d63939; }
-      
-      /* Estados de evaluación */
-      .status-pending { color: #fab005; }
-      .status-completed { color: #2fb344; }
-      .status-expired { color: #6c757d; }
-      
-      /* Banderas rojas */
-      .red-flag-indicator {
-        display: inline-block;
-        width: 16px;
-        height: 16px;
-        background-color: #d63939;
+      :root {
+        --tblr-font-sans-serif: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+      }
+      body {
+        font-feature-settings: "cv03", "cv04", "cv11";
+      }
+      .score-indicator {
+        width: 60px;
+        height: 60px;
         border-radius: 50%;
-        margin-left: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.2rem;
+        color: white;
+      }
+      .score-high { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+      .score-medium { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); }
+      .score-low { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); }
+      .disc-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-right: 0.25rem;
+      }
+      .disc-d { background-color: #dc2626; color: white; }
+      .disc-i { background-color: #fbbf24; color: black; }
+      .disc-s { background-color: #3b82f6; color: white; }
+      .disc-c { background-color: #10b981; color: white; }
+      .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+        background: var(--tblr-primary) !important;
+        color: white !important;
+        border: 1px solid var(--tblr-primary) !important;
       }
     </style>
+    <script>
+      // Theme detection and initialization
+      (function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-bs-theme', theme);
+      })();
+    </script>
   </head>
   <body>
-    <script src="./dist/js/tabler-theme.min.js"></script>
+    <script src="../Tabler/tabler-1.4.0/dashboard/dist/js/demo-theme.min.js"></script>
+    <script>
+      // Theme switcher
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        document.body.setAttribute('data-bs-theme', currentTheme);
+        
+        // Update theme links
+        document.querySelectorAll('[href="?theme=dark"], [href="?theme=light"]').forEach(link => {
+          link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const newTheme = this.href.includes('dark') ? 'dark' : 'light';
+            localStorage.setItem('theme', newTheme);
+            document.documentElement.setAttribute('data-bs-theme', newTheme);
+            document.body.setAttribute('data-bs-theme', newTheme);
+          });
+        });
+      });
+    </script>
     <div class="page">
       <!-- Navbar -->
       <header class="navbar navbar-expand-md d-print-none">
