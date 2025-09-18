@@ -261,7 +261,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="h1 mb-3">156</div>
+                    <div class="h1 mb-3" data-stat="total">0</div>
                     <div class="d-flex mb-2">
                       <div>Tasa de crecimiento</div>
                       <div class="ms-auto">
@@ -291,7 +291,7 @@
                       </div>
                     </div>
                     <div class="d-flex align-items-baseline">
-                      <div class="h1 mb-3 me-2">124</div>
+                      <div class="h1 mb-3 me-2" data-stat="completados">0</div>
                       <div class="me-auto">
                         <span class="text-yellow">
                           <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -354,7 +354,7 @@
                     <div class="d-flex align-items-center">
                       <div class="subheader">Promedio de Puntaje</div>
                     </div>
-                    <div class="h1 mb-3">72.4</div>
+                    <div class="h1 mb-3" data-stat="tasa">0%</div>
                     <div class="d-flex mb-2">
                       <div>Puntuación máxima: 122</div>
                     </div>
@@ -764,19 +764,150 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js" defer></script>
-    <script src="js/demo-data.js"></script>
     <script>
-      // Función para mostrar mensaje de "Próximamente"
-      function showComingSoon() {
-        alert('Esta funcionalidad estará disponible próximamente.\n\nPara activar el sistema completo:\n1. Configura Supabase\n2. Configura Netlify\n3. Agrega las credenciales\n\nConsulta SETUP.md para más información.');
+      // Función para cargar datos reales del dashboard
+      async function loadRealDashboardData() {
+        try {
+          console.log('🔄 Cargando datos reales del dashboard...');
+          
+          // Cargar estadísticas desde la API
+          const response = await fetch('/api/dashboard-stats');
+          
+          if (!response.ok) {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+          }
+          
+          const data = await response.json();
+          
+          // Actualizar estadísticas en el DOM
+          updateDashboardStats(data);
+          
+          console.log('✅ Datos del dashboard cargados exitosamente');
+          
+        } catch (error) {
+          console.error('❌ Error cargando datos del dashboard:', error);
+          showEmptyDashboard();
+        }
+      }
+      
+      // Actualizar estadísticas en el DOM
+      function updateDashboardStats(data) {
+        // Actualizar tarjetas de estadísticas
+        const totalElement = document.querySelector('[data-stat="total"]');
+        const completadosElement = document.querySelector('[data-stat="completados"]');
+        const tasaElement = document.querySelector('[data-stat="tasa"]');
+        
+        if (totalElement) totalElement.textContent = data.total_evaluaciones || 0;
+        if (completadosElement) completadosElement.textContent = data.completadas_mes || 0;
+        if (tasaElement) tasaElement.textContent = `${data.tasa_aprobacion || 0}%`;
+        
+        // Actualizar tabla de evaluaciones recientes si hay datos
+        updateRecentEvaluations(data.evaluaciones_recientes || []);
+      }
+      
+      // Mostrar dashboard vacío cuando no hay datos
+      function showEmptyDashboard() {
+        const mainContent = document.querySelector('.page-body');
+        if (mainContent) {
+          const emptyState = `
+            <div class="empty d-flex flex-column justify-content-center align-items-center" style="min-height: 400px;">
+              <div class="empty-img">
+                <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="128" height="128" rx="64" fill="#f8f9fa"/>
+                  <path d="M64 32c17.673 0 32 14.327 32 32s-14.327 32-32 32-32-14.327-32-32 14.327-32 32-32z" fill="#dee2e6"/>
+                  <path d="M64 48v16l8-8-8-8z" fill="#6c757d"/>
+                </svg>
+              </div>
+              <p class="empty-title">Sin datos disponibles</p>
+              <p class="empty-subtitle text-muted">
+                No hay evaluaciones completadas aún. Cuando los candidatos completen el test, 
+                aparecerán aquí las estadísticas.
+              </p>
+              <div class="empty-action">
+                <a href="#" onclick="window.location.reload()" class="btn btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
+                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
+                  </svg>
+                  Actualizar
+                </a>
+              </div>
+            </div>
+          `;
+          
+          // Reemplazar contenido con estado vacío
+          const container = document.querySelector('.container-xl');
+          if (container) {
+            container.innerHTML = `
+              <div class="page-header d-print-none">
+                <div class="row g-2 align-items-center">
+                  <div class="col">
+                    <h2 class="page-title">Dashboard</h2>
+                  </div>
+                </div>
+              </div>
+              ${emptyState}
+            `;
+          }
+        }
+      }
+      
+      // Actualizar tabla de evaluaciones recientes
+      function updateRecentEvaluations(evaluaciones) {
+        const tabla = document.querySelector('#tabla-evaluaciones-recientes tbody');
+        if (!tabla) return;
+        
+        if (evaluaciones.length === 0) {
+          tabla.innerHTML = `
+            <tr>
+              <td colspan="5" class="text-center text-muted py-4">
+                No hay evaluaciones recientes
+              </td>
+            </tr>
+          `;
+          return;
+        }
+        
+        tabla.innerHTML = evaluaciones.map(eval => `
+          <tr>
+            <td>${eval.nombre}</td>
+            <td>${eval.puesto}</td>
+            <td>
+              <span class="badge bg-${getStatusColor(eval.estado)}">${eval.estado}</span>
+            </td>
+            <td>${eval.porcentaje ? eval.porcentaje + '%' : '-'}</td>
+            <td>
+              <span class="badge bg-${getRecommendationColor(eval.recomendacion)}">${eval.recomendacion || '-'}</span>
+            </td>
+          </tr>
+        `).join('');
+      }
+      
+      // Funciones auxiliares para colores
+      function getStatusColor(estado) {
+        switch (estado) {
+          case 'completado': return 'success';
+          case 'en_progreso': return 'warning';
+          case 'pendiente': return 'secondary';
+          default: return 'secondary';
+        }
+      }
+      
+      function getRecommendationColor(recomendacion) {
+        switch (recomendacion) {
+          case 'CONTRATAR': return 'success';
+          case 'CONTRATAR_CON_RESERVAS': return 'warning';
+          case 'SEGUNDA_ENTREVISTA': return 'info';
+          case 'RECHAZADO': return 'danger';
+          default: return 'secondary';
+        }
       }
     </script>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        // Inicializar modo demo
-        if (window.DemoData) {
-          window.DemoData.initDemo();
-        }
+        // Cargar datos reales del dashboard
+        loadRealDashboardData();
         // Evaluation Trend Chart
         window.ApexCharts && (new ApexCharts(document.getElementById('chart-evaluation-trend'), {
           chart: {

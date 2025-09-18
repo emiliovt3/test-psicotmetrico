@@ -9,7 +9,9 @@
       "Bash(npm init:*)",
       "Bash(npm install:*)",
       "Read(//c/Users/Emilio/Pictures/Screenshots/**)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
