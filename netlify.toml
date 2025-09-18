@@ -56,15 +56,6 @@
 [context.develop]
   environment = { NODE_ENV = "development" }
 
-# Plugins de Netlify (opcional)
-[[plugins]]
-  package = "@netlify/plugin-lighthouse"
-  
-  [plugins.inputs]
-    output_path = "lighthouse-reports"
-    
-  [plugins.inputs.thresholds]
-    performance = 0.8
-    accessibility = 0.9
-    best-practices = 0.9
-    seo = 0.9
+# Plugins de Netlify (opcional) - Lighthouse removido para evitar bloqueos
+# [[plugins]]
+#   package = "@netlify/plugin-lighthouse"

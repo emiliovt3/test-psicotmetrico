@@ -3,14 +3,20 @@
   "permissions": {
     "allow": [
       "Bash(mkdir:*)",
-      "Bash(cp:*)"
+      "Bash(cp:*)",
+      "Bash(dir)",
+      "Bash(python:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Read(//c/Users/Emilio/Pictures/Screenshots/**)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
   },
+  "enableAllProjectMcpServers": true,
   "enabledMcpjsonServers": [
     "context7",
     "playwright"
-  ],
-  "enableAllProjectMcpServers": true
+  ]
 }
