@@ -269,17 +269,12 @@
                     <div class="d-flex align-items-center">
                       <div class="subheader">Evaluaciones Totales</div>
                     </div>
-                    <div class="h1 mb-3">247</div>
+                    <div class="h1 mb-3" data-stat="total-evaluaciones">—</div>
                     <div class="d-flex mb-2">
                       <div>Últimos 30 días</div>
                       <div class="ms-auto">
-                        <span class="text-green d-inline-flex align-items-center lh-1">
-                          8%
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                            <path d="M3 17l6 -6l4 4l8 -8" />
-                            <path d="M14 7l7 0l0 7" />
-                          </svg>
+                        <span class="text-muted" data-stat="crecimiento-evaluaciones">
+                          —
                         </span>
                       </div>
                     </div>
@@ -293,13 +288,11 @@
                     <div class="d-flex align-items-center">
                       <div class="subheader">Tasa de Aprobación</div>
                     </div>
-                    <div class="h1 mb-3">68%</div>
+                    <div class="h1 mb-3" data-stat="tasa-aprobacion-candidatos">—</div>
                     <div class="d-flex mb-2">
                       <div>Recomendados</div>
                       <div class="ms-auto">
-                        <span class="text-green d-inline-flex align-items-center lh-1">
-                          Bueno
-                        </span>
+                        <span class="text-muted" data-stat="estado-aprobacion">—</span>
                       </div>
                     </div>
                   </div>
@@ -312,13 +305,11 @@
                     <div class="d-flex align-items-center">
                       <div class="subheader">Pendientes</div>
                     </div>
-                    <div class="h1 mb-3">12</div>
+                    <div class="h1 mb-3" data-stat="pendientes-total">—</div>
                     <div class="d-flex mb-2">
                       <div>Por completar</div>
                       <div class="ms-auto">
-                        <span class="text-yellow d-inline-flex align-items-center lh-1">
-                          5 expiran hoy
-                        </span>
+                        <span class="text-muted" data-stat="expiran-hoy">—</span>
                       </div>
                     </div>
                   </div>
@@ -331,13 +322,11 @@
                     <div class="d-flex align-items-center">
                       <div class="subheader">Banderas Rojas</div>
                     </div>
-                    <div class="h1 mb-3">23</div>
+                    <div class="h1 mb-3" data-stat="banderas-rojas">—</div>
                     <div class="d-flex mb-2">
                       <div>Detectadas este mes</div>
                       <div class="ms-auto">
-                        <span class="text-red d-inline-flex align-items-center lh-1">
-                          9.3%
-                        </span>
+                        <span class="text-muted" data-stat="porcentaje-banderas">—</span>
                       </div>
                     </div>
                   </div>
@@ -387,7 +376,7 @@
                       <th></th>
                     </tr>
                   </thead>
-                  <tbody id="tabla-candidatos">
+                  <tbody>
                     <tr>
                       <td colspan="8" class="text-center text-muted py-4">
                         Sin candidatos registrados

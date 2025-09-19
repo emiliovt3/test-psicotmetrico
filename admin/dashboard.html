@@ -265,18 +265,11 @@
                     <div class="d-flex mb-2">
                       <div>Tasa de crecimiento</div>
                       <div class="ms-auto">
-                        <span class="text-green d-inline-flex align-items-center lh-1">
-                          8% 
-                          <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                            <polyline points="3 17 9 11 13 15 21 7" />
-                            <polyline points="14 7 21 7 21 14" />
-                          </svg>
-                        </span>
+                        <span class="text-muted" data-stat="crecimiento">—</span>
                       </div>
                     </div>
                     <div class="progress progress-sm">
-                      <div class="progress-bar bg-primary" style="width: 75%" role="progressbar"></div>
+                      <div class="progress-bar bg-secondary" style="width: 0%" role="progressbar" data-stat="progress-total"></div>
                     </div>
                   </div>
                 </div>
@@ -287,7 +280,7 @@
                     <div class="d-flex align-items-center">
                       <div class="subheader">Tests Completados</div>
                       <div class="ms-auto lh-1">
-                        <span class="badge bg-green-lt">+12%</span>
+                        <span class="badge bg-secondary-lt" data-stat="badge-completitud">—</span>
                       </div>
                     </div>
                     <div class="d-flex align-items-baseline">
@@ -303,7 +296,7 @@
                       </div>
                     </div>
                     <div class="progress progress-sm">
-                      <div class="progress-bar bg-green" style="width: 79.5%" role="progressbar"></div>
+                      <div class="progress-bar bg-secondary" style="width: 0%" role="progressbar" data-stat="progress-completitud"></div>
                     </div>
                   </div>
                 </div>
@@ -314,7 +307,7 @@
                     <div class="d-flex align-items-center">
                       <div class="subheader">Tasa de Aprobación</div>
                       <div class="ms-auto lh-1">
-                        <span class="badge bg-red-lt">-5%</span>
+                        <span class="badge bg-secondary-lt" data-stat="badge-aprobacion">—</span>
                       </div>
                     </div>
                     <div class="d-flex align-items-baseline">
@@ -335,9 +328,7 @@
                     </div>
                   </div>
                   <div class="progress progress-sm">
-                    <div class="progress-bar bg-success" style="width: 36%" role="progressbar"></div>
-                    <div class="progress-bar bg-warning" style="width: 31%" role="progressbar"></div>
-                    <div class="progress-bar bg-danger" style="width: 33%" role="progressbar"></div>
+                    <div class="progress-bar bg-secondary" style="width: 0%" role="progressbar" data-stat="progress-aprobacion"></div>
                   </div>
                 </div>
               </div>
@@ -352,14 +343,10 @@
                       <div>Puntuación máxima: 122</div>
                     </div>
                     <div class="progress progress-sm">
-                      <div class="progress-bar bg-blue" style="width: 59.3%" role="progressbar"></div>
+                      <div class="progress-bar bg-secondary" style="width: 0%" role="progressbar" data-stat="progress-promedio"></div>
                     </div>
-                    <div class="mt-3 text-muted small">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <polyline points="3 17 9 11 13 15 21 7" />
-                      </svg>
-                      Mejora del 3.2% vs mes anterior
+                    <div class="mt-3 text-muted small" data-stat="tendencia-promedio">
+                      —
                     </div>
                   </div>
                 </div>
