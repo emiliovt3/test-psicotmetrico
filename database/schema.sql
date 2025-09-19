@@ -83,35 +83,134 @@ CREATE INDEX idx_resultados_porcentaje ON resultados(porcentaje DESC);
 
 -- ==============================================
 -- TABLA: configuracion
--- Configuración global del sistema
+-- Sistema de configuración global mejorado
 -- ==============================================
 CREATE TABLE IF NOT EXISTS configuracion (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    clave VARCHAR(50) UNIQUE NOT NULL,
-    valor JSONB NOT NULL,
-    descripcion TEXT,
-    actualizado_por VARCHAR(100),
-    updated_at TIMESTAMP DEFAULT NOW()
+    seccion VARCHAR(50) NOT NULL,              -- Sección de configuración (company, email, security, etc.)
+    clave VARCHAR(100) NOT NULL,               -- Clave de configuración dentro de la sección
+    valor JSONB NOT NULL,                      -- Valor de configuración (puede ser cualquier tipo JSON)
+    valor_encriptado BOOLEAN DEFAULT FALSE,    -- Indica si el valor está encriptado
+    tipo_dato VARCHAR(20) DEFAULT 'json',      -- Tipo de dato (string, number, boolean, json, encrypted)
+    descripcion TEXT,                          -- Descripción de la configuración
+    es_sistema BOOLEAN DEFAULT FALSE,          -- Si es configuración del sistema (no editable por UI)
+    es_sensible BOOLEAN DEFAULT FALSE,         -- Si contiene datos sensibles (passwords, tokens, etc.)
+    version INTEGER DEFAULT 1,                -- Control de versión para configuraciones
+    actualizado_por VARCHAR(100),             -- Usuario que realizó el cambio
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE(seccion, clave)                    -- Combinación única de sección + clave
 );
 
--- Configuración inicial
-INSERT INTO configuracion (clave, valor, descripcion) VALUES
-    ('emails_notificacion', '["rh@empresa.com"]', 'Emails que reciben notificaciones'),
-    ('tiempo_expiracion_horas', '48', 'Horas de validez del token'),
-    ('auto_guardado_segundos', '30', 'Frecuencia de auto-guardado'),
-    ('puntajes_maximos', '{
+-- Índices para búsquedas optimizadas
+CREATE INDEX idx_configuracion_seccion ON configuracion(seccion);
+CREATE INDEX idx_configuracion_clave ON configuracion(clave);
+CREATE INDEX idx_configuracion_tipo ON configuracion(tipo_dato);
+CREATE INDEX idx_configuracion_sensible ON configuracion(es_sensible);
+CREATE INDEX idx_configuracion_updated ON configuracion(updated_at DESC);
+
+-- ==============================================
+-- TABLA: configuracion_historial
+-- Historial de cambios de configuración
+-- ==============================================
+CREATE TABLE IF NOT EXISTS configuracion_historial (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    configuracion_id UUID NOT NULL REFERENCES configuracion(id) ON DELETE CASCADE,
+    valor_anterior JSONB,
+    valor_nuevo JSONB NOT NULL,
+    actualizado_por VARCHAR(100),
+    razon_cambio TEXT,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Índice para búsquedas por configuración
+CREATE INDEX idx_config_historial_config ON configuracion_historial(configuracion_id);
+CREATE INDEX idx_config_historial_fecha ON configuracion_historial(created_at DESC);
+
+-- Configuración inicial del sistema
+INSERT INTO configuracion (seccion, clave, valor, descripcion, es_sistema, tipo_dato) VALUES
+    -- Configuración básica del sistema
+    ('sistema', 'emails_notificacion', '["rh@empresa.com"]', 'Emails que reciben notificaciones del sistema', true, 'json'),
+    ('sistema', 'tiempo_expiracion_horas', '48', 'Horas de validez del token de evaluación', true, 'number'),
+    ('sistema', 'auto_guardado_segundos', '30', 'Frecuencia de auto-guardado en segundos', true, 'number'),
+
+    -- Configuración de puntuación
+    ('evaluacion', 'puntajes_maximos', '{
         "cleaver": 40,
         "kostick": 30,
         "situaciones": 25,
         "aptitudes": 27
-    }', 'Puntajes máximos por sección'),
-    ('umbrales_recomendacion', '{
+    }', 'Puntajes máximos por sección del test', false, 'json'),
+
+    ('evaluacion', 'umbrales_recomendacion', '{
         "contratar": 80,
         "contratar_con_reservas": 65,
         "segunda_entrevista": 50,
         "rechazar": 0
-    }', 'Umbrales de porcentaje para recomendaciones')
-ON CONFLICT (clave) DO NOTHING;
+    }', 'Umbrales de porcentaje para recomendaciones de contratación', false, 'json'),
+
+    ('evaluacion', 'tiempo_limite_minutos', '60', 'Tiempo límite para completar la evaluación', false, 'number'),
+    ('evaluacion', 'permitir_retomar', 'true', 'Permitir retomar evaluación después de desconexión', false, 'boolean'),
+    ('evaluacion', 'mostrar_progreso', 'true', 'Mostrar barra de progreso durante la evaluación', false, 'boolean'),
+
+    -- Configuración de empresa
+    ('empresa', 'nombre', '"Empresa de Signos Luminosos"', 'Nombre de la empresa', false, 'string'),
+    ('empresa', 'logo_url', '""', 'URL del logo de la empresa', false, 'string'),
+    ('empresa', 'color_primario', '"#0066cc"', 'Color primario de la marca', false, 'string'),
+    ('empresa', 'color_secundario', '"#ffffff"', 'Color secundario de la marca', false, 'string'),
+    ('empresa', 'direccion', '""', 'Dirección física de la empresa', false, 'string'),
+    ('empresa', 'telefono', '""', 'Teléfono de contacto', false, 'string'),
+    ('empresa', 'email_contacto', '""', 'Email de contacto general', false, 'string'),
+
+    -- Configuración de seguridad
+    ('seguridad', 'max_intentos_login', '5', 'Máximo número de intentos de login fallidos', false, 'number'),
+    ('seguridad', 'tiempo_bloqueo_minutos', '15', 'Tiempo de bloqueo después de máximos intentos', false, 'number'),
+    ('seguridad', 'requerir_2fa', 'false', 'Requerir autenticación de dos factores', false, 'boolean'),
+    ('seguridad', 'duracion_sesion_horas', '8', 'Duración máxima de la sesión administrativa', false, 'number'),
+
+    -- Configuración de email (valores sensibles)
+    ('email', 'smtp_host', '""', 'Servidor SMTP para envío de emails', false, 'string'),
+    ('email', 'smtp_puerto', '587', 'Puerto del servidor SMTP', false, 'number'),
+    ('email', 'smtp_usuario', '""', 'Usuario SMTP', false, 'string'),
+    ('email', 'smtp_password', '""', 'Contraseña SMTP', true, 'encrypted'),
+    ('email', 'remitente_nombre', '"Sistema Psicométrico"', 'Nombre del remitente en emails', false, 'string'),
+    ('email', 'remitente_email', '""', 'Email del remitente', false, 'string'),
+    ('email', 'plantilla_invitacion', '""', 'Plantilla HTML para email de invitación', false, 'string'),
+    ('email', 'plantilla_recordatorio', '""', 'Plantilla HTML para email de recordatorio', false, 'string'),
+
+    -- Configuración de reportes
+    ('reportes', 'incluir_graficos', 'true', 'Incluir gráficos en reportes PDF', false, 'boolean'),
+    ('reportes', 'marca_agua', '"CONFIDENCIAL"', 'Marca de agua en reportes', false, 'string'),
+    ('reportes', 'footer_personalizado', '""', 'Footer personalizado en reportes', false, 'string'),
+    ('reportes', 'auto_archivar_dias', '90', 'Días para auto-archivar reportes antiguos', false, 'number'),
+
+    -- Puestos de trabajo con perfiles DISC
+    ('puestos', 'soldador', '{
+        "nombre": "Soldador",
+        "descripcion": "Técnico especializado en soldadura",
+        "disc_ideal": {"D": 2, "I": 4, "S": 8, "C": 7},
+        "disc_min": {"D": 1, "I": 2, "S": 6, "C": 5},
+        "disc_max": {"D": 4, "I": 6, "S": 9, "C": 9},
+        "prioridad": "critical",
+        "activo": true,
+        "competencias_tecnicas": ["soldadura_mig", "soldadura_tig", "lectura_planos"],
+        "banderas_rojas": ["D > 6", "S < 5"]
+    }', 'Perfil del puesto: Soldador', false, 'json'),
+
+    ('puestos', 'electricista', '{
+        "nombre": "Electricista",
+        "descripcion": "Técnico especializado en instalaciones eléctricas",
+        "disc_ideal": {"D": 3, "I": 3, "S": 7, "C": 8},
+        "disc_min": {"D": 1, "I": 1, "S": 5, "C": 6},
+        "disc_max": {"D": 5, "I": 5, "S": 9, "C": 9},
+        "prioridad": "critical",
+        "activo": true,
+        "competencias_tecnicas": ["instalaciones_electricas", "tableros", "motores"],
+        "banderas_rojas": ["D > 6", "C < 5"]
+    }', 'Perfil del puesto: Electricista', false, 'json')
+ON CONFLICT (seccion, clave) DO NOTHING;
 
 -- ==============================================
 -- TABLA: sesiones_admin
@@ -236,6 +335,7 @@ ALTER TABLE candidatos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE respuestas ENABLE ROW LEVEL SECURITY;
 ALTER TABLE resultados ENABLE ROW LEVEL SECURITY;
 ALTER TABLE configuracion ENABLE ROW LEVEL SECURITY;
+ALTER TABLE configuracion_historial ENABLE ROW LEVEL SECURITY;
 ALTER TABLE sesiones_admin ENABLE ROW LEVEL SECURITY;
 ALTER TABLE logs_actividad ENABLE ROW LEVEL SECURITY;
 
@@ -269,7 +369,12 @@ CREATE POLICY "Solo admin puede ver resultados" ON resultados
 
 -- Políticas para configuración
 CREATE POLICY "Solo admin puede gestionar configuración" ON configuracion
-    FOR ALL 
+    FOR ALL
+    USING (auth.jwt() ->> 'role' = 'admin');
+
+-- Políticas para historial de configuración
+CREATE POLICY "Solo admin puede ver historial de configuración" ON configuracion_historial
+    FOR ALL
     USING (auth.jwt() ->> 'role' = 'admin');
 
 -- ==============================================
@@ -289,6 +394,42 @@ CREATE TRIGGER actualizar_fecha_candidatos
     BEFORE UPDATE ON candidatos
     FOR EACH ROW
     EXECUTE FUNCTION actualizar_fecha_modificacion();
+
+-- Trigger para actualizar updated_at en configuración
+CREATE TRIGGER actualizar_fecha_configuracion
+    BEFORE UPDATE ON configuracion
+    FOR EACH ROW
+    EXECUTE FUNCTION actualizar_fecha_modificacion();
+
+-- Función para registrar cambios de configuración en historial
+CREATE OR REPLACE FUNCTION registrar_cambio_configuracion()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Solo registrar si el valor realmente cambió
+    IF OLD.valor IS DISTINCT FROM NEW.valor THEN
+        INSERT INTO configuracion_historial (
+            configuracion_id,
+            valor_anterior,
+            valor_nuevo,
+            actualizado_por,
+            razon_cambio
+        ) VALUES (
+            NEW.id,
+            OLD.valor,
+            NEW.valor,
+            NEW.actualizado_por,
+            'Cambio automático vía sistema'
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger para historial de configuración
+CREATE TRIGGER historial_configuracion
+    AFTER UPDATE ON configuracion
+    FOR EACH ROW
+    EXECUTE FUNCTION registrar_cambio_configuracion();
 
 -- Trigger para registrar actividad
 CREATE OR REPLACE FUNCTION registrar_actividad()
@@ -352,6 +493,7 @@ CREATE TRIGGER log_resultados
 GRANT USAGE ON SCHEMA public TO anon;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO anon;
 GRANT INSERT, UPDATE ON candidatos, respuestas, logs_actividad TO anon;
+GRANT SELECT ON configuracion TO anon;  -- Solo lectura para configuración pública
 
 -- Dar permisos al usuario autenticado
 GRANT ALL ON ALL TABLES IN SCHEMA public TO authenticated;

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings API Test - Sistema Psicométrico</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #343a40;
+            margin-top: 0;
+        }
+        .test-section {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 4px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button.secondary {
+            background: #6c757d;
+        }
+        button.secondary:hover {
+            background: #545b62;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        button.danger:hover {
+            background: #c82333;
+        }
+        .result {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 8px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin: 4px 0;
+            box-sizing: border-box;
+        }
+        .form-group {
+            margin: 12px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .inline-form {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+        }
+        .inline-form > div {
+            flex: 1;
+        }
+        .inline-form button {
+            margin: 0;
+        }
+        .status {
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            font-weight: 500;
+        }
+        .status.loading {
+            background: #cce5ff;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Settings API Test Interface</h1>
+        <p>Test interface for the Supabase-based settings management system.</p>
+    </div>
+
+    <!-- GET Operations -->
+    <div class="container">
+        <h2>📥 GET Operations</h2>
+
+        <div class="test-section">
+            <h3>Get All Configurations</h3>
+            <div class="inline-form">
+                <div>
+                    <label>Format:</label>
+                    <select id="getAllFormat">
+                        <option value="grouped">Grouped by Section</option>
+                        <option value="flat">Flat (section.key)</option>
+                        <option value="complete">Complete (default)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Include Sensitive:</label>
+                    <select id="getAllSensitive">
+                        <option value="false">No</option>
+                        <option value="true">Yes (Admin)</option>
+                    </select>
+                </div>
+                <button onclick="getAllConfigurations()">Get All</button>
+            </div>
+            <div id="getAllResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Get Section</h3>
+            <div class="inline-form">
+                <div>
+                    <label>Section:</label>
+                    <select id="getSectionName">
+                        <option value="empresa">Empresa</option>
+                        <option value="evaluacion">Evaluación</option>
+                        <option value="email">Email</option>
+                        <option value="seguridad">Seguridad</option>
+                        <option value="reportes">Reportes</option>
+                        <option value="puestos">Puestos</option>
+                    </select>
+                </div>
+                <button onclick="getSection()">Get Section</button>
+            </div>
+            <div id="getSectionResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Get Specific Value</h3>
+            <div class="inline-form">
+                <div>
+                    <label>Section:</label>
+                    <input type="text" id="getValueSection" placeholder="empresa" value="empresa">
+                </div>
+                <div>
+                    <label>Key:</label>
+                    <input type="text" id="getValueKey" placeholder="nombre" value="nombre">
+                </div>
+                <button onclick="getValue()">Get Value</button>
+            </div>
+            <div id="getValueResult" class="result"></div>
+        </div>
+    </div>
+
+    <!-- POST/PUT Operations -->
+    <div class="container">
+        <h2>📤 POST/PUT Operations</h2>
+
+        <div class="test-section">
+            <h3>Update Configuration</h3>
+            <div class="form-group">
+                <label>Section:</label>
+                <input type="text" id="updateSection" placeholder="empresa" value="empresa">
+            </div>
+            <div class="form-group">
+                <label>Key:</label>
+                <input type="text" id="updateKey" placeholder="nombre" value="nombre">
+            </div>
+            <div class="form-group">
+                <label>Value:</label>
+                <input type="text" id="updateValue" placeholder="Nuevo Nombre de Empresa">
+            </div>
+            <div class="form-group">
+                <label>User:</label>
+                <input type="text" id="updateUser" placeholder="admin@empresa.com" value="admin@empresa.com">
+            </div>
+            <div class="form-group">
+                <label>Description (optional):</label>
+                <input type="text" id="updateDescription" placeholder="Updated company name">
+            </div>
+            <button onclick="updateConfiguration()">Update Configuration</button>
+            <div id="updateResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Batch Update</h3>
+            <div class="form-group">
+                <label>Configurations JSON:</label>
+                <textarea id="batchConfigurations" rows="8" placeholder='[
+  {
+    "seccion": "empresa",
+    "clave": "nombre",
+    "valor": "Nueva Empresa",
+    "descripcion": "Nombre actualizado"
+  },
+  {
+    "seccion": "empresa",
+    "clave": "color_primario",
+    "valor": "#ff6600",
+    "descripcion": "Color corporativo"
+  }
+]'></textarea>
+            </div>
+            <div class="form-group">
+                <label>User:</label>
+                <input type="text" id="batchUser" placeholder="admin@empresa.com" value="admin@empresa.com">
+            </div>
+            <button onclick="batchUpdate()">Batch Update</button>
+            <div id="batchResult" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Migration -->
+    <div class="container">
+        <h2>🔄 Migration Operations</h2>
+
+        <div class="test-section">
+            <h3>Check Migration Status</h3>
+            <button onclick="checkMigration()">Check Migration Needed</button>
+            <div id="migrationCheckResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Migrate from LocalStorage</h3>
+            <div class="form-group">
+                <label>LocalStorage Data JSON:</label>
+                <textarea id="migrationData" rows="10" placeholder='{"empresa": {"nombre": "Mi Empresa"}, "evaluacion": {"tiempo_limite_minutos": 60}}'></textarea>
+            </div>
+            <div class="inline-form">
+                <div>
+                    <label>User:</label>
+                    <input type="text" id="migrationUser" placeholder="admin@empresa.com" value="admin@empresa.com">
+                </div>
+                <div>
+                    <label>Force Overwrite:</label>
+                    <select id="migrationForce">
+                        <option value="false">No</option>
+                        <option value="true">Yes</option>
+                    </select>
+                </div>
+                <button onclick="migrateFromLocalStorage()">Migrate</button>
+            </div>
+            <div id="migrationResult" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Export/Import -->
+    <div class="container">
+        <h2>💾 Export/Import</h2>
+
+        <div class="test-section">
+            <h3>Export Configurations</h3>
+            <div class="inline-form">
+                <div>
+                    <label>Include Sensitive:</label>
+                    <select id="exportSensitive">
+                        <option value="false">No</option>
+                        <option value="true">Yes (Admin)</option>
+                    </select>
+                </div>
+                <button onclick="exportConfigurations()">Export</button>
+                <button class="secondary" onclick="downloadExport()" id="downloadBtn" style="display: none;">Download JSON</button>
+            </div>
+            <div id="exportResult" class="result"></div>
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="status" style="display: none;"></div>
+
+    <!-- Include the settings client -->
+    <script src="settings-client.js"></script>
+    <script>
+        let lastExportData = null;
+
+        // Show status message
+        function showStatus(message, type = 'loading') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+            status.style.display = 'block';
+
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    status.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Hide status message
+        function hideStatus() {
+            document.getElementById('status').style.display = 'none';
+        }
+
+        // Format JSON for display
+        function formatResult(data, isError = false) {
+            return JSON.stringify(data, null, 2);
+        }
+
+        // Show result in element
+        function showResult(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.textContent = formatResult(data);
+            element.className = `result ${isError ? 'error' : 'success'}`;
+        }
+
+        // GET Operations
+        async function getAllConfigurations() {
+            showStatus('Getting all configurations...');
+            try {
+                const format = document.getElementById('getAllFormat').value;
+                const includeSensitive = document.getElementById('getAllSensitive').value;
+
+                const params = new URLSearchParams();
+                if (format !== 'complete') params.append('formato', format);
+                if (includeSensitive === 'true') params.append('incluir_sensibles', 'true');
+
+                const response = await fetch(`/netlify/functions/settings-manager?${params}`);
+                const data = await response.json();
+
+                showResult('getAllResult', data);
+                hideStatus();
+            } catch (error) {
+                showResult('getAllResult', { error: error.message }, true);
+                showStatus('Error getting configurations', 'error');
+            }
+        }
+
+        async function getSection() {
+            showStatus('Getting section...');
+            try {
+                const section = document.getElementById('getSectionName').value;
+                const data = await settingsClient.getSection(section);
+
+                showResult('getSectionResult', data);
+                hideStatus();
+            } catch (error) {
+                showResult('getSectionResult', { error: error.message }, true);
+                showStatus('Error getting section', 'error');
+            }
+        }
+
+        async function getValue() {
+            showStatus('Getting value...');
+            try {
+                const section = document.getElementById('getValueSection').value;
+                const key = document.getElementById('getValueKey').value;
+                const value = await settingsClient.getValue(section, key);
+
+                showResult('getValueResult', { value });
+                hideStatus();
+            } catch (error) {
+                showResult('getValueResult', { error: error.message }, true);
+                showStatus('Error getting value', 'error');
+            }
+        }
+
+        // POST/PUT Operations
+        async function updateConfiguration() {
+            showStatus('Updating configuration...');
+            try {
+                const section = document.getElementById('updateSection').value;
+                const key = document.getElementById('updateKey').value;
+                const value = document.getElementById('updateValue').value;
+                const user = document.getElementById('updateUser').value;
+                const description = document.getElementById('updateDescription').value;
+
+                const options = {};
+                if (description) options.descripcion = description;
+
+                const result = await settingsClient.setValue(section, key, value, { ...options, usuario: user });
+
+                showResult('updateResult', result);
+                hideStatus();
+            } catch (error) {
+                showResult('updateResult', { error: error.message }, true);
+                showStatus('Error updating configuration', 'error');
+            }
+        }
+
+        async function batchUpdate() {
+            showStatus('Batch updating configurations...');
+            try {
+                const configurationsText = document.getElementById('batchConfigurations').value;
+                const user = document.getElementById('batchUser').value;
+
+                const configurations = JSON.parse(configurationsText);
+                const result = await settingsClient.updateConfigurations(configurations, user, 'Batch update via test interface');
+
+                showResult('batchResult', result);
+                hideStatus();
+            } catch (error) {
+                showResult('batchResult', { error: error.message }, true);
+                showStatus('Error in batch update', 'error');
+            }
+        }
+
+        // Migration Operations
+        async function checkMigration() {
+            showStatus('Checking migration status...');
+            try {
+                const result = await settingsClient.checkMigrationNeeded();
+                showResult('migrationCheckResult', result);
+                hideStatus();
+            } catch (error) {
+                showResult('migrationCheckResult', { error: error.message }, true);
+                showStatus('Error checking migration', 'error');
+            }
+        }
+
+        async function migrateFromLocalStorage() {
+            showStatus('Migrating from LocalStorage...');
+            try {
+                const dataText = document.getElementById('migrationData').value;
+                const user = document.getElementById('migrationUser').value;
+                const force = document.getElementById('migrationForce').value === 'true';
+
+                const data = JSON.parse(dataText);
+                const result = await settingsClient.migrateFromLocalStorage(data, user, force);
+
+                showResult('migrationResult', result);
+                hideStatus();
+            } catch (error) {
+                showResult('migrationResult', { error: error.message }, true);
+                showStatus('Error in migration', 'error');
+            }
+        }
+
+        // Export/Import Operations
+        async function exportConfigurations() {
+            showStatus('Exporting configurations...');
+            try {
+                const includeSensitive = document.getElementById('exportSensitive').value === 'true';
+                const result = await settingsClient.exportConfigurations({ includeSensitive });
+
+                lastExportData = result;
+                showResult('exportResult', result);
+                document.getElementById('downloadBtn').style.display = 'inline-block';
+                hideStatus();
+            } catch (error) {
+                showResult('exportResult', { error: error.message }, true);
+                showStatus('Error exporting configurations', 'error');
+            }
+        }
+
+        function downloadExport() {
+            if (!lastExportData) return;
+
+            const blob = new Blob([JSON.stringify(lastExportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `psicometrico-config-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Load sample data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const sampleMigrationData = {
+                empresa: {
+                    nombre: "Empresa de Prueba",
+                    logo_url: "https://via.placeholder.com/200x100",
+                    color_primario: "#007bff",
+                    color_secundario: "#ffffff"
+                },
+                evaluacion: {
+                    tiempo_limite_minutos: 60,
+                    permitir_retomar: true,
+                    mostrar_progreso: true
+                },
+                puestos: [
+                    {
+                        nombre: "Soldador",
+                        descripcion: "Técnico especializado en soldadura",
+                        disc_ideal: {D: 2, I: 4, S: 8, C: 7},
+                        prioridad: "critical",
+                        activo: true
+                    }
+                ]
+            };
+
+            document.getElementById('migrationData').value = JSON.stringify(sampleMigrationData, null, 2);
+
+            const sampleBatchUpdate = [
+                {
+                    seccion: "empresa",
+                    clave: "nombre",
+                    valor: "Nueva Empresa de Test",
+                    descripcion: "Nombre actualizado via test"
+                },
+                {
+                    seccion: "empresa",
+                    clave: "color_primario",
+                    valor: "#ff6600",
+                    descripcion: "Color corporativo actualizado"
+                }
+            ];
+
+            document.getElementById('batchConfigurations').value = JSON.stringify(sampleBatchUpdate, null, 2);
+        });
+    </script>
+</body>
+</html>

@@ -4,9 +4,98 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Evaluación Psicométrica - Anuncios Luminosos</title>
-    
+    <title>Evaluación Psicométrica - Sistema de Evaluación Psicológica</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23206bc4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M12 2v6l3-3-3-3'/%3e%3cpath d='M12 22v-6l3 3-3 3'/%3e%3cpath d='M22 12h-6l3-3-3-3'/%3e%3cpath d='M2 12h6l-3-3 3-3'/%3e%3cpath d='M12 2v6'/%3e%3cpath d='M12 22v-6'/%3e%3cpath d='M22 12h-6'/%3e%3cpath d='M2 12h6'/%3e%3c/svg%3e">
+    <meta name="theme-color" content="#206bc4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <style>
+        @import url("https://rsms.me/inter/inter.css");
+
+        /* Tabler-compatible Dark/Light mode variables */
+        :root {
+            --tblr-body-bg: #f8fafc;
+            --tblr-body-color: #182433;
+            --tblr-card-bg: #ffffff;
+            --tblr-border-color: #dadfe5;
+            --tblr-primary: #206bc4;
+            --tblr-primary-rgb: 32, 107, 196;
+            --tblr-shadow: rgba(0, 0, 0, 0.04);
+            --tblr-input-bg: #ffffff;
+            --tblr-navbar-bg: #ffffff;
+            --tblr-navbar-color: #667382;
+            --tblr-text-muted: #667382;
+            --tblr-success: #2fb344;
+            --tblr-warning: #f59f00;
+            --tblr-danger: #d63384;
+            --tblr-info: #206bc4;
+            --tblr-light: #f8fafc;
+            --tblr-dark: #1e293b;
+            --tblr-secondary: #667382;
+
+            /* Custom variables mapping to Tabler */
+            --bg-color: var(--tblr-body-bg);
+            --text-color: var(--tblr-body-color);
+            --container-bg: var(--tblr-card-bg);
+            --border-color: var(--tblr-border-color);
+            --primary-color: var(--tblr-primary);
+            --shadow-color: var(--tblr-shadow);
+            --input-bg: var(--tblr-input-bg);
+            --info-bg: rgba(32, 107, 196, 0.1);
+            --warning-bg: rgba(245, 159, 0, 0.1);
+            --warning-border: var(--tblr-warning);
+            --warning-text: #b45309;
+            --question-bg: var(--tblr-card-bg);
+            --option-bg: var(--tblr-light);
+            --option-border: var(--tblr-border-color);
+            --choice-bg: var(--tblr-light);
+            --canvas-bg: #ffffff;
+            --signature-bg: #fdfdfe;
+            --loading-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        [data-theme="dark"] {
+            --tblr-body-bg: #1e293b;
+            --tblr-body-color: #cbd5e1;
+            --tblr-card-bg: #334155;
+            --tblr-border-color: #475569;
+            --tblr-primary: #74a9ec;
+            --tblr-primary-rgb: 116, 169, 236;
+            --tblr-shadow: rgba(0, 0, 0, 0.2);
+            --tblr-input-bg: #475569;
+            --tblr-navbar-bg: #1e293b;
+            --tblr-navbar-color: #94a3b8;
+            --tblr-text-muted: #94a3b8;
+            --tblr-success: #2fb344;
+            --tblr-warning: #f59f00;
+            --tblr-danger: #d63384;
+            --tblr-info: #74a9ec;
+            --tblr-light: #334155;
+            --tblr-dark: #0f172a;
+            --tblr-secondary: #94a3b8;
+
+            /* Dark mode mappings */
+            --bg-color: var(--tblr-body-bg);
+            --text-color: var(--tblr-body-color);
+            --container-bg: var(--tblr-card-bg);
+            --border-color: var(--tblr-border-color);
+            --primary-color: var(--tblr-primary);
+            --shadow-color: var(--tblr-shadow);
+            --input-bg: var(--tblr-input-bg);
+            --info-bg: rgba(116, 169, 236, 0.1);
+            --warning-bg: rgba(245, 159, 0, 0.1);
+            --warning-border: var(--tblr-warning);
+            --warning-text: var(--tblr-warning);
+            --question-bg: var(--tblr-card-bg);
+            --option-bg: var(--tblr-input-bg);
+            --option-border: var(--tblr-border-color);
+            --choice-bg: var(--tblr-input-bg);
+            --canvas-bg: #ffffff;
+            --signature-bg: #f8f9fa;
+            --loading-bg: rgba(30, 41, 59, 0.9);
+        }
         /* Reset y base styles */
         * {
             margin: 0;
@@ -15,12 +104,14 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'Inter Var', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
+            font-feature-settings: "cv03", "cv04", "cv11";
             line-height: 1.6;
-            color: #333;
-            background: #f8f9fa;
+            color: var(--text-color);
+            background: var(--bg-color);
             font-size: 16px;
             overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         /* Container */
@@ -28,8 +119,9 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background: white;
+            background: var(--container-bg);
             min-height: 100vh;
+            transition: background-color 0.3s ease;
         }
         
         /* Header */
@@ -47,7 +139,8 @@
         }
         
         .header h2 {
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.7;
             font-size: 18px;
             font-weight: 400;
         }
@@ -72,15 +165,16 @@
         
         /* Candidate info */
         .candidate-info {
-            background: #e8f4f8;
-            border-left: 4px solid #066fd1;
+            background: var(--info-bg);
+            border-left: 4px solid var(--primary-color);
             padding: 15px;
             margin-bottom: 25px;
             border-radius: 0 5px 5px 0;
+            transition: background-color 0.3s ease;
         }
         
         .candidate-info h3 {
-            color: #066fd1;
+            color: var(--primary-color);
             margin-bottom: 10px;
             font-size: 18px;
         }
@@ -98,34 +192,36 @@
         
         .info-label {
             font-weight: 600;
-            color: #333;
+            color: var(--text-color);
         }
-        
+
         .info-value {
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.8;
         }
         
         /* Instructions */
         .instructions {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
+            background: var(--warning-bg);
+            border: 1px solid var(--warning-border);
             border-radius: 5px;
             padding: 15px;
             margin-bottom: 25px;
+            transition: background-color 0.3s ease;
         }
         
         .instructions h3 {
-            color: #856404;
+            color: var(--warning-text);
             margin-bottom: 10px;
             font-size: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
+
         .instructions ul {
             margin-left: 20px;
-            color: #856404;
+            color: var(--warning-text);
         }
         
         .instructions li {
@@ -163,25 +259,26 @@
         
         /* Questions */
         .question {
-            background: white;
-            border: 1px solid #dee2e6;
+            background: var(--question-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
         .question-number {
-            color: #066fd1;
+            color: var(--primary-color);
             font-weight: 600;
             margin-bottom: 10px;
             font-size: 14px;
         }
-        
+
         .question-text {
             font-size: 16px;
             margin-bottom: 15px;
-            color: #333;
+            color: var(--text-color);
             font-weight: 500;
         }
         
@@ -194,8 +291,8 @@
         }
         
         .cleaver-option {
-            background: #f8f9fa;
-            border: 2px solid #dee2e6;
+            background: var(--option-bg);
+            border: 2px solid var(--option-border);
             border-radius: 8px;
             padding: 15px 12px;
             text-align: center;
@@ -212,7 +309,7 @@
         }
         
         .option-letter {
-            background: #066fd1;
+            background: var(--primary-color);
             color: white;
             width: 24px;
             height: 24px;
@@ -223,20 +320,20 @@
             font-weight: 700;
             font-size: 14px;
         }
-        
+
         .option-word {
             font-weight: 600;
-            color: #333;
+            color: var(--text-color);
         }
         
         /* Estado cuando está seleccionado como MÁS */
         .cleaver-option.selected-mas {
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border-color: #066fd1;
+            border-color: var(--primary-color);
         }
-        
+
         .cleaver-option.selected-mas .option-word {
-            color: #066fd1;
+            color: var(--primary-color);
         }
         
         /* Estado cuando está seleccionado como MENOS */
@@ -257,7 +354,7 @@
         }
         
         .cleaver-option.selected-both .option-word {
-            color: #333;
+            color: var(--text-color);
             font-weight: 700;
         }
         
@@ -268,10 +365,11 @@
             align-items: flex-start;
             margin-top: 25px;
             padding: 20px;
-            background: #f8f9fa;
+            background: var(--choice-bg);
             border-radius: 8px;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border-color);
             position: relative;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
         .cleaver-choices-compact::before {
@@ -281,7 +379,7 @@
             top: 10px;
             bottom: 10px;
             width: 2px;
-            background: linear-gradient(to bottom, #dee2e6, #adb5bd, #dee2e6);
+            background: linear-gradient(to bottom, var(--border-color), #adb5bd, var(--border-color));
             transform: translateX(-50%);
         }
         
@@ -299,17 +397,18 @@
             font-size: 16px;
             padding: 10px 16px;
             border-radius: 8px;
-            background: white;
-            border: 3px solid #dee2e6;
+            background: var(--container-bg);
+            border: 3px solid var(--border-color);
             min-width: 90px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
         }
         
         .choice-compact:first-child .choice-label {
             background: linear-gradient(135deg, #e3f2fd, #bbdefb);
-            border-color: #066fd1;
-            color: #066fd1;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
             box-shadow: 0 3px 6px rgba(6, 111, 209, 0.2);
         }
         
@@ -331,20 +430,20 @@
             justify-content: center;
             width: 40px;
             height: 40px;
-            background: white;
-            border: 2px solid #dee2e6;
+            background: var(--container-bg);
+            border: 2px solid var(--border-color);
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
             font-size: 14px;
-            color: #333;
+            color: var(--text-color);
             transition: all 0.3s ease;
             position: relative;
         }
         
         .choice-btn:hover {
-            background: #f0f0f0;
-            border-color: #066fd1;
+            background: var(--option-bg);
+            border-color: var(--primary-color);
             transform: scale(1.1);
         }
         
@@ -359,9 +458,9 @@
         
         .choice-btn input:checked + span,
         .choice-btn:has(input:checked) {
-            background: #066fd1;
+            background: var(--primary-color);
             color: white;
-            border-color: #066fd1;
+            border-color: var(--primary-color);
             transform: scale(1.1);
         }
         
@@ -384,10 +483,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f8f9fa;
+            background: var(--choice-bg);
             padding: 15px;
             border-radius: 8px;
             margin-top: 15px;
+            transition: background-color 0.3s ease;
         }
         
         .likert-option {
@@ -406,7 +506,8 @@
         .likert-label {
             font-size: 12px;
             text-align: center;
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.8;
             font-weight: 500;
         }
         
@@ -423,12 +524,13 @@
         
         /* Situation scenarios */
         .scenario-box {
-            background: #f0f8ff;
-            border-left: 4px solid #066fd1;
+            background: var(--info-bg);
+            border-left: 4px solid var(--primary-color);
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 0 5px 5px 0;
             font-style: italic;
+            transition: background-color 0.3s ease;
         }
         
         .scenario-options {
@@ -440,7 +542,7 @@
             align-items: flex-start;
             gap: 10px;
             padding: 12px;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             margin-bottom: 8px;
             cursor: pointer;
@@ -448,8 +550,8 @@
         }
         
         .scenario-option:hover {
-            background: #f8f9fa;
-            border-color: #066fd1;
+            background: var(--option-bg);
+            border-color: var(--primary-color);
         }
         
         .scenario-option input {
@@ -470,21 +572,23 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: var(--text-color);
         }
         
         .input-field {
             width: 100%;
             padding: 12px;
-            border: 2px solid #dee2e6;
+            border: 2px solid var(--border-color);
             border-radius: 6px;
             font-size: 16px;
-            transition: border-color 0.3s ease;
+            background: var(--input-bg);
+            color: var(--text-color);
+            transition: border-color 0.3s ease, background-color 0.3s ease;
         }
         
         .input-field:focus {
             outline: none;
-            border-color: #066fd1;
+            border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(6, 111, 209, 0.1);
         }
         
@@ -495,7 +599,7 @@
             gap: 15px;
             margin-top: 30px;
             padding-top: 20px;
-            border-top: 1px solid #dee2e6;
+            border-top: 1px solid var(--border-color);
         }
         
         .btn {
@@ -510,10 +614,10 @@
         }
         
         .btn-primary {
-            background: #066fd1;
+            background: var(--primary-color);
             color: white;
         }
-        
+
         .btn-primary:hover {
             background: #0556b3;
         }
@@ -546,11 +650,12 @@
         
         /* Signature canvas */
         .signature-container {
-            border: 2px dashed #dee2e6;
+            border: 2px dashed var(--border-color);
             border-radius: 8px;
             padding: 20px;
             text-align: center;
-            background: #fdfdfe;
+            background: var(--signature-bg);
+            transition: border-color 0.3s ease, background-color 0.3s ease;
         }
         
         .signature-canvas {
@@ -559,7 +664,7 @@
             cursor: crosshair;
             display: block;
             margin: 0 auto;
-            background: white;
+            background: var(--canvas-bg);
         }
         
         .signature-controls {
@@ -611,18 +716,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: var(--loading-bg);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 2000;
+            transition: background-color 0.3s ease;
         }
         
         .loading-spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #066fd1;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
             border-radius: 50%;
             animation: spin 1s linear infinite;
         }
@@ -804,20 +910,64 @@
         }
         
         /* Print styles */
+        /* Theme toggle button - Tabler style */
+        .theme-toggle {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 2001;
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.15s ease;
+            box-shadow: 0 1px 3px var(--shadow-color);
+            color: var(--text-color);
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(var(--tblr-primary-rgb), 0.25);
+        }
+
+        .theme-toggle svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 1.5;
+        }
+
         @media print {
             body {
                 background: white;
             }
-            
+
             .progress-container,
             .nav-buttons,
-            .autosave-indicator {
+            .autosave-indicator,
+            .theme-toggle {
                 display: none;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Theme toggle button - Tabler style -->
+    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="theme-toggle-icon">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+            <path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />
+        </svg>
+    </button>
     <!-- Progress bar -->
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
@@ -1171,8 +1321,10 @@
             loadSavedData();
             generateAllQuestions();
             updateProgress();
+            updateNavigationButtons();
             setupAutosave();
             initializeSignaturePad();
+            initializeTheme();
         });
         
         function initializeForm() {
@@ -1507,26 +1659,56 @@
         
         function nextSection() {
             // Validation will be added here
-            currentSection++;
-            updateProgress();
-            // Load next section content
-        }
-        
-        function previousSection() {
-            if (currentSection > 1) {
-                currentSection--;
+            if (currentSection < 5) {
+                // Hide current section
+                document.getElementById(`section${currentSection}`).style.display = 'none';
+
+                // Show next section
+                currentSection++;
+                document.getElementById(`section${currentSection}`).style.display = 'block';
+
                 updateProgress();
-                // Load previous section content
+                updateNavigationButtons();
             }
         }
-        
+
+        function previousSection() {
+            if (currentSection > 1) {
+                // Hide current section
+                document.getElementById(`section${currentSection}`).style.display = 'none';
+
+                // Show previous section
+                currentSection--;
+                document.getElementById(`section${currentSection}`).style.display = 'block';
+
+                updateProgress();
+                updateNavigationButtons();
+            }
+        }
+
         function updateProgress() {
             const progressBar = document.getElementById('progressBar');
-            const progress = (currentSection - 1) / 3 * 100; // 4 sections total
+            const progress = (currentSection - 1) / 4 * 100; // 5 sections total (0-100%)
             progressBar.style.width = progress + '%';
-            
-            // Update navigation buttons
-            document.getElementById('prevBtn').disabled = currentSection === 1;
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Previous button
+            prevBtn.disabled = currentSection === 1;
+
+            // Next and Submit buttons
+            if (currentSection === 5) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            } else {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+                nextBtn.disabled = false;
+            }
         }
         
         function setupAutosave() {
@@ -1574,9 +1756,206 @@
             }
         }
         
+        function updateKostickChoice(index, value) {
+            if (!formData.kostick) formData.kostick = {};
+            formData.kostick[index] = value;
+            saveData();
+        }
+
+        function selectScenarioOption(index, value) {
+            const radio = document.querySelector(`input[name="situation_${index}"][value="${value}"]`);
+            if (radio) {
+                radio.checked = true;
+                updateSituationChoice(index, value);
+            }
+        }
+
+        function updateSituationChoice(index, value) {
+            if (!formData.situations) formData.situations = {};
+            formData.situations[index] = value;
+            saveData();
+        }
+
+        function selectAptitudOption(index, value) {
+            const radio = document.querySelector(`input[name="aptitud_${index}"][value="${value}"]`);
+            if (radio) {
+                radio.checked = true;
+                updateAptitudChoice(index, value);
+            }
+        }
+
+        function updateAptitudChoice(index, value) {
+            if (!formData.aptitudes) formData.aptitudes = {};
+            formData.aptitudes[index] = value;
+            saveData();
+        }
+
+        function initializeSignaturePad() {
+            const canvas = document.getElementById('signatureCanvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            function startDrawing(e) {
+                isDrawing = true;
+                [lastX, lastY] = getMousePos(e);
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                const [currentX, currentY] = getMousePos(e);
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(currentX, currentY);
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+
+                [lastX, lastY] = [currentX, currentY];
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function getMousePos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                return [
+                    clientX - rect.left,
+                    clientY - rect.top
+                ];
+            }
+
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startDrawing(e);
+            });
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                draw(e);
+            });
+            canvas.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                stopDrawing();
+            });
+        }
+
+        function clearSignature() {
+            const canvas = document.getElementById('signatureCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Remove signature from form data
+            if (formData.signature) {
+                delete formData.signature;
+                saveData();
+            }
+        }
+
+        function undoSignature() {
+            // Simple implementation - just clear the canvas
+            clearSignature();
+        }
+
+        function submitForm() {
+            // Validate signature
+            const canvas = document.getElementById('signatureCanvas');
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const hasSignature = imageData.data.some(pixel => pixel !== 0);
+
+            const declaration = document.getElementById('acceptDeclaration').checked;
+
+            if (!declaration) {
+                alert('Por favor, acepte la declaración de veracidad.');
+                return;
+            }
+
+            if (!hasSignature) {
+                document.getElementById('signatureError').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('signatureError').style.display = 'none';
+            }
+
+            // Save signature
+            formData.signature = canvas.toDataURL();
+            formData.declaration = declaration;
+
+            // Show loading
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            // In real implementation, submit to Supabase
+            setTimeout(() => {
+                alert('Evaluación enviada correctamente. Gracias por su tiempo.');
+                localStorage.removeItem('evaluationFormData');
+                window.location.href = '/';
+            }, 2000);
+        }
+
         function restoreFormState() {
-            // Implementation will be added to restore form fields
+            // Show correct section
+            for (let i = 1; i <= 5; i++) {
+                document.getElementById(`section${i}`).style.display = i === currentSection ? 'block' : 'none';
+            }
+
+            // Restore form fields
+            if (formData.cleaver) {
+                Object.keys(formData.cleaver).forEach(questionIndex => {
+                    const data = formData.cleaver[questionIndex];
+                    if (data.mas) {
+                        const radio = document.querySelector(`input[name="cleaver_${questionIndex}_mas"][value="${data.mas}"]`);
+                        if (radio) radio.checked = true;
+                    }
+                    if (data.menos) {
+                        const radio = document.querySelector(`input[name="cleaver_${questionIndex}_menos"][value="${data.menos}"]`);
+                        if (radio) radio.checked = true;
+                    }
+                    updateCleaverVisualFeedback(parseInt(questionIndex));
+                });
+            }
+
+            if (formData.kostick) {
+                Object.keys(formData.kostick).forEach(index => {
+                    const radio = document.querySelector(`input[name="kostick_${index}"][value="${formData.kostick[index]}"]`);
+                    if (radio) radio.checked = true;
+                });
+            }
+
+            if (formData.situations) {
+                Object.keys(formData.situations).forEach(index => {
+                    const radio = document.querySelector(`input[name="situation_${index}"][value="${formData.situations[index]}"]`);
+                    if (radio) radio.checked = true;
+                });
+            }
+
+            if (formData.aptitudes) {
+                Object.keys(formData.aptitudes).forEach(index => {
+                    const input = document.querySelector(`input[name="aptitud_${index}"]`);
+                    if (input) input.value = formData.aptitudes[index];
+                });
+            }
+
+            if (formData.declaration) {
+                document.getElementById('acceptDeclaration').checked = true;
+            }
+
             updateProgress();
+            updateNavigationButtons();
         }
         
         function showAutosaveIndicator() {
@@ -1588,6 +1967,46 @@
             }, 2000);
         }
         
+        // Tabler-compatible theme management
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggleIcon();
+
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeToggleIcon();
+        }
+
+        function updateThemeToggleIcon() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const themeIcon = document.querySelector('.theme-toggle-icon');
+            const themeToggle = document.getElementById('themeToggle');
+
+            if (!themeIcon || !themeToggle) return;
+
+            // Clear existing paths
+            themeIcon.innerHTML = '<path stroke="none" d="M0 0h24v24H0z" fill="none"/>';
+
+            if (currentTheme === 'dark') {
+                // Sun icon for dark mode (show sun to switch to light)
+                themeIcon.innerHTML += '<path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />';
+                themeIcon.innerHTML += '<path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />';
+                themeToggle.title = 'Cambiar a modo claro';
+            } else {
+                // Moon icon for light mode (show moon to switch to dark)
+                themeIcon.innerHTML += '<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />';
+                themeToggle.title = 'Cambiar a modo oscuro';
+            }
+        }
+
         // Cleanup
         window.addEventListener('beforeunload', function() {
             saveData();

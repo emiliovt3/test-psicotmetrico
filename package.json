@@ -7,11 +7,18 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "python -m http.server 8000"
   },
-  "keywords": ["psicometrico", "evaluacion", "rrhh"],
+  "keywords": [
+    "psicometrico",
+    "evaluacion",
+    "rrhh"
+  ],
   "author": "Claude AI",
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0"
   }
 }

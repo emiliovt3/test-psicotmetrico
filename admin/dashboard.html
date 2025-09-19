@@ -28,6 +28,15 @@
       .status-pending { background-color: #fbbf24; }
       .status-completed { background-color: #10b981; }
       .status-expired { background-color: #ef4444; }
+
+      .rotating {
+        animation: rotate 1s linear infinite;
+      }
+
+      @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
     </style>
     <script>
       // Theme detection and initialization
@@ -40,11 +49,34 @@
   <body>
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/demo-theme.min.js"></script>
     <script>
+      // Update theme toggle icon based on current theme
+      function updateThemeToggleIcon() {
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        const themeIcon = document.querySelector('.theme-toggle-icon');
+
+        if (!themeIcon) return;
+
+        // Clear existing paths
+        themeIcon.innerHTML = '<path stroke="none" d="M0 0h24v24H0z" fill="none"/>';
+
+        if (currentTheme === 'dark') {
+          // Moon icon for dark mode
+          themeIcon.innerHTML += '<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />';
+        } else {
+          // Sun icon for light mode
+          themeIcon.innerHTML += '<path d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />';
+          themeIcon.innerHTML += '<path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" />';
+        }
+      }
+
       // Theme switcher
       document.addEventListener('DOMContentLoaded', function() {
         const currentTheme = localStorage.getItem('theme') || 'light';
         document.body.setAttribute('data-bs-theme', currentTheme);
-        
+
+        // Update theme toggle icon on page load
+        updateThemeToggleIcon();
+
         // Update theme dropdown
         document.querySelectorAll('[data-bs-theme-value]').forEach(item => {
           item.addEventListener('click', function(e) {
@@ -53,6 +85,8 @@
             localStorage.setItem('theme', newTheme);
             document.documentElement.setAttribute('data-bs-theme', newTheme);
             document.body.setAttribute('data-bs-theme', newTheme);
+            // Update the icon after theme change
+            updateThemeToggleIcon();
           });
         });
       });
@@ -70,18 +104,6 @@
             </a>
           </h1>
           <div class="navbar-nav flex-row order-md-last">
-            <div class="nav-item d-none d-md-flex me-3">
-              <div class="btn-list">
-                <a href="#" class="btn btn-primary" id="generateLinkBtn">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
-                    <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
-                  </svg>
-                  Generar Link
-                </a>
-              </div>
-            </div>
             <!-- Dark/Light Mode Toggle -->
             <div class="nav-item dropdown d-none d-md-flex me-3">
               <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Toggle theme">
@@ -134,7 +156,7 @@
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <a href="#" class="dropdown-item">Configuración</a>
+                <a href="./configuracion.html" class="dropdown-item">Configuración</a>
                 <div class="dropdown-divider"></div>
                 <a href="login.html" class="dropdown-item">Cerrar sesión</a>
               </div>
@@ -176,34 +198,29 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#" >
+                  <a class="nav-link" href="./reportes.html">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                        <path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" />
-                        <line x1="3" y1="6" x2="3" y2="19" />
-                        <line x1="12" y1="6" x2="12" y2="19" />
-                        <line x1="21" y1="6" x2="21" y2="19" />
+                        <path d="M3 12m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v6a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M9 8m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v10a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M15 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v14a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" />
+                        <path d="M4 20l14 0" />
                       </svg>
                     </span>
                     <span class="nav-link-title">Reportes</span>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link" href="#" >
+                  <a class="nav-link" href="./configuracion.html">
                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <path d="M14 3v4a1 1 0 0 0 1 1h4" />
-                        <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
-                        <line x1="9" y1="9" x2="10" y2="9" />
-                        <line x1="9" y1="13" x2="15" y2="13" />
-                        <line x1="9" y1="17" x2="15" y2="17" />
+                        <path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z"/>
+                        <path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0"/>
                       </svg>
                     </span>
                     <span class="nav-link-title">Configuración</span>
-                    <span class="badge bg-yellow-lt ms-2">Pronto</span>
                   </a>
                 </li>
               </ul>
@@ -465,44 +482,46 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="row mb-3">
-              <div class="col-lg-6">
-                <label class="form-label">Nombre completo</label>
-                <input type="text" class="form-control" placeholder="Ingrese nombre completo">
+            <form>
+              <div class="row mb-3">
+                <div class="col-lg-6">
+                  <label class="form-label">Nombre completo</label>
+                  <input type="text" class="form-control" placeholder="Ingrese nombre completo" required>
+                </div>
+                <div class="col-lg-6">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-control" placeholder="correo@ejemplo.com" required>
+                </div>
+                </div>
+              <div class="row mb-3">
+                <div class="col-lg-6">
+                  <label class="form-label">Teléfono</label>
+                  <input type="tel" class="form-control" placeholder="+52 123 456 7890">
+                </div>
+                <div class="col-lg-6">
+                  <label class="form-label">Puesto</label>
+                  <select class="form-select" required>
+                    <option value="">Seleccione un puesto</option>
+                    <option value="soldador">Soldador</option>
+                    <option value="electricista">Electricista</option>
+                    <option value="instalador">Instalador</option>
+                    <option value="ayudante">Ayudante General</option>
+                  </select>
+                </div>
               </div>
-              <div class="col-lg-6">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" placeholder="correo@ejemplo.com">
+              <div class="row mb-3">
+                <div class="col-12">
+                  <label class="form-label">Notas adicionales</label>
+                  <textarea class="form-control" rows="3" placeholder="Información adicional del candidato..."></textarea>
+                </div>
               </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-lg-6">
-                <label class="form-label">Teléfono</label>
-                <input type="tel" class="form-control" placeholder="+52 123 456 7890">
-              </div>
-              <div class="col-lg-6">
-                <label class="form-label">Puesto</label>
-                <select class="form-select">
-                  <option value="">Seleccione un puesto</option>
-                  <option value="soldador">Soldador</option>
-                  <option value="electricista">Electricista</option>
-                  <option value="instalador">Instalador</option>
-                  <option value="ayudante">Ayudante General</option>
-                </select>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-12">
-                <label class="form-label">Notas adicionales</label>
-                <textarea class="form-control" rows="3" placeholder="Información adicional del candidato..."></textarea>
-              </div>
-            </div>
+            </form>
           </div>
           <div class="modal-footer">
             <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
               Cancelar
             </a>
-            <a href="#" class="btn btn-primary ms-auto">
+            <a href="#" class="btn btn-primary ms-auto" onclick="crearCandidato()">
               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                 <line x1="12" y1="5" x2="12" y2="19" />
@@ -518,28 +537,116 @@
     <script src="https://cdn.jsdelivr.net/npm/apexcharts" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js" defer></script>
     <script>
-      // Función para cargar datos reales del dashboard
+      // Función para cargar datos del dashboard (desarrollo y producción)
       async function loadRealDashboardData() {
         try {
-          console.log('🔄 Cargando datos reales del dashboard...');
-          
-          // Cargar estadísticas desde la API
-          const response = await fetch('/api/dashboard-stats');
-          
-          if (!response.ok) {
-            throw new Error(`Error ${response.status}: ${response.statusText}`);
+          // Detectar si estamos en desarrollo
+          const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+          let data;
+
+          if (isDevelopment) {
+            console.log('🔄 [DEV] Cargando datos del dashboard desde localStorage...');
+            data = loadDevelopmentDashboardData();
+          } else {
+            console.log('🔄 [PROD] Cargando datos del dashboard desde API...');
+            const response = await fetch('/api/dashboard-stats');
+
+            if (!response.ok) {
+              throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            data = await response.json();
           }
-          
-          const data = await response.json();
-          
+
           // Actualizar estadísticas en el DOM
           updateDashboardStats(data);
-          
+
           console.log('✅ Datos del dashboard cargados exitosamente');
-          
+
         } catch (error) {
           console.error('❌ Error cargando datos del dashboard:', error);
           showEmptyDashboard();
+        }
+      }
+
+      // Función para cargar datos en desarrollo desde localStorage
+      function loadDevelopmentDashboardData() {
+        try {
+          const candidatosString = localStorage.getItem('candidatos_desarrollo');
+          const candidatos = candidatosString ? JSON.parse(candidatosString) : [];
+
+          // Filtrar candidatos expirados
+          const ahora = new Date();
+          const candidatosValidos = candidatos.filter(candidato => {
+            const fechaExpiracion = new Date(candidato.fecha_expiracion);
+            return fechaExpiracion > ahora;
+          });
+
+          // Calcular estadísticas básicas
+          const total = candidatosValidos.length;
+          const completados = candidatosValidos.filter(c => c.estado === 'completado').length;
+          const pendientes = candidatosValidos.filter(c => c.estado === 'pendiente').length;
+          const enProgreso = candidatosValidos.filter(c => c.estado === 'en_progreso').length;
+
+          // Calcular estadísticas por tiempo
+          const hoy = new Date();
+          hoy.setHours(0, 0, 0, 0);
+          const haceUnaSemana = new Date(hoy.getTime() - 7 * 24 * 60 * 60 * 1000);
+          const haceUnMes = new Date(hoy.getFullYear(), hoy.getMonth() - 1, hoy.getDate());
+
+          const completadosHoy = candidatosValidos.filter(c => {
+            const fecha = new Date(c.fecha_creacion);
+            return c.estado === 'completado' && fecha >= hoy;
+          }).length;
+
+          const completadosSemana = candidatosValidos.filter(c => {
+            const fecha = new Date(c.fecha_creacion);
+            return c.estado === 'completado' && fecha >= haceUnaSemana;
+          }).length;
+
+          const completadosMes = candidatosValidos.filter(c => {
+            const fecha = new Date(c.fecha_creacion);
+            return c.estado === 'completado' && fecha >= haceUnMes;
+          }).length;
+
+          // Simular tasa de aprobación
+          const tasaAprobacion = total > 0 ? Math.round((completados / total) * 100) : 0;
+
+          return {
+            total_evaluaciones: total,
+            completadas_hoy: completadosHoy,
+            completadas_semana: completadosSemana,
+            completadas_mes: completadosMes,
+            pendientes: pendientes,
+            en_progreso: enProgreso,
+            tasa_aprobacion: tasaAprobacion,
+            evaluaciones_recientes: candidatosValidos.slice(0, 10), // Últimos 10
+            distribucion_estados: {
+              completado: completados,
+              en_progreso: enProgreso,
+              pendiente: pendientes
+            },
+            development: true
+          };
+        } catch (error) {
+          console.error('Error procesando datos de desarrollo:', error);
+          return {
+            total_evaluaciones: 0,
+            completadas_hoy: 0,
+            completadas_semana: 0,
+            completadas_mes: 0,
+            pendientes: 0,
+            en_progreso: 0,
+            tasa_aprobacion: 0,
+            evaluaciones_recientes: [],
+            distribucion_estados: {
+              completado: 0,
+              en_progreso: 0,
+              pendiente: 0
+            },
+            development: true
+          };
         }
       }
       
@@ -560,49 +667,73 @@
       
       // Mostrar dashboard vacío cuando no hay datos
       function showEmptyDashboard() {
-        const mainContent = document.querySelector('.page-body');
-        if (mainContent) {
-          const emptyState = `
-            <div class="empty d-flex flex-column justify-content-center align-items-center" style="min-height: 400px;">
-              <div class="empty-img">
-                <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="128" height="128" rx="64" fill="#f8f9fa"/>
-                  <path d="M64 32c17.673 0 32 14.327 32 32s-14.327 32-32 32-32-14.327-32-32 14.327-32 32-32z" fill="#dee2e6"/>
-                  <path d="M64 48v16l8-8-8-8z" fill="#6c757d"/>
-                </svg>
-              </div>
-              <p class="empty-title">Sin datos disponibles</p>
-              <p class="empty-subtitle text-muted">
-                No hay evaluaciones completadas aún. Cuando los candidatos completen el test, 
-                aparecerán aquí las estadísticas.
-              </p>
-              <div class="empty-action">
-                <a href="#" onclick="window.location.reload()" class="btn btn-primary">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
-                    <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
+        console.log('📊 Mostrando dashboard sin datos');
+
+        // Limpiar datos de estadísticas pero mantener estructura
+        const statsElements = {
+          'total': '—',
+          'completados': '—',
+          'tasa-completitud': '—',
+          'tasa-aprobacion': '—',
+          'promedio-puntaje': '—',
+          'crecimiento': '—',
+          'pendientes': '—',
+          'badge-completitud': '—',
+          'badge-aprobacion': '—',
+          'contratar': 'Contratar: —',
+          'revisar': 'Revisar: —',
+          'rechazar': 'Rechazar: —',
+          'tendencia-promedio': 'Sin datos suficientes para calcular tendencia'
+        };
+
+        // Actualizar elementos de estadísticas
+        Object.entries(statsElements).forEach(([key, value]) => {
+          const element = document.querySelector(`[data-stat="${key}"]`);
+          if (element) {
+            element.textContent = value;
+          }
+        });
+
+        // Resetear barras de progreso
+        const progressBars = document.querySelectorAll('[data-stat^="progress-"]');
+        progressBars.forEach(bar => {
+          bar.style.width = '0%';
+        });
+
+        // Mostrar mensaje discreto en lugar de gráfico principal
+        const chartContainer = document.getElementById('chart-evaluation-trend');
+        if (chartContainer) {
+          chartContainer.innerHTML = `
+            <div class="d-flex align-items-center justify-content-center" style="height: 240px;">
+              <div class="text-center">
+                <div class="text-muted mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M3 3v18h18"/>
+                    <path d="M7 12l3-3 2 2 5-5"/>
                   </svg>
-                  Actualizar
-                </a>
+                </div>
+                <div class="text-muted small">Sin datos para mostrar gráfico</div>
               </div>
             </div>
           `;
-          
-          // Reemplazar contenido con estado vacío
-          const container = document.querySelector('.container-xl');
-          if (container) {
-            container.innerHTML = `
-              <div class="page-header d-print-none">
-                <div class="row g-2 align-items-center">
-                  <div class="col">
-                    <h2 class="page-title">Dashboard</h2>
-                  </div>
+        }
+
+        // Mostrar mensaje discreto en lugar de gráfico de distribución
+        const chartDistribution = document.getElementById('chart-position-distribution');
+        if (chartDistribution) {
+          chartDistribution.innerHTML = `
+            <div class="d-flex align-items-center justify-content-center" style="height: 240px;">
+              <div class="text-center">
+                <div class="text-muted mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>
+                    <path d="M22 12A10 10 0 0 0 12 2v10z"/>
+                  </svg>
                 </div>
+                <div class="text-muted small">Sin datos para distribución</div>
               </div>
-              ${emptyState}
-            `;
-          }
+            </div>
+          `;
         }
       }
       
@@ -689,10 +820,10 @@
           },
           series: [{
             name: "Evaluaciones",
-            data: [12, 18, 25, 19, 32, 28, 44, 38, 52, 45, 58, 62]
+            data: []
           },{
             name: "Aprobados",
-            data: [8, 14, 18, 13, 24, 19, 32, 28, 38, 32, 42, 45]
+            data: []
           }],
           tooltip: {
             theme: 'dark'
@@ -756,7 +887,7 @@
           fill: {
             opacity: 1,
           },
-          series: [45, 38, 28, 45],
+          series: [],
           labels: ["Soldador", "Electricista", "Instalador", "Ayudante"],
           tooltip: {
             theme: 'dark'
@@ -781,6 +912,456 @@
           },
         })).render();
       });
+
+      // Función para guardar candidato en desarrollo
+      function guardarCandidatoDesarrollo(candidato) {
+        try {
+          const candidatosString = localStorage.getItem('candidatos_desarrollo');
+          const candidatos = candidatosString ? JSON.parse(candidatosString) : [];
+          candidatos.push(candidato);
+          localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatos));
+          console.log('✅ [DEV] Candidato guardado en localStorage:', candidato.nombre);
+        } catch (error) {
+          console.error('❌ [DEV] Error guardando candidato:', error);
+        }
+      }
+
+      // Función para crear candidato
+      async function crearCandidato() {
+        const form = document.querySelector('#modal-new-candidate form');
+        const nombre = form.querySelector('input[placeholder="Ingrese nombre completo"]').value;
+        const email = form.querySelector('input[placeholder="correo@ejemplo.com"]').value;
+        const telefono = form.querySelector('input[placeholder="+52 123 456 7890"]').value;
+        const puesto = form.querySelector('select').value;
+        const notas = form.querySelector('textarea').value;
+        const submitBtn = document.querySelector('#modal-new-candidate .btn-primary');
+
+        // Validar campos requeridos
+        if (!nombre || !email || !puesto) {
+          alert('Por favor, completa todos los campos requeridos (nombre, email y puesto)');
+          return;
+        }
+
+        // Mostrar loading
+        const originalText = submitBtn.textContent;
+        submitBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon rotating" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <path d="M12 3a9 9 0 1 0 9 9"/>
+          </svg>
+          Creando...
+        `;
+        submitBtn.disabled = true;
+
+        try {
+          // Determinar endpoint basado en si estamos en desarrollo
+          const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          const endpoint = isDevelopment ? '/api/create-candidate-dev' : '/api/create-candidate';
+
+          // Llamar a la API para crear candidato
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              nombre: nombre,
+              email: email,
+              telefono: telefono,
+              puesto: puesto,
+              notas: notas,
+              expiracion: '48' // Valor por defecto
+            })
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.success) {
+            // En desarrollo: guardar candidato en localStorage
+            if (isDevelopment) {
+              guardarCandidatoDesarrollo(result.candidato);
+              // Recargar datos del dashboard inmediatamente
+              setTimeout(() => {
+                loadRealDashboardData();
+              }, 100);
+            }
+
+            // Mostrar modal con el link generado
+            mostrarModalExito(result.testUrl, result.candidato);
+
+            // Cerrar modal de formulario
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-new-candidate'));
+            modal.hide();
+
+            // Limpiar formulario
+            form.reset();
+
+          } else {
+            throw new Error(result.error || 'Error desconocido');
+          }
+
+        } catch (error) {
+          console.error('Error creating candidate:', error);
+          alert(`Error al crear el candidato: ${error.message}`);
+        } finally {
+          // Restaurar botón
+          submitBtn.innerHTML = originalText;
+          submitBtn.disabled = false;
+        }
+      }
+
+      // Función para mostrar modal de éxito con link generado
+      function mostrarModalExito(url, candidato) {
+        // Crear modal dinámicamente si no existe
+        let modal = document.getElementById('modal-candidato-creado');
+        if (!modal) {
+          const modalHtml = `
+            <div class="modal modal-blur fade" id="modal-candidato-creado" tabindex="-1" role="dialog" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header bg-success text-white">
+                    <div class="d-flex align-items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-lg me-2" width="32" height="32" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                        <path d="M9 12l2 2l4 -4" />
+                      </svg>
+                      <h5 class="modal-title mb-0">Candidato Creado Exitosamente</h5>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Candidate Summary Section -->
+                    <div class="row mb-4">
+                      <div class="col-md-6">
+                        <div class="card">
+                          <div class="card-header">
+                            <h3 class="card-title">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                              </svg>
+                              Información del Candidato
+                            </h3>
+                          </div>
+                          <div class="card-body">
+                            <div class="mb-2">
+                              <span class="text-muted">Nombre completo:</span>
+                              <div class="fw-bold" id="success-candidate-name"></div>
+                            </div>
+                            <div class="mb-2">
+                              <span class="text-muted">Email:</span>
+                              <div class="fw-bold" id="success-candidate-email"></div>
+                            </div>
+                            <div class="mb-2">
+                              <span class="text-muted">Puesto solicitado:</span>
+                              <div>
+                                <span class="badge bg-primary fs-6" id="success-candidate-position"></span>
+                              </div>
+                            </div>
+                            <div class="mb-0">
+                              <span class="text-muted">Fecha de registro:</span>
+                              <div class="fw-bold" id="success-candidate-date"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="card">
+                          <div class="card-header">
+                            <h3 class="card-title">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                                <rectangle x="9" y="3" width="6" height="4" rx="2" />
+                                <path d="M9 14l2 2l4 -4" />
+                              </svg>
+                              Configuración de la Evaluación
+                            </h3>
+                          </div>
+                          <div class="card-body">
+                            <div class="row mb-2">
+                              <div class="col-6">
+                                <span class="text-muted">Secciones:</span>
+                                <div class="fw-bold">5 Secciones</div>
+                              </div>
+                              <div class="col-6">
+                                <span class="text-muted">Duración estimada:</span>
+                                <div class="fw-bold">45-60 min</div>
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <div class="col-6">
+                                <span class="text-muted">Vigencia del token:</span>
+                                <div class="fw-bold text-warning">48 horas</div>
+                              </div>
+                              <div class="col-6">
+                                <span class="text-muted">Idioma:</span>
+                                <div class="fw-bold">Español</div>
+                              </div>
+                            </div>
+                            <div class="mb-0">
+                              <span class="text-muted">Tipo de evaluación:</span>
+                              <div class="fw-bold">Evaluación Psicométrica Completa</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Test Link Section -->
+                    <div class="card mb-4">
+                      <div class="card-header">
+                        <h3 class="card-title">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+                            <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+                          </svg>
+                          Link de Evaluación Personalizado
+                        </h3>
+                      </div>
+                      <div class="card-body">
+                        <div class="input-group input-group-lg mb-3">
+                          <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                              <path d="M19.5 7a9 9 0 0 0 -7.5 -4a8.991 8.991 0 0 0 -7.484 4" />
+                              <path d="M11.5 3a16.989 16.989 0 0 0 -1.826 4" />
+                              <path d="M12.5 3a16.989 16.989 0 0 1 1.828 4" />
+                              <path d="M19.5 17a9 9 0 0 1 -7.5 4a8.991 8.991 0 0 1 -7.484 -4" />
+                              <path d="M11.5 21a16.989 16.989 0 0 1 -1.826 -4" />
+                              <path d="M12.5 21a16.989 16.989 0 0 0 1.828 -4" />
+                              <path d="M2 10l1 4l1.5 -4l1.5 4l1 -4" />
+                              <path d="M17 10l1 4l1.5 -4l1.5 4l1 -4" />
+                              <path d="M9.5 10l1 4l1.5 -4l1.5 4l1 -4" />
+                            </svg>
+                          </span>
+                          <input type="text" class="form-control" id="success-generated-link" readonly style="font-family: monospace; font-size: 0.9em;">
+                          <button class="btn btn-primary" type="button" onclick="copiarLinkExito()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copiar Link
+                          </button>
+                        </div>
+                        <div class="alert alert-info mb-0">
+                          <div class="d-flex">
+                            <div>
+                              <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <circle cx="12" cy="12" r="9" />
+                                <line x1="12" y1="8" x2="12.01" y2="8" />
+                                <polyline points="11,12 12,12 12,16 13,16" />
+                              </svg>
+                            </div>
+                            <div class="ms-2">
+                              <h4 class="alert-title">Instrucciones de distribución:</h4>
+                              <p class="mb-1">• Copia el link y envíalo al candidato por WhatsApp, email o SMS</p>
+                              <p class="mb-1">• El candidato puede completar la evaluación desde cualquier dispositivo</p>
+                              <p class="mb-0">• El link es único y expira automáticamente en 48 horas</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Test Sections Overview -->
+                    <div class="card mb-4">
+                      <div class="card-header">
+                        <h3 class="card-title">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <rect x="3" y="4" width="18" height="4" rx="2" />
+                            <rect x="3" y="10" width="18" height="4" rx="2" />
+                            <rect x="3" y="16" width="18" height="4" rx="2" />
+                          </svg>
+                          Contenido de la Evaluación (5 Secciones)
+                        </h3>
+                      </div>
+                      <div class="card-body">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="list-group list-group-flush">
+                              <div class="list-group-item d-flex align-items-center">
+                                <span class="badge bg-primary me-3">1</span>
+                                <div>
+                                  <strong>Perfil de Comportamiento (DISC)</strong>
+                                  <small class="text-muted d-block">10 preguntas • Personalidad laboral</small>
+                                </div>
+                              </div>
+                              <div class="list-group-item d-flex align-items-center">
+                                <span class="badge bg-primary me-3">2</span>
+                                <div>
+                                  <strong>Preferencias Laborales (KOSTICK)</strong>
+                                  <small class="text-muted d-block">15 preguntas • Motivación y valores</small>
+                                </div>
+                              </div>
+                              <div class="list-group-item d-flex align-items-center">
+                                <span class="badge bg-warning me-3">3</span>
+                                <div>
+                                  <strong>Situaciones Laborales</strong>
+                                  <small class="text-muted d-block">5 escenarios • Ética y honestidad</small>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="list-group list-group-flush">
+                              <div class="list-group-item d-flex align-items-center">
+                                <span class="badge bg-success me-3">4</span>
+                                <div>
+                                  <strong>Aptitudes y Razonamiento</strong>
+                                  <small class="text-muted d-block">12 preguntas • Competencias técnicas</small>
+                                </div>
+                              </div>
+                              <div class="list-group-item d-flex align-items-center">
+                                <span class="badge bg-secondary me-3">5</span>
+                                <div>
+                                  <strong>Declaración y Firma</strong>
+                                  <small class="text-muted d-block">Firma digital • Validación legal</small>
+                                </div>
+                              </div>
+                              <div class="list-group-item d-flex align-items-center border-0">
+                                <div class="text-muted">
+                                  <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <circle cx="12" cy="12" r="9" />
+                                    <polyline points="12,7 12,12 15,15" />
+                                  </svg>
+                                  <strong>Total: 42 elementos de evaluación</strong>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Next Steps -->
+                    <div class="alert alert-success">
+                      <div class="d-flex">
+                        <div>
+                          <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                            <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+                            <rectangle x="9" y="3" width="6" height="4" rx="2" />
+                            <path d="M9 14l2 2l4 -4" />
+                          </svg>
+                        </div>
+                        <div class="ms-2">
+                          <h4 class="alert-title">Próximos pasos:</h4>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <ol class="mb-0">
+                                <li>Copiar y enviar el link al candidato</li>
+                                <li>El candidato accede desde cualquier dispositivo</li>
+                                <li>Completa las 5 secciones (45-60 minutos)</li>
+                              </ol>
+                            </div>
+                            <div class="col-md-6">
+                              <ol class="mb-0" start="4">
+                                <li>Resultados aparecen automáticamente en el dashboard</li>
+                                <li>Recibes notificación de finalización</li>
+                                <li>Análisis completo listo para revisión</li>
+                              </ol>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M18 6l-12 12" />
+                        <path d="M6 6l12 12" />
+                      </svg>
+                      Cerrar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="copiarLinkExito()">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      Copiar Link
+                    </button>
+                    <button type="button" class="btn btn-success" onclick="copiarLinkYCerrar()">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                      </svg>
+                      Copiar y Crear Otro
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          document.body.insertAdjacentHTML('beforeend', modalHtml);
+          modal = document.getElementById('modal-candidato-creado');
+        }
+
+        // Llenar datos
+        document.getElementById('success-candidate-name').textContent = candidato.nombre;
+        document.getElementById('success-candidate-email').textContent = candidato.email;
+        document.getElementById('success-candidate-position').textContent = candidato.puesto;
+        document.getElementById('success-candidate-date').textContent = new Date().toLocaleDateString('es-ES', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        document.getElementById('success-generated-link').value = url;
+
+        // Mostrar modal
+        new bootstrap.Modal(modal).show();
+      }
+
+      // Función para copiar link al clipboard
+      async function copiarLinkExito() {
+        const linkInput = document.getElementById('success-generated-link');
+        const copyBtn = document.querySelector('[onclick="copiarLinkExito()"]');
+
+        try {
+          await navigator.clipboard.writeText(linkInput.value);
+
+          // Feedback visual
+          const originalHtml = copyBtn.innerHTML;
+          copyBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-success" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+              <polyline points="20,6 9,17 4,12"></polyline>
+            </svg>
+            ¡Copiado!
+          `;
+
+          setTimeout(() => {
+            copyBtn.innerHTML = originalHtml;
+          }, 2000);
+
+        } catch (err) {
+          // Fallback para navegadores que no soportan clipboard API
+          linkInput.select();
+          document.execCommand('copy');
+          alert('Link copiado al portapapeles');
+        }
+      }
+
+      // Función para copiar y cerrar modal
+      async function copiarLinkYCerrar() {
+        await copiarLinkExito();
+        setTimeout(() => {
+          const modal = bootstrap.Modal.getInstance(document.getElementById('modal-candidato-creado'));
+          modal.hide();
+          // Recargar para actualizar dashboard con el nuevo candidato
+          location.reload();
+        }, 1000);
+      }
+
     </script>
   </body>
 </html>

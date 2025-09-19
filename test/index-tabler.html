@@ -23,8 +23,78 @@
             --success-color: #2fb344;
             --danger-color: #dc3545;
             --warning-color: #ffc107;
+
+            /* Light theme colors */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --border-color: #dee2e6;
+            --border-light: #e6e6e6;
+            --card-bg: #ffffff;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --input-bg: #ffffff;
+            --button-bg: #f8f9fa;
+            --signature-bg: #f8f9fa;
+            --signature-border: #ccc;
+        }
+
+        /* Dark theme colors */
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #404040;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #999999;
+            --border-color: #404040;
+            --border-light: #555555;
+            --card-bg: #2d2d2d;
+            --card-shadow: rgba(0, 0, 0, 0.3);
+            --input-bg: #404040;
+            --button-bg: #404040;
+            --signature-bg: #404040;
+            --signature-border: #666666;
         }
         
+        /* Global theme styles */
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Theme toggle button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px var(--card-shadow);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--primary-color);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95);
+        }
+
         /* Auto-save indicator */
         .save-indicator {
             position: fixed;
@@ -37,7 +107,7 @@
             font-size: 14px;
             display: none;
             z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px var(--card-shadow);
             animation: slideIn 0.3s ease-out;
         }
         
@@ -93,31 +163,31 @@
             justify-content: center;
             font-weight: 600;
             font-size: 14px;
-            border: 2px solid #e6e6e6;
-            background: #f8f9fa;
-            color: #6c757d;
+            border: 2px solid var(--border-light);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
             transition: all 0.3s;
         }
-        
+
         .progress-step.active {
             background: var(--primary-color);
             border-color: var(--primary-color);
             color: white;
         }
-        
+
         .progress-step.completed {
             background: var(--success-color);
             border-color: var(--success-color);
             color: white;
         }
-        
+
         .progress-line {
             width: 60px;
             height: 2px;
-            background: #e6e6e6;
+            background: var(--border-light);
             transition: background 0.3s;
         }
-        
+
         .progress-line.completed {
             background: var(--success-color);
         }
@@ -125,28 +195,31 @@
         /* Question styles */
         .question-card {
             margin-bottom: 1.5rem;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border-color);
             border-radius: 0.5rem;
             overflow: hidden;
+            background: var(--card-bg);
+            transition: all 0.3s ease;
         }
-        
+
         .question-header {
-            background: #f8f9fa;
+            background: var(--bg-secondary);
             padding: 1rem;
-            border-bottom: 1px solid #dee2e6;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: between;
             align-items: center;
         }
-        
+
         .question-number {
             font-weight: 600;
             color: var(--primary-color);
             margin-right: 0.5rem;
         }
-        
+
         .question-body {
             padding: 1.5rem;
+            background: var(--card-bg);
         }
         
         /* CLEAVER specific styles */
@@ -160,9 +233,9 @@
         .word-card {
             text-align: center;
             padding: 1rem;
-            border: 2px solid #e6e6e6;
+            border: 2px solid var(--border-light);
             border-radius: 0.5rem;
-            background: #f8f9fa;
+            background: var(--bg-secondary);
             transition: all 0.3s;
         }
         
@@ -203,12 +276,12 @@
         
         .word-text {
             font-weight: 500;
-            color: #495057;
+            color: var(--text-primary);
         }
         
         /* Choice section */
         .choice-section {
-            background: #f8f9fa;
+            background: var(--bg-secondary);
             border-radius: 0.5rem;
             padding: 1.5rem;
             margin-top: 1.5rem;
@@ -270,10 +343,10 @@
         .choice-btn {
             width: 45px;
             height: 45px;
-            border: 2px solid #dee2e6;
+            border: 2px solid var(--border-color);
             border-radius: 0.375rem;
-            background: white;
-            color: #6c757d;
+            background: var(--input-bg);
+            color: var(--text-secondary);
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -303,7 +376,7 @@
         .choice-separator {
             width: 2px;
             height: 80px;
-            background: linear-gradient(to bottom, #dee2e6, #adb5bd, #dee2e6);
+            background: linear-gradient(to bottom, var(--border-color), var(--text-muted), var(--border-color));
             border-radius: 1px;
         }
         
@@ -315,7 +388,7 @@
             gap: 1rem;
             margin-top: 2rem;
             padding-top: 1.5rem;
-            border-top: 1px solid #dee2e6;
+            border-top: 1px solid var(--border-color);
         }
         
         /* Desktop styles - default */
@@ -335,7 +408,7 @@
             .choice-separator {
                 width: 3px;
                 height: 100px;
-                background: linear-gradient(to bottom, #dee2e6, #adb5bd, #dee2e6);
+                background: linear-gradient(to bottom, var(--border-color), var(--text-muted), var(--border-color));
             }
             
             .cleaver-words {
@@ -391,6 +464,15 @@
             .container {
                 padding: 1rem;
             }
+
+            /* Adjust theme toggle for mobile */
+            .theme-toggle {
+                top: 15px;
+                left: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
             
             .choice-grid {
                 display: flex;
@@ -435,8 +517,140 @@
         
         /* Card styling improvements */
         .card-lg {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 0.5rem 1rem var(--card-shadow);
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .card-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .card-body {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+
+        /* Alert styles for dark mode */
+        .alert {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .alert-info {
+            background: rgba(13, 202, 240, 0.1);
+            border-color: rgba(13, 202, 240, 0.2);
+            color: var(--text-primary);
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.1);
+            border-color: rgba(255, 193, 7, 0.2);
+            color: var(--text-primary);
+        }
+
+        .alert-light {
+            background: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+
+        /* Form controls dark mode */
+        .form-check-input {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .form-check-label {
+            color: var(--text-primary);
+        }
+
+        .form-selectgroup-label {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .form-selectgroup-input:checked + .form-selectgroup-label {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Signature pad dark mode */
+        #signaturePad {
+            background: var(--signature-bg) !important;
+            border: 2px dashed var(--signature-border) !important;
+            border-radius: 8px;
+        }
+
+        /* Text colors */
+        .text-secondary {
+            color: var(--text-secondary) !important;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+
+        .text-primary {
+            color: var(--text-primary) !important;
+        }
+
+        /* Badge improvements for dark mode */
+        .badge {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        /* Spinner improvements */
+        .spinner-border {
+            color: var(--primary-color);
+        }
+
+        /* Page screens dark mode support */
+        .page {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .page-center {
+            background: var(--bg-primary);
+        }
+
+        /* Icons and SVG elements */
+        .icon {
+            color: inherit;
+        }
+
+        /* Small text elements */
+        small {
+            color: var(--text-muted) !important;
+        }
+
+        /* Links */
+        a {
+            color: var(--primary-color);
+        }
+
+        a:hover {
+            color: var(--primary-color);
+            opacity: 0.8;
         }
         
         /* Hidden sections */
@@ -451,11 +665,16 @@
 </head>
 
 <body>
+    <!-- Theme toggle button -->
+    <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Cambiar tema">
+        <span id="themeIcon">☀️</span>
+    </div>
+
     <!-- Auto-save indicator -->
     <div class="save-indicator" id="saveIndicator">
         ✓ Guardado automáticamente
     </div>
-    
+
     <!-- Network status indicator -->
     <div class="save-indicator" id="networkIndicator" style="background: var(--warning-color); color: #000; display: none; right: 20px; top: 60px;">
         ⚠️ Sin conexión - Guardando localmente
@@ -687,18 +906,126 @@
                                 </svg>
                                 Anterior
                             </button>
-                            <button type="button" class="btn btn-success" onclick="submitForm()">
+                            <button type="button" class="btn btn-primary" onclick="nextSection()">
+                                Continuar
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                     <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
                                     <path d="M5 12l14 0"/>
                                     <path d="M13 18l6 -6"/>
                                     <path d="M13 6l6 6"/>
                                 </svg>
-                                Finalizar Evaluación
                             </button>
                         </div>
                     </div>
-                    
+
+                    <!-- Section 5: Declaración y Firma -->
+                    <div class="section" id="section5">
+                        <div class="text-center mb-4">
+                            <h3 class="h4 mb-1">Declaración y Firma Digital</h3>
+                            <p class="text-secondary">Confirmación final y firma de la evaluación</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h4 class="card-title mb-3">🛡️ Declaración de Veracidad</h4>
+
+                                        <div class="alert alert-info">
+                                            <div class="d-flex">
+                                                <div>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
+                                                        <circle cx="12" cy="12" r="9"/>
+                                                        <line x1="12" y1="8" x2="12" y2="12"/>
+                                                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    Al completar esta evaluación, usted declara bajo juramento que:
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="declaration-list mb-4">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="declaration1" required>
+                                                <label class="form-check-label" for="declaration1">
+                                                    <strong>📝 Veracidad:</strong> Todas las respuestas proporcionadas son verdaderas y reflejan fielmente mi experiencia, conocimientos y forma de actuar.
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check mt-3">
+                                                <input class="form-check-input" type="checkbox" id="declaration2" required>
+                                                <label class="form-check-label" for="declaration2">
+                                                    <strong>🤝 Integridad:</strong> He respondido de manera honesta sin consultar fuentes externas o recibir ayuda de terceros durante la evaluación.
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check mt-3">
+                                                <input class="form-check-input" type="checkbox" id="declaration3" required>
+                                                <label class="form-check-label" for="declaration3">
+                                                    <strong>📋 Consentimiento:</strong> Autorizo el uso de esta información para fines de evaluación laboral y entiendo que será tratada de manera confidencial.
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check mt-3">
+                                                <input class="form-check-input" type="checkbox" id="declaration4" required>
+                                                <label class="form-check-label" for="declaration4">
+                                                    <strong>⚖️ Responsabilidad:</strong> Comprendo que proporcionar información falsa puede resultar en la descalificación del proceso de selección.
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="signature-section">
+                                            <h5 class="mb-3">✍️ Firma Digital</h5>
+                                            <div class="signature-pad-container">
+                                                <canvas id="signaturePad" width="300" height="150" style="border: 2px dashed #ccc; border-radius: 8px; background: #f8f9fa;"></canvas>
+                                            </div>
+
+                                            <div class="signature-info mt-3">
+                                                <p class="text-muted small mb-2">
+                                                    <strong>Candidato:</strong> <span id="candidateNameSignature">--</span><br>
+                                                    <strong>Fecha:</strong> <span id="currentDate">--</span><br>
+                                                    <strong>Hora:</strong> <span id="currentTime">--</span>
+                                                </p>
+                                            </div>
+
+                                            <div class="signature-actions">
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="clearSignature()">
+                                                    🗑️ Limpiar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-footer">
+                            <button type="button" class="btn btn-secondary" onclick="prevSection()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
+                                    <path d="M5 12l14 0"/>
+                                    <path d="M5 18l6 -6"/>
+                                    <path d="M5 6l6 6"/>
+                                </svg>
+                                Anterior
+                            </button>
+                            <button type="button" class="btn btn-success btn-lg" onclick="submitForm()" id="finalSubmitBtn" disabled>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="m0 0h24v24H0z" fill="none"/>
+                                    <path d="M5 12l14 0"/>
+                                    <path d="M13 18l6 -6"/>
+                                    <path d="M13 6l6 6"/>
+                                </svg>
+                                🏁 Finalizar Evaluación
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
             
@@ -712,12 +1039,83 @@
     
     <!-- JavaScript -->
     <script>
+        // Theme Management System
+        function initializeTheme() {
+            // Check for saved theme preference or default to light mode
+            const savedTheme = localStorage.getItem('psychometric-test-theme') || 'light';
+            setTheme(savedTheme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        }
+
+        function setTheme(theme) {
+            // Apply theme to document
+            document.documentElement.setAttribute('data-theme', theme);
+
+            // Update theme toggle icon
+            updateThemeToggleIcon(theme);
+
+            // Save theme preference
+            localStorage.setItem('psychometric-test-theme', theme);
+
+            // Update signature pad background if it exists
+            updateSignaturePadTheme(theme);
+        }
+
+        function updateThemeToggleIcon(theme) {
+            const themeIcon = document.getElementById('themeIcon');
+            if (themeIcon) {
+                if (theme === 'dark') {
+                    themeIcon.textContent = '🌙';
+                    themeIcon.setAttribute('title', 'Cambiar a modo claro');
+                } else {
+                    themeIcon.textContent = '☀️';
+                    themeIcon.setAttribute('title', 'Cambiar a modo oscuro');
+                }
+            }
+        }
+
+        function updateSignaturePadTheme(theme) {
+            const signaturePad = document.getElementById('signaturePad');
+            if (signaturePad) {
+                const ctx = signaturePad.getContext('2d');
+                if (theme === 'dark') {
+                    ctx.strokeStyle = '#ffffff';
+                } else {
+                    ctx.strokeStyle = '#000000';
+                }
+
+                // Update existing signature if present
+                if (testData.signature) {
+                    // Redraw signature with new stroke color
+                    redrawSignatureWithTheme(ctx, theme);
+                }
+            }
+        }
+
+        function redrawSignatureWithTheme(ctx, theme) {
+            // This function would redraw the signature with the correct color
+            // For now, we'll just ensure new strokes use the correct color
+            // The signature data would need to be reprocessed to change existing strokes
+        }
+
+        // Theme persistence across navigation
+        function persistThemeAcrossSections() {
+            // This ensures theme persists when navigating between sections
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            localStorage.setItem('psychometric-test-theme', currentTheme);
+        }
+
         // API Configuration
         const API_BASE_URL = '/.netlify/functions';
         
         // Current section tracking
         let currentSection = 1;
-        let totalSections = 4;
+        let totalSections = 5;
         let startTime = Date.now();
         
         // Token and candidate info
@@ -729,8 +1127,14 @@
             cleaver: {},
             kostick: {},
             situations: {},
-            aptitudes: {}
+            aptitudes: {},
+            declaration: {},
+            signature: null
         };
+
+        // Signature pad variables
+        let signaturePad = null;
+        let isDrawing = false;
         
         // API utility functions
         async function apiCall(endpoint, method = 'GET', body = null) {
@@ -905,17 +1309,20 @@
         // Situational questions
         const SITUATIONS = [
             {
-                scenario: "🚨 Su supervisor le pide que termine un trabajo urgente, pero nota que faltan materiales importantes. El supervisor no está disponible para consultar.",
+                id: 1,
+                scenario: "🚨 SITUACIÓN CRÍTICA: Un cliente le ofrece pagar en efectivo 'por debajo de la mesa' para evitar facturar el trabajo y así 'ahorrar impuestos'. ¿Qué haría usted?",
                 options: {
-                    A: "Busco materiales alternativos y completo el trabajo lo mejor posible",
-                    B: "Espero a que regrese el supervisor para consultarle",
-                    C: "Busco a otro supervisor para que me autorice los materiales",
-                    D: "Improviso con lo que tengo aunque el resultado no sea el mejor"
+                    A: "Acepto el trabajo sin factura para conseguir el cliente", // AUTOMATIC DISQUALIFIER - Tax evasion
+                    B: "Le explico que debemos facturar todos los trabajos por política de la empresa",
+                    C: "Consulto con mi supervisor sobre esta situación",
+                    D: "Rechazo educadamente el trabajo si no acepta facturación"
                 },
-                critical: true
+                critical: true,
+                redFlag: 'A' // Option A = immediate rejection
             },
             {
-                scenario: "Un compañero de trabajo constantemente llega tarde y usted tiene que cubrir su trabajo extra.",
+                id: 2,
+                scenario: "Un compañero de trabajo constantemente llega tarde y usted tiene que cubrir su trabajo extra. Esta situación se vuelve habitual y afecta su rendimiento.",
                 options: {
                     A: "Hablo directamente con el compañero sobre el problema",
                     B: "Reporto la situación a mi supervisor inmediatamente",
@@ -925,37 +1332,187 @@
                 critical: false
             },
             {
-                scenario: "Encuentra un error importante en el trabajo de un compañero que ya fue entregado al cliente.",
+                id: 3,
+                scenario: "Encuentra un error importante en la instalación eléctrica de un letrero que ya fue entregado al cliente. El error podría causar problemas de seguridad.",
                 options: {
                     A: "Informo inmediatamente a mi supervisor sobre el error",
-                    B: "Hablo primero con el compañero para que corrija su error",
-                    C: "Corrijo discretamente el error sin mencionarlo",
-                    D: "Documento el error pero no tomo acción inmediata"
+                    B: "Hablo primero con el compañero que hizo la instalación",
+                    C: "Voy inmediatamente a corregir el error sin avisar",
+                    D: "Documento el error y espero a ver si causa problemas"
                 },
                 critical: false
             },
             {
-                scenario: "🚨 Le ofrecen un soborno para aprobar un trabajo que no cumple con los estándares de calidad.",
+                id: 4,
+                scenario: "🚨 SITUACIÓN CRÍTICA: Al terminar un trabajo de instalación, sobran algunos materiales valiosos (cables, conectores, etc.). ¿Qué hace con estos materiales?",
                 options: {
-                    A: "Rechazo el soborno y reporto el incidente inmediatamente",
-                    B: "Rechazo el soborno pero no reporto para evitar problemas",
-                    C: "Acepto el dinero pero me aseguro de que el trabajo se corrija",
-                    D: "Acepto el dinero y apruebo el trabajo para evitar conflictos"
+                    A: "Me los llevo a casa porque sobraron del trabajo", // AUTOMATIC DISQUALIFIER - Theft
+                    B: "Los devuelvo al almacén de la empresa inmediatamente",
+                    C: "Los dejo en el lugar de trabajo para el próximo proyecto",
+                    D: "Pregunto a mi supervisor qué hacer con los materiales"
                 },
-                critical: true
+                critical: true,
+                redFlag: 'A' // Option A = immediate rejection
+            },
+            {
+                id: 5,
+                scenario: "Un cliente está muy molesto porque el trabajo se retrasó dos días debido a problemas con los permisos municipales. Le exige una compensación económica.",
+                options: {
+                    A: "Le explico educadamente que el retraso no fue culpa nuestra",
+                    B: "Le ofrezco una pequeña compensación de mi propio bolsillo",
+                    C: "Inmediatamente consulto con mi supervisor sobre la situación",
+                    D: "Le aseguro que terminaremos el trabajo con la mejor calidad posible"
+                },
+                critical: false
             }
         ];
         
-        // Technical aptitudes
+        // Technical aptitudes and reasoning questions
         const APTITUDES = [
-            "Soldadura con electrodo",
-            "Instalaciones eléctricas básicas",
-            "Manejo de herramientas eléctricas",
-            "Lectura de planos técnicos",
-            "Trabajo en alturas",
-            "Instalación de letreros luminosos",
-            "Mantenimiento preventivo",
-            "Trabajo con tubos de neón/LED"
+            {
+                id: 1,
+                type: "math",
+                question: "Si necesita 3.5 metros de cable para cada letrero y debe instalar 8 letreros, ¿cuántos metros de cable necesita en total?",
+                options: {
+                    A: "24 metros",
+                    B: "28 metros", // Correct answer
+                    C: "32 metros",
+                    D: "26 metros"
+                },
+                correct: "B"
+            },
+            {
+                id: 2,
+                type: "safety",
+                question: "¿Cuál es la regla de oro para trabajar con electricidad?",
+                options: {
+                    A: "Trabajar siempre con herramientas aisladas",
+                    B: "Verificar que no hay corriente antes de trabajar", // Correct answer
+                    C: "Usar guantes de cuero siempre",
+                    D: "Trabajar solo en días secos"
+                },
+                correct: "B"
+            },
+            {
+                id: 3,
+                type: "math",
+                question: "Un letrero luminoso consume 150 watts por hora. Si funciona 12 horas diarias, ¿cuántos kilowatts consume por día?",
+                options: {
+                    A: "1.8 kW", // Correct answer
+                    B: "1.5 kW",
+                    C: "2.1 kW",
+                    D: "1.2 kW"
+                },
+                correct: "A"
+            },
+            {
+                id: 4,
+                type: "technical",
+                question: "¿Qué herramienta es ESENCIAL para verificar la seguridad en instalaciones eléctricas?",
+                options: {
+                    A: "Martillo aislado",
+                    B: "Multímetro/probador de tensión", // Correct answer
+                    C: "Destornillador magnético",
+                    D: "Alicate universal"
+                },
+                correct: "B"
+            },
+            {
+                id: 5,
+                type: "safety",
+                question: "Al trabajar en alturas superiores a 2 metros, ¿qué equipo es OBLIGATORIO usar?",
+                options: {
+                    A: "Casco y botas",
+                    B: "Arnés de seguridad", // Correct answer
+                    C: "Guantes antideslizantes",
+                    D: "Gafas de protección"
+                },
+                correct: "B"
+            },
+            {
+                id: 6,
+                type: "math",
+                question: "Si un rollo de soldadura pesa 2.5 kg y necesita 4 rollos completos para un proyecto, ¿cuál es el peso total del material?",
+                options: {
+                    A: "8 kg",
+                    B: "9 kg",
+                    C: "10 kg", // Correct answer
+                    D: "12 kg"
+                },
+                correct: "C"
+            },
+            {
+                id: 7,
+                type: "technical",
+                question: "¿Cuál es la diferencia principal entre soldadura MIG y soldadura con electrodo?",
+                options: {
+                    A: "El tipo de metal que se puede soldar",
+                    B: "La temperatura de trabajo",
+                    C: "El método de protección del arco", // Correct answer
+                    D: "El grosor del material"
+                },
+                correct: "C"
+            },
+            {
+                id: 8,
+                type: "safety",
+                question: "Antes de instalar un letrero eléctrico, ¿qué verificación es MÁS importante?",
+                options: {
+                    A: "Que el diseño sea atractivo",
+                    B: "Que la estructura soporte el peso", // Correct answer
+                    C: "Que tenga garantía del fabricante",
+                    D: "Que sea visible desde lejos"
+                },
+                correct: "B"
+            },
+            {
+                id: 9,
+                type: "math",
+                question: "Una escalera de 5 metros se apoya contra una pared a 4 metros de altura. ¿A qué distancia de la pared está la base de la escalera?",
+                options: {
+                    A: "2 metros",
+                    B: "3 metros", // Correct answer (Pythagorean theorem: 5² = 4² + 3²)
+                    C: "3.5 metros",
+                    D: "1.5 metros"
+                },
+                correct: "B"
+            },
+            {
+                id: 10,
+                type: "technical",
+                question: "¿Qué tipo de tubo se recomienda para proteger cables eléctricos en exteriores?",
+                options: {
+                    A: "Tubo de PVC", // Correct answer
+                    B: "Tubo de cartón",
+                    C: "Tubo de cobre",
+                    D: "Sin protección"
+                },
+                correct: "A"
+            },
+            {
+                id: 11,
+                type: "safety",
+                question: "¿Qué debe hacer PRIMERO si ve chispas en una instalación eléctrica?",
+                options: {
+                    A: "Rociar agua para apagar las chispas",
+                    B: "Desconectar inmediatamente la energía", // Correct answer
+                    C: "Llamar a los bomberos",
+                    D: "Continuar trabajando con cuidado"
+                },
+                correct: "B"
+            },
+            {
+                id: 12,
+                type: "math",
+                question: "Si debe instalar 6 letreros y cada uno toma 3.5 horas de trabajo, ¿cuántas horas necesita en total?",
+                options: {
+                    A: "18 horas",
+                    B: "20 horas",
+                    C: "21 horas", // Correct answer
+                    D: "24 horas"
+                },
+                correct: "C"
+            }
         ];
         
         // Initialize form
@@ -972,12 +1529,16 @@
             generateKostickQuestions();
             generateSituationsQuestions();
             generateAptitudesQuestions();
-            
+
+            // Initialize signature pad and declaration section
+            initializeSignaturePad();
+            setupDeclarationSection();
+
             // Restore UI state if we have saved data
             if (testData && Object.keys(testData).length > 0) {
                 restoreUIState();
             }
-            
+
             // Start auto-save
             startAutoSave();
             
@@ -1270,69 +1831,88 @@
         // Generate aptitudes questions
         function generateAptitudesQuestions() {
             const container = document.getElementById('aptitudesQuestions');
-            
-            APTITUDES.forEach((aptitude, index) => {
+
+            APTITUDES.forEach((question, index) => {
                 const questionCard = document.createElement('div');
                 questionCard.className = 'question-card';
-                
+
+                // Add type indicator color
+                let typeColor = '';
+                let typeIcon = '';
+                switch(question.type) {
+                    case 'math':
+                        typeColor = 'success';
+                        typeIcon = '🔢';
+                        break;
+                    case 'safety':
+                        typeColor = 'danger';
+                        typeIcon = '🛡️';
+                        break;
+                    case 'technical':
+                        typeColor = 'primary';
+                        typeIcon = '⚙️';
+                        break;
+                }
+
                 questionCard.innerHTML = `
                     <div class="question-header">
-                        <span class="question-number">Aptitud ${index + 1}</span>
+                        <span class="question-number">Pregunta ${index + 1}</span>
+                        <span class="badge bg-${typeColor} ms-2">${typeIcon} ${question.type.charAt(0).toUpperCase() + question.type.slice(1)}</span>
                     </div>
                     <div class="question-body">
-                        <p class="mb-3"><strong>${aptitude}</strong></p>
-                        <p class="text-secondary mb-3">¿Cuál es su nivel de experiencia en esta área?</p>
-                        
-                        <div class="row g-2">
-                            <div class="col-6 col-md">
-                                <label class="form-selectgroup-item">
-                                    <input type="radio" name="aptitud_${index}" value="0" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, '0')">
-                                    <span class="form-selectgroup-label">
-                                        <strong>Sin experiencia</strong><br>
-                                        <small class="text-secondary">Nunca lo he hecho</small>
+                        <div class="alert alert-light mb-3">
+                            <strong>${question.question}</strong>
+                        </div>
+
+                        <div class="form-selectgroup form-selectgroup-boxes d-flex flex-column">
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="aptitud_${index}" value="A" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, 'A')">
+                                <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                    <span class="me-3">
+                                        <span class="form-selectgroup-check"></span>
                                     </span>
-                                </label>
-                            </div>
-                            <div class="col-6 col-md">
-                                <label class="form-selectgroup-item">
-                                    <input type="radio" name="aptitud_${index}" value="1" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, '1')">
-                                    <span class="form-selectgroup-label">
-                                        <strong>Básico</strong><br>
-                                        <small class="text-secondary">He observado o ayudado</small>
+                                    <span>
+                                        <strong>A)</strong> ${question.options.A}
                                     </span>
-                                </label>
-                            </div>
-                            <div class="col-6 col-md">
-                                <label class="form-selectgroup-item">
-                                    <input type="radio" name="aptitud_${index}" value="2" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, '2')">
-                                    <span class="form-selectgroup-label">
-                                        <strong>Intermedio</strong><br>
-                                        <small class="text-secondary">Puedo hacerlo con supervisión</small>
+                                </span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="aptitud_${index}" value="B" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, 'B')">
+                                <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                    <span class="me-3">
+                                        <span class="form-selectgroup-check"></span>
                                     </span>
-                                </label>
-                            </div>
-                            <div class="col-6 col-md">
-                                <label class="form-selectgroup-item">
-                                    <input type="radio" name="aptitud_${index}" value="3" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, '3')">
-                                    <span class="form-selectgroup-label">
-                                        <strong>Avanzado</strong><br>
-                                        <small class="text-secondary">Trabajo independientemente</small>
+                                    <span>
+                                        <strong>B)</strong> ${question.options.B}
                                     </span>
-                                </label>
-                            </div>
-                            <div class="col-6 col-md">
-                                <label class="form-selectgroup-item">
-                                    <input type="radio" name="aptitud_${index}" value="4" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, '4')">
-                                    <span class="form-selectgroup-label">
-                                        <strong>Experto</strong><br>
-                                        <small class="text-secondary">Puedo enseñar a otros</small>
+                                </span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="aptitud_${index}" value="C" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, 'C')">
+                                <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                    <span class="me-3">
+                                        <span class="form-selectgroup-check"></span>
                                     </span>
-                                </label>
-                            </div>
+                                    <span>
+                                        <strong>C)</strong> ${question.options.C}
+                                    </span>
+                                </span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="aptitud_${index}" value="D" class="form-selectgroup-input" onchange="updateAptitudeChoice(${index}, 'D')">
+                                <span class="form-selectgroup-label d-flex align-items-center p-3">
+                                    <span class="me-3">
+                                        <span class="form-selectgroup-check"></span>
+                                    </span>
+                                    <span>
+                                        <strong>D)</strong> ${question.options.D}
+                                    </span>
+                                </span>
+                            </label>
                         </div>
                     </div>
                 `;
-                
+
                 container.appendChild(questionCard);
             });
         }
@@ -1360,22 +1940,33 @@
                 if (!validateCurrentSection()) {
                     return;
                 }
-                
+
+                // Persist theme across navigation
+                persistThemeAcrossSections();
+
                 // Hide current section
                 document.getElementById(`section${currentSection}`).classList.remove('active');
-                
+
                 // Update progress
                 document.getElementById(`step${currentSection}`).classList.remove('active');
                 document.getElementById(`step${currentSection}`).classList.add('completed');
                 if (currentSection < totalSections) {
                     document.getElementById(`line${currentSection}`).classList.add('completed');
                 }
-                
+
                 // Show next section
                 currentSection++;
                 document.getElementById(`section${currentSection}`).classList.add('active');
                 document.getElementById(`step${currentSection}`).classList.add('active');
-                
+
+                // Ensure signature pad is properly themed if we're on section 5
+                if (currentSection === 5) {
+                    setTimeout(() => {
+                        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+                        updateSignaturePadTheme(currentTheme);
+                    }, 100);
+                }
+
                 // Scroll to top
                 window.scrollTo(0, 0);
             }
@@ -1392,6 +1983,8 @@
                     return validateSituationsSection();
                 case 4: // APTITUDES
                     return validateAptitudesSection();
+                case 5: // DECLARATION & SIGNATURE
+                    return validateDeclarationSection();
                 default:
                     return true;
             }
@@ -1446,10 +2039,13 @@
         
         function prevSection() {
             if (currentSection > 1) {
+                // Persist theme across navigation
+                persistThemeAcrossSections();
+
                 // Hide current section
                 document.getElementById(`section${currentSection}`).classList.remove('active');
                 document.getElementById(`step${currentSection}`).classList.remove('active');
-                
+
                 // Update progress
                 currentSection--;
                 document.getElementById(`step${currentSection}`).classList.remove('completed');
@@ -1457,10 +2053,10 @@
                 if (currentSection < totalSections) {
                     document.getElementById(`line${currentSection}`).classList.remove('completed');
                 }
-                
+
                 // Show previous section
                 document.getElementById(`section${currentSection}`).classList.add('active');
-                
+
                 // Scroll to top
                 window.scrollTo(0, 0);
             }
@@ -1681,6 +2277,156 @@
             }
         }
         
+        // Signature pad functionality
+        function initializeSignaturePad() {
+            const canvas = document.getElementById('signaturePad');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas properties based on current theme
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            ctx.strokeStyle = currentTheme === 'dark' ? '#ffffff' : '#000000';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+
+            // Touch events for mobile
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+
+            function startDrawing(e) {
+                isDrawing = true;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+
+                // Mark that signature has started
+                checkSignatureComplete();
+            }
+
+            function draw(e) {
+                if (!isDrawing) return;
+                e.preventDefault();
+
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                // Save signature data
+                testData.signature = canvas.toDataURL();
+                checkSignatureComplete();
+            }
+
+            function stopDrawing() {
+                isDrawing = false;
+            }
+
+            function handleTouch(e) {
+                e.preventDefault();
+                const touch = e.touches[0];
+                const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' :
+                                                 e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                    clientX: touch.clientX,
+                    clientY: touch.clientY
+                });
+                canvas.dispatchEvent(mouseEvent);
+            }
+        }
+
+        function clearSignature() {
+            const canvas = document.getElementById('signaturePad');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            testData.signature = null;
+            checkSignatureComplete();
+        }
+
+        function setupDeclarationSection() {
+            // Set current date and time
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+            const timeStr = now.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+
+            document.getElementById('currentDate').textContent = dateStr;
+            document.getElementById('currentTime').textContent = timeStr;
+
+            // Set candidate name if available
+            if (candidateInfo && candidateInfo.nombre) {
+                document.getElementById('candidateNameSignature').textContent = candidateInfo.nombre;
+            }
+
+            // Add event listeners for declaration checkboxes
+            const checkboxes = document.querySelectorAll('#section5 input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    testData.declaration[this.id] = this.checked;
+                    checkDeclarationComplete();
+                });
+            });
+
+            // Initial check
+            checkDeclarationComplete();
+        }
+
+        function checkDeclarationComplete() {
+            const checkboxes = document.querySelectorAll('#section5 input[type="checkbox"]');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+            checkSignatureComplete();
+            return allChecked;
+        }
+
+        function checkSignatureComplete() {
+            const declarationComplete = checkDeclarationComplete();
+            const signatureExists = testData.signature && testData.signature.length > 0;
+
+            const submitBtn = document.getElementById('finalSubmitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = !(declarationComplete && signatureExists);
+            }
+        }
+
+        function validateDeclarationSection() {
+            const declarationComplete = checkDeclarationComplete();
+            const signatureExists = testData.signature && testData.signature.length > 0;
+
+            if (!declarationComplete) {
+                alert('⚠️ Por favor marque todas las declaraciones requeridas antes de continuar.');
+                return false;
+            }
+
+            if (!signatureExists) {
+                alert('✍️ Por favor proporcione su firma digital antes de finalizar la evaluación.');
+                return false;
+            }
+
+            return true;
+        }
+
         // Network monitoring
         function monitorNetworkStatus() {
             const networkIndicator = document.getElementById('networkIndicator');
@@ -1703,6 +2449,10 @@
         
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme first
+            initializeTheme();
+
+            // Initialize other systems
             monitorNetworkStatus();
             initializeForm();
         });

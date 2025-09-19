@@ -29,9 +29,8 @@
         position: relative;
         background: conic-gradient(
           from 0deg,
-          #10b981 0deg,
-          #10b981 260deg,
-          #e5e7eb 260deg
+          #e5e7eb 0deg,
+          #e5e7eb 360deg
         );
       }
       .score-circle-inner {
@@ -43,6 +42,9 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+      }
+      [data-bs-theme="dark"] .score-circle-inner {
+        background: var(--tblr-bg-surface);
       }
       .score-value {
         font-size: 3rem;
@@ -101,14 +103,32 @@
       .recommendation-hire {
         background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
         border: 2px solid #10b981;
+        color: #065f46;
+      }
+      [data-bs-theme="dark"] .recommendation-hire {
+        background: linear-gradient(135deg, rgba(5, 95, 70, 0.2) 0%, rgba(6, 78, 59, 0.3) 100%);
+        border: 2px solid #10b981;
+        color: #ffffff;
       }
       .recommendation-review {
         background: linear-gradient(135deg, #fed7aa 0%, #fbbf24 100%);
         border: 2px solid #f59e0b;
+        color: #92400e;
+      }
+      [data-bs-theme="dark"] .recommendation-review {
+        background: linear-gradient(135deg, rgba(146, 64, 14, 0.2) 0%, rgba(120, 53, 15, 0.3) 100%);
+        border: 2px solid #f59e0b;
+        color: #ffffff;
       }
       .recommendation-reject {
         background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
         border: 2px solid #dc2626;
+        color: #991b1b;
+      }
+      [data-bs-theme="dark"] .recommendation-reject {
+        background: linear-gradient(135deg, rgba(153, 27, 27, 0.2) 0%, rgba(127, 29, 29, 0.3) 100%);
+        border: 2px solid #dc2626;
+        color: #ffffff;
       }
       @media print {
         .no-print {
@@ -209,7 +229,7 @@
                 </div>
               </a>
               <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                <a href="#" class="dropdown-item">Configuración</a>
+                <a href="./configuracion.html" class="dropdown-item">Configuración</a>
                 <div class="dropdown-divider"></div>
                 <a href="login.html" class="dropdown-item">Cerrar sesión</a>
               </div>
@@ -319,16 +339,16 @@
                             <line x1="11" y1="15" x2="12" y2="15" />
                             <line x1="12" y1="15" x2="12" y2="18" />
                           </svg>
-                          Evaluación completada: 26 de Agosto, 2025 - 14:32
+                          <span id="fecha-evaluacion">Fecha de evaluación: —</span>
                         </small>
                       </div>
                       <div class="col-md-5 text-center">
                         <div class="score-circle">
                           <div class="score-circle-inner">
-                            <div class="score-value">88</div>
+                            <div class="score-value" id="puntaje-total">—</div>
                             <div class="score-max">de 122</div>
                             <div class="mt-2">
-                              <span class="badge bg-green">72.1%</span>
+                              <span class="badge" id="porcentaje-badge">—%</span>
                             </div>
                           </div>
                         </div>
@@ -349,10 +369,9 @@
                       <circle cx="12" cy="12" r="9" />
                       <path d="M9 12l2 2l4 -4" />
                     </svg>
-                    RECOMENDACIÓN: CONTRATAR
+                    <span id="recomendacion-titulo">RECOMENDACIÓN: —</span>
                   </h2>
-                  <p class="mb-0">El candidato muestra un perfil altamente compatible con el puesto. Presenta estabilidad emocional, 
-                  orientación al cumplimiento de normas y baja dominancia. No se detectaron banderas rojas en sus respuestas.</p>
+                  <p class="mb-0" id="recomendacion-descripcion">Análisis del perfil del candidato aparecerá aquí.</p>
                 </div>
               </div>
             </div>
@@ -367,30 +386,30 @@
                   </div>
                   <div class="card-body">
                     <div class="disc-chart">
-                      <div class="disc-bar disc-bar-d" style="height: 30%">
-                        <span>3</span>
+                      <div class="disc-bar disc-bar-d" style="height: 10%" id="disc-d">
+                        <span>—</span>
                         <span class="disc-label">D</span>
                       </div>
-                      <div class="disc-bar disc-bar-i" style="height: 50%">
-                        <span>5</span>
+                      <div class="disc-bar disc-bar-i" style="height: 10%" id="disc-i">
+                        <span>—</span>
                         <span class="disc-label">I</span>
                       </div>
-                      <div class="disc-bar disc-bar-s" style="height: 80%">
-                        <span>8</span>
+                      <div class="disc-bar disc-bar-s" style="height: 10%" id="disc-s">
+                        <span>—</span>
                         <span class="disc-label">S</span>
                       </div>
-                      <div class="disc-bar disc-bar-c" style="height: 70%">
-                        <span>7</span>
+                      <div class="disc-bar disc-bar-c" style="height: 10%" id="disc-c">
+                        <span>—</span>
                         <span class="disc-label">C</span>
                       </div>
                     </div>
                     <div class="mt-4">
                       <h4>Interpretación del Perfil:</h4>
                       <ul class="list-unstyled space-y-1">
-                        <li><strong>Dominancia (D: 3 - Bajo):</strong> Cooperativo, no confrontacional</li>
-                        <li><strong>Influencia (I: 5 - Medio):</strong> Equilibrio social adecuado</li>
-                        <li><strong>Estabilidad (S: 8 - Alto):</strong> Confiable, constante, paciente</li>
-                        <li><strong>Cumplimiento (C: 7 - Alto):</strong> Orientado a normas y calidad</li>
+                        <li id="interpretacion-d"><strong>Dominancia (D: —):</strong> Interpretación pendiente</li>
+                        <li id="interpretacion-i"><strong>Influencia (I: —):</strong> Interpretación pendiente</li>
+                        <li id="interpretacion-s"><strong>Estabilidad (S: —):</strong> Interpretación pendiente</li>
+                        <li id="interpretacion-c"><strong>Cumplimiento (C: —):</strong> Interpretación pendiente</li>
                       </ul>
                     </div>
                   </div>
@@ -420,10 +439,10 @@
                               <strong>CLEAVER/DISC</strong>
                               <div class="text-muted small">Perfil conductual</div>
                             </td>
-                            <td class="text-end">22</td>
+                            <td class="text-end" id="cleaver-puntaje">—</td>
                             <td class="text-end">30</td>
                             <td class="text-end">
-                              <span class="badge bg-green">73.3%</span>
+                              <span class="badge" id="cleaver-porcentaje">—%</span>
                             </td>
                           </tr>
                           <tr>
@@ -431,10 +450,10 @@
                               <strong>KOSTICK</strong>
                               <div class="text-muted small">Preferencias laborales</div>
                             </td>
-                            <td class="text-end">28</td>
+                            <td class="text-end" id="kostick-puntaje">—</td>
                             <td class="text-end">37</td>
                             <td class="text-end">
-                              <span class="badge bg-green">75.7%</span>
+                              <span class="badge" id="kostick-porcentaje">—%</span>
                             </td>
                           </tr>
                           <tr>
@@ -442,10 +461,10 @@
                               <strong>Situaciones Laborales</strong>
                               <div class="text-muted small">Ética y honestidad</div>
                             </td>
-                            <td class="text-end">20</td>
+                            <td class="text-end" id="situaciones-puntaje">—</td>
                             <td class="text-end">25</td>
                             <td class="text-end">
-                              <span class="badge bg-green">80.0%</span>
+                              <span class="badge" id="situaciones-porcentaje">—%</span>
                             </td>
                           </tr>
                           <tr>
@@ -453,18 +472,18 @@
                               <strong>Aptitudes Técnicas</strong>
                               <div class="text-muted small">Conocimientos y seguridad</div>
                             </td>
-                            <td class="text-end">18</td>
+                            <td class="text-end" id="aptitudes-puntaje">—</td>
                             <td class="text-end">30</td>
                             <td class="text-end">
-                              <span class="badge bg-yellow">60.0%</span>
+                              <span class="badge" id="aptitudes-porcentaje">—%</span>
                             </td>
                           </tr>
                           <tr class="table-active">
                             <td><strong>TOTAL</strong></td>
-                            <td class="text-end"><strong>88</strong></td>
+                            <td class="text-end"><strong id="total-puntaje">—</strong></td>
                             <td class="text-end"><strong>122</strong></td>
                             <td class="text-end">
-                              <span class="badge bg-green">72.1%</span>
+                              <span class="badge" id="total-porcentaje">—%</span>
                             </td>
                           </tr>
                         </tbody>
@@ -483,58 +502,31 @@
                     <h3 class="card-title mb-0">Análisis de Respuestas Críticas</h3>
                   </div>
                   <div class="card-body">
-                    <h4 class="mb-3">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                        <circle cx="12" cy="12" r="9" />
-                        <path d="M9 12l2 2l4 -4" />
-                      </svg>
-                      Sin Banderas Rojas Detectadas
-                    </h4>
+                    <div id="banderas-rojas-header">
+                      <h4 class="mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                          <circle cx="12" cy="12" r="9" />
+                          <path d="M9 12l2 2l4 -4" />
+                        </svg>
+                        <span id="banderas-rojas-titulo">Análisis de Respuestas Críticas</span>
+                      </h4>
+                    </div>
                     <div class="row">
                       <div class="col-md-6">
                         <h5>Situaciones Éticas</h5>
                         <ul class="list-unstyled">
-                          <li class="mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                              <path d="M5 12l5 5l10 -10" />
-                            </svg>
-                            <strong>Situación 1:</strong> Rechazaría trabajo sin factura (Respuesta: D - Correcta)
-                          </li>
-                          <li class="mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                              <path d="M5 12l5 5l10 -10" />
-                            </svg>
-                            <strong>Situación 4:</strong> No tomaría materiales sobrantes (Respuesta: C - Correcta)
-                          </li>
+                          <div id="situaciones-eticas-lista">
+                            <p class="text-muted">Las respuestas a situaciones éticas aparecerán aquí.</p>
+                          </div>
                         </ul>
                       </div>
                       <div class="col-md-6">
                         <h5>Preguntas KOSTICK Críticas</h5>
                         <ul class="list-unstyled">
-                          <li class="mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                              <path d="M5 12l5 5l10 -10" />
-                            </svg>
-                            <strong>Pregunta 5:</strong> Seguiría normas de seguridad (TA)
-                          </li>
-                          <li class="mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                              <path d="M5 12l5 5l10 -10" />
-                            </svg>
-                            <strong>Pregunta 11:</strong> Reportaría condiciones inseguras (TA)
-                          </li>
-                          <li class="mb-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                              <path d="M5 12l5 5l10 -10" />
-                            </svg>
-                            <strong>Pregunta 13:</strong> Devolvería materiales extras (TA)
-                          </li>
+                          <div id="kostick-criticas-lista">
+                            <p class="text-muted">Las respuestas críticas de KOSTICK aparecerán aquí.</p>
+                          </div>
                         </ul>
                       </div>
                     </div>
@@ -552,41 +544,9 @@
                   </div>
                   <div class="card-body">
                     <ul class="list-unstyled space-y-2">
-                      <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M5 12l5 5l10 -10" />
-                        </svg>
-                        Alta estabilidad emocional y paciencia
-                      </li>
-                      <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M5 12l5 5l10 -10" />
-                        </svg>
-                        Fuerte orientación al cumplimiento de normas
-                      </li>
-                      <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M5 12l5 5l10 -10" />
-                        </svg>
-                        Comportamiento ético ejemplar
-                      </li>
-                      <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M5 12l5 5l10 -10" />
-                        </svg>
-                        Trabajo cooperativo y no conflictivo
-                      </li>
-                      <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-green icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M5 12l5 5l10 -10" />
-                        </svg>
-                        Compromiso con la seguridad laboral
-                      </li>
+                      <div id="fortalezas-lista">
+                        <p class="text-muted">Las fortalezas identificadas aparecerán aquí.</p>
+                      </div>
                     </ul>
                   </div>
                 </div>
@@ -599,30 +559,9 @@
                   </div>
                   <div class="card-body">
                     <ul class="list-unstyled space-y-2">
-                      <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-yellow icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M12 9v2m0 4v.01" />
-                          <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
-                        </svg>
-                        Conocimientos técnicos requieren reforzamiento (60%)
-                      </li>
-                      <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-yellow icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M12 9v2m0 4v.01" />
-                          <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
-                        </svg>
-                        Capacitación inicial recomendada en procesos específicos
-                      </li>
-                      <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="icon text-yellow icon-inline" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                          <path d="M12 9v2m0 4v.01" />
-                          <path d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
-                        </svg>
-                        Supervisión inicial para verificar adaptación al puesto
-                      </li>
+                      <div id="areas-mejora-lista">
+                        <p class="text-muted">Las áreas de mejora aparecerán aquí.</p>
+                      </div>
                     </ul>
                   </div>
                 </div>
@@ -637,32 +576,20 @@
                     <h3 class="card-title">Observaciones Finales</h3>
                   </div>
                   <div class="card-body">
-                    <p class="mb-3">
-                      <span id="conclusion-texto">Perfil psicométrico del candidato.</span> 
-                      Su combinación de alta estabilidad (S) y cumplimiento (C) con baja dominancia (D) lo convierte en un 
-                      candidato ideal para trabajos que requieren precisión, paciencia y adherencia a protocolos de seguridad.
-                    </p>
-                    <p class="mb-3">
-                      No se identificaron banderas rojas en ninguna de las respuestas críticas, lo que indica un alto nivel 
-                      de integridad y honestidad. El candidato demostró comprensión clara de las expectativas éticas del 
-                      ambiente laboral.
-                    </p>
-                    <p class="mb-0">
-                      <strong>Recomendación de contratación:</strong> Se sugiere proceder con la contratación, implementando 
-                      un programa de capacitación técnica inicial para fortalecer las áreas identificadas de mejora. El 
-                      candidato tiene un alto potencial de éxito y permanencia en la organización.
-                    </p>
+                    <div id="observaciones-contenido">
+                      <p class="text-muted">Las observaciones finales aparecerán aquí una vez completada la evaluación.</p>
+                    </div>
                   </div>
                   <div class="card-footer">
                     <div class="row align-items-center">
                       <div class="col">
                         <div class="text-muted">
-                          Evaluación procesada por: Sistema Automatizado v2.0
+                          <span id="sistema-procesamiento">Sistema Automatizado v2.0</span>
                         </div>
                       </div>
                       <div class="col-auto">
                         <div class="text-muted">
-                          Fecha de procesamiento: 26/08/2025 14:45
+                          <span id="fecha-procesamiento">Fecha de procesamiento: —</span>
                         </div>
                       </div>
                     </div>
@@ -700,5 +627,301 @@
     <!-- Scripts -->
     <script src="../Tabler/tabler-1.4.0/dashboard/dist/libs/apexcharts/dist/apexcharts.min.js" defer></script>
     <script src="../Tabler/tabler-1.4.0/dashboard/dist/js/tabler.min.js" defer></script>
+    <script>
+      // Data loading and population functions
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize empty state
+        showEmptyState();
+
+        // Load real data if URL params are present
+        const urlParams = new URLSearchParams(window.location.search);
+        const candidatoId = urlParams.get('id');
+
+        if (candidatoId) {
+          loadCandidateResults(candidatoId);
+        }
+      });
+
+      function showEmptyState() {
+        // Set default recommendation box class
+        const recomendacionBox = document.querySelector('.recommendation-box');
+        if (recomendacionBox) {
+          recomendacionBox.className = 'recommendation-box';
+        }
+
+        // Set default badge colors
+        const badges = document.querySelectorAll('[id$="-porcentaje"], #porcentaje-badge, #total-porcentaje');
+        badges.forEach(badge => {
+          badge.className = 'badge bg-secondary';
+        });
+      }
+
+      async function loadCandidateResults(candidatoId) {
+        try {
+          // TODO: Replace with actual API endpoint
+          console.log('Loading results for candidate:', candidatoId);
+
+          // Example of how real data would be populated:
+          // const response = await fetch(`/api/candidatos/${candidatoId}/resultado`);
+          // const data = await response.json();
+          // populateResults(data);
+
+        } catch (error) {
+          console.error('Error loading candidate results:', error);
+        }
+      }
+
+      function populateResults(data) {
+        // Example function for populating real data
+        // This would be called when real API data is available
+
+        // Basic info
+        document.getElementById('candidato-nombre').textContent = data.nombre || '—';
+        document.getElementById('candidato-nombre-detalle').textContent = data.nombre || '—';
+        document.getElementById('candidato-contacto').textContent = data.email || '—';
+        document.getElementById('candidato-puesto').textContent = `Puesto: ${data.puesto || '—'}`;
+
+        // Scores
+        document.getElementById('puntaje-total').textContent = data.puntajeTotal || '—';
+        document.getElementById('porcentaje-badge').textContent = `${data.porcentaje || '—'}%`;
+
+        // Update score circle
+        if (data.porcentaje !== undefined) {
+          updateScoreCircle(data.porcentaje, data.esNoContratable);
+        }
+
+        // Set recommendation
+        if (data.recomendacion) {
+          setRecommendation(data.recomendacion, data.recomendacionTexto);
+        }
+
+        // DISC Profile
+        if (data.perfilDISC) {
+          populateDISCProfile(data.perfilDISC);
+        }
+
+        // Score breakdown
+        if (data.desglosePuntuacion) {
+          populateScoreBreakdown(data.desglosePuntuacion);
+        }
+
+        // Critical responses
+        if (data.banderasRojas !== undefined) {
+          populateCriticalResponses(data.banderasRojas, data.respuestasCriticas);
+        }
+
+        // Strengths and improvements
+        if (data.fortalezas) {
+          populateStrengths(data.fortalezas);
+        }
+        if (data.areasMejora) {
+          populateImprovements(data.areasMejora);
+        }
+
+        // Final observations
+        if (data.observaciones) {
+          document.getElementById('observaciones-contenido').innerHTML = data.observaciones;
+        }
+
+        // Timestamps
+        if (data.fechaEvaluacion) {
+          document.getElementById('fecha-evaluacion').textContent = `Evaluación completada: ${data.fechaEvaluacion}`;
+        }
+        if (data.fechaProcesamiento) {
+          document.getElementById('fecha-procesamiento').textContent = `Fecha de procesamiento: ${data.fechaProcesamiento}`;
+        }
+      }
+
+      function setRecommendation(tipo, texto) {
+        const titulo = document.getElementById('recomendacion-titulo');
+        const descripcion = document.getElementById('recomendacion-descripcion');
+        const box = document.querySelector('.recommendation-box');
+
+        titulo.textContent = `RECOMENDACIÓN: ${tipo.toUpperCase()}`;
+        descripcion.textContent = texto;
+
+        // Set appropriate CSS class based on recommendation
+        box.className = 'recommendation-box';
+        if (tipo.toLowerCase().includes('contratar')) {
+          box.classList.add('recommendation-hire');
+        } else if (tipo.toLowerCase().includes('revisar')) {
+          box.classList.add('recommendation-review');
+        } else if (tipo.toLowerCase().includes('rechazar')) {
+          box.classList.add('recommendation-reject');
+        }
+      }
+
+      function populateDISCProfile(perfil) {
+        // Update DISC bars and values
+        ['d', 'i', 's', 'c'].forEach(letra => {
+          const valor = perfil[letra] || 0;
+          const altura = Math.max(10, (valor / 10) * 100); // Min 10% height
+
+          const bar = document.getElementById(`disc-${letra}`);
+          if (bar) {
+            bar.style.height = `${altura}%`;
+            bar.querySelector('span').textContent = valor;
+          }
+
+          // Update interpretations
+          const interpretacion = document.getElementById(`interpretacion-${letra}`);
+          if (interpretacion && perfil.interpretaciones && perfil.interpretaciones[letra]) {
+            interpretacion.innerHTML = `<strong>${perfil.interpretaciones[letra].titulo}:</strong> ${perfil.interpretaciones[letra].descripcion}`;
+          }
+        });
+      }
+
+      function populateScoreBreakdown(desglose) {
+        const secciones = ['cleaver', 'kostick', 'situaciones', 'aptitudes', 'total'];
+
+        secciones.forEach(seccion => {
+          if (desglose[seccion]) {
+            const puntaje = document.getElementById(`${seccion}-puntaje`);
+            const porcentaje = document.getElementById(`${seccion}-porcentaje`);
+
+            if (puntaje) puntaje.textContent = desglose[seccion].puntaje;
+            if (porcentaje) {
+              porcentaje.textContent = `${desglose[seccion].porcentaje}%`;
+
+              // Set badge color based on percentage
+              const pct = desglose[seccion].porcentaje;
+              porcentaje.className = 'badge ';
+              if (pct >= 80) porcentaje.className += 'bg-green';
+              else if (pct >= 65) porcentaje.className += 'bg-yellow';
+              else porcentaje.className += 'bg-red';
+            }
+          }
+        });
+      }
+
+      function populateCriticalResponses(tieneBanderas, respuestas) {
+        const header = document.getElementById('banderas-rojas-header');
+        const titulo = document.getElementById('banderas-rojas-titulo');
+
+        if (tieneBanderas) {
+          titulo.textContent = 'Banderas Rojas Detectadas';
+          header.querySelector('.icon').className = 'icon text-red';
+        } else {
+          titulo.textContent = 'Sin Banderas Rojas Detectadas';
+          header.querySelector('.icon').className = 'icon text-green';
+        }
+
+        // Populate situaciones éticas
+        if (respuestas && respuestas.situaciones) {
+          const lista = document.getElementById('situaciones-eticas-lista');
+          lista.innerHTML = respuestas.situaciones.map(situacion =>
+            `<li class="mb-2">
+              <svg class="icon ${situacion.correcta ? 'text-green' : 'text-red'} icon-inline" width="24" height="24">
+                <path d="${situacion.correcta ? 'M5 12l5 5l10 -10' : 'M18 6L6 18M6 6l12 12'}"/>
+              </svg>
+              <strong>${situacion.nombre}:</strong> ${situacion.descripcion}
+            </li>`
+          ).join('');
+        }
+
+        // Populate KOSTICK críticas
+        if (respuestas && respuestas.kostick) {
+          const lista = document.getElementById('kostick-criticas-lista');
+          lista.innerHTML = respuestas.kostick.map(pregunta =>
+            `<li class="mb-2">
+              <svg class="icon ${pregunta.correcta ? 'text-green' : 'text-red'} icon-inline" width="24" height="24">
+                <path d="${pregunta.correcta ? 'M5 12l5 5l10 -10' : 'M18 6L6 18M6 6l12 12'}"/>
+              </svg>
+              <strong>${pregunta.nombre}:</strong> ${pregunta.descripcion}
+            </li>`
+          ).join('');
+        }
+      }
+
+      function populateStrengths(fortalezas) {
+        const lista = document.getElementById('fortalezas-lista');
+        lista.innerHTML = fortalezas.map(fortaleza =>
+          `<li>
+            <svg class="icon text-green icon-inline" width="24" height="24">
+              <path d="M5 12l5 5l10 -10"/>
+            </svg>
+            ${fortaleza}
+          </li>`
+        ).join('');
+      }
+
+      function populateImprovements(areas) {
+        const lista = document.getElementById('areas-mejora-lista');
+        lista.innerHTML = areas.map(area =>
+          `<li>
+            <svg class="icon text-yellow icon-inline" width="24" height="24">
+              <path d="M12 9v2m0 4v.01M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75"/>
+            </svg>
+            ${area}
+          </li>`
+        ).join('');
+      }
+
+      function updateScoreCircle(porcentaje, esNoContratable = false) {
+        const circle = document.querySelector('.score-circle');
+        if (!circle || porcentaje === undefined) return;
+
+        // Special handling for non-hirable candidates
+        if (esNoContratable) {
+          // Show full red circle for non-hirable candidates
+          circle.style.background = `conic-gradient(
+            from 0deg,
+            #dc2626 0deg,
+            #dc2626 360deg
+          )`;
+
+          // Update badge to show rejection
+          const badge = document.getElementById('porcentaje-badge');
+          if (badge) {
+            badge.className = 'badge bg-red';
+            badge.textContent = 'NO CONTRATABLE';
+          }
+          return;
+        }
+
+        // Convert percentage to degrees (360 degrees = 100%)
+        const degrees = Math.min(360, Math.max(0, (porcentaje / 100) * 360));
+
+        // Choose color based on score
+        let color = '#e5e7eb'; // Gray for no score
+        if (porcentaje >= 80) {
+          color = '#10b981'; // Green for high score
+        } else if (porcentaje >= 65) {
+          color = '#fbbf24'; // Yellow for medium score
+        } else if (porcentaje >= 50) {
+          color = '#f59e0b'; // Orange for low-medium score
+        } else if (porcentaje > 0) {
+          color = '#ef4444'; // Red for low score
+        }
+
+        // Update the conic gradient
+        if (degrees > 0) {
+          circle.style.background = `conic-gradient(
+            from 0deg,
+            ${color} 0deg,
+            ${color} ${degrees}deg,
+            #e5e7eb ${degrees}deg
+          )`;
+        } else {
+          // No score - show empty circle
+          circle.style.background = `conic-gradient(
+            from 0deg,
+            #e5e7eb 0deg,
+            #e5e7eb 360deg
+          )`;
+        }
+
+        // Update badge color
+        const badge = document.getElementById('porcentaje-badge');
+        if (badge) {
+          badge.className = 'badge ';
+          if (porcentaje >= 80) badge.className += 'bg-green';
+          else if (porcentaje >= 65) badge.className += 'bg-yellow';
+          else if (porcentaje >= 50) badge.className += 'bg-orange';
+          else if (porcentaje > 0) badge.className += 'bg-red';
+          else badge.className += 'bg-secondary';
+        }
+      }
+    </script>
   </body>
 </html>
