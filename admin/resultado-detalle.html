@@ -262,7 +262,7 @@
             <div class="row g-2 align-items-center">
               <div class="col">
                 <div class="page-pretitle">Resultado de Evaluación</div>
-                <h2 class="page-title">Juan Pérez García</h2>
+                <h2 class="page-title" id="candidato-nombre">Candidato</h2>
               </div>
               <div class="col-auto ms-auto d-print-none">
                 <div class="btn-list">
@@ -303,10 +303,10 @@
                         <span class="avatar avatar-xl" style="background-image: url(../Tabler/tabler-1.4.0/dashboard/dist/static/avatars/001m.jpg)"></span>
                       </div>
                       <div class="col-md-5">
-                        <h3 class="mb-1">Juan Pérez García</h3>
-                        <p class="text-muted mb-2">juan.perez@email.com • +52 555 123 4567</p>
+                        <h3 class="mb-1" id="candidato-nombre-detalle">Candidato</h3>
+                        <p class="text-muted mb-2" id="candidato-contacto">—</p>
                         <div class="mb-2">
-                          <span class="badge bg-blue-lt me-1">Puesto: Soldador Senior</span>
+                          <span class="badge bg-blue-lt me-1" id="candidato-puesto">Puesto: —</span>
                           <span class="badge bg-green-lt">Estado: Completado</span>
                         </div>
                         <small class="text-muted">
@@ -638,7 +638,7 @@
                   </div>
                   <div class="card-body">
                     <p class="mb-3">
-                      Juan Pérez García presenta un perfil psicométrico altamente favorable para el puesto de Soldador Senior. 
+                      <span id="conclusion-texto">Perfil psicométrico del candidato.</span> 
                       Su combinación de alta estabilidad (S) y cumplimiento (C) con baja dominancia (D) lo convierte en un 
                       candidato ideal para trabajos que requieren precisión, paciencia y adherencia a protocolos de seguridad.
                     </p>

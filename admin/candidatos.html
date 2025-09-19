@@ -387,143 +387,17 @@
                       <th></th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <!-- Datos de ejemplo - serán reemplazados por datos de Supabase -->
+                  <tbody id="tabla-candidatos">
                     <tr>
-                      <td><span class="text-secondary">001</span></td>
-                      <td>
-                        <div class="d-flex py-1 align-items-center">
-                          <span class="avatar me-2">JM</span>
-                          <div class="flex-fill">
-                            <div class="font-weight-medium">José Martínez</div>
-                            <div class="text-secondary"><a href="#" class="text-reset">jose.martinez@email.com</a></div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>Soldador</td>
-                      <td>2024-01-15</td>
-                      <td>
-                        <span class="badge bg-success me-1"></span> Completado
-                      </td>
-                      <td>
-                        <span class="badge badge-score-high">77%</span>
-                      </td>
-                      <td>
-                        <span class="text-secondary" title="D:3 I:5 S:8 C:7">S8-C7</span>
-                      </td>
-                      <td>
-                        <span class="badge bg-green-lt">CONTRATAR</span>
-                      </td>
-                      <td class="text-end">
-                        <div class="dropdown">
-                          <button class="btn btn-ghost-secondary btn-icon" data-bs-toggle="dropdown">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                            </svg>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="resultado.html?id=001">Ver detalle</a>
-                            <a class="dropdown-item" href="#">Descargar PDF</a>
-                            <a class="dropdown-item" href="#">Reenviar link</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-red" href="#">Eliminar</a>
-                          </div>
-                        </div>
+                      <td colspan="8" class="text-center text-muted py-4">
+                        Sin candidatos registrados
                       </td>
                     </tr>
-                    
-                    <tr>
-                      <td><span class="text-secondary">002</span></td>
-                      <td>
-                        <div class="d-flex py-1 align-items-center">
-                          <span class="avatar me-2">CR</span>
-                          <div class="flex-fill">
-                            <div class="font-weight-medium">Carlos Ramírez <span class="red-flag-indicator" title="Banderas rojas detectadas"></span></div>
-                            <div class="text-secondary"><a href="#" class="text-reset">carlos.r@email.com</a></div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>Electricista</td>
-                      <td>2024-01-14</td>
-                      <td>
-                        <span class="badge bg-success me-1"></span> Completado
-                      </td>
-                      <td>
-                        <span class="badge badge-score-low">42%</span>
-                      </td>
-                      <td>
-                        <span class="text-secondary" title="D:8 I:2 S:4 C:3">D8-I2</span>
-                      </td>
-                      <td>
-                        <span class="badge bg-red-lt">NO CONTRATAR</span>
-                      </td>
-                      <td class="text-end">
-                        <div class="dropdown">
-                          <button class="btn btn-ghost-secondary btn-icon" data-bs-toggle="dropdown">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                            </svg>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="resultado.html?id=002">Ver detalle</a>
-                            <a class="dropdown-item" href="#">Descargar PDF</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-red" href="#">Eliminar</a>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    
-                    <tr>
-                      <td><span class="text-secondary">003</span></td>
-                      <td>
-                        <div class="d-flex py-1 align-items-center">
-                          <span class="avatar me-2">MG</span>
-                          <div class="flex-fill">
-                            <div class="font-weight-medium">María García</div>
-                            <div class="text-secondary"><a href="#" class="text-reset">maria.garcia@email.com</a></div>
-                          </div>
-                        </div>
-                      </td>
-                      <td>Obrero</td>
-                      <td>2024-01-16</td>
-                      <td>
-                        <span class="badge bg-warning me-1"></span> Pendiente
-                      </td>
-                      <td>-</td>
-                      <td>-</td>
-                      <td>-</td>
-                      <td class="text-end">
-                        <div class="dropdown">
-                          <button class="btn btn-ghost-secondary btn-icon" data-bs-toggle="dropdown">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
-                              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                              <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                              <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                              <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                            </svg>
-                          </button>
-                          <div class="dropdown-menu dropdown-menu-end">
-                            <a class="dropdown-item" href="#">Reenviar link</a>
-                            <a class="dropdown-item" href="#">Copiar link</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item text-red" href="#">Cancelar</a>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    
                   </tbody>
                 </table>
               </div>
               <div class="card-footer d-flex align-items-center">
-                <p class="m-0 text-secondary">Mostrando <span>1</span> a <span>3</span> de <span>247</span> entradas</p>
+                <p class="m-0 text-secondary">Mostrando <span>0</span> a <span>0</span> de <span>0</span> entradas</p>
                 <ul class="pagination m-0 ms-auto">
                   <li class="page-item disabled">
                     <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
@@ -587,7 +461,7 @@
             <form id="form-generar-link">
               <div class="mb-3">
                 <label class="form-label">Nombre completo</label>
-                <input type="text" class="form-control" name="nombre" placeholder="Ej: Juan Pérez García" required>
+                <input type="text" class="form-control" name="nombre" placeholder="Ej: José García López" required>
               </div>
               <div class="mb-3">
                 <label class="form-label">Email</label>
