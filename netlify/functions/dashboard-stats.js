@@ -1,5 +1,17 @@
-// Check if we're in development mode (no Supabase credentials)
-let isDevelopment = !process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY || process.env.NODE_ENV === 'development';
+// Check if we're in development mode (no Supabase credentials or placeholder values)
+let isDevelopment = !process.env.SUPABASE_URL ||
+                   !process.env.SUPABASE_SERVICE_KEY ||
+                   process.env.NODE_ENV === 'development' ||
+                   process.env.SUPABASE_URL.includes('your-project.supabase.co') ||
+                   process.env.SUPABASE_SERVICE_KEY.includes('your-service-key-here');
+
+console.log('🔍 Environment check:', {
+  hasUrl: !!process.env.SUPABASE_URL,
+  hasKey: !!process.env.SUPABASE_SERVICE_KEY,
+  nodeEnv: process.env.NODE_ENV,
+  isDevelopment: isDevelopment,
+  url: process.env.SUPABASE_URL?.substring(0, 20) + '...'
+});
 
 let supabase = null;
 if (!isDevelopment) {
@@ -9,6 +21,7 @@ if (!isDevelopment) {
       process.env.SUPABASE_URL,
       process.env.SUPABASE_SERVICE_KEY
     );
+    console.log('✅ Supabase client initialized for production');
   } catch (error) {
     console.warn('⚠️ Could not initialize Supabase client, falling back to development mode');
     isDevelopment = true;

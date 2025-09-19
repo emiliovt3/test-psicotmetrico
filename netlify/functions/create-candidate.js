@@ -1,5 +1,9 @@
-// Check if we're in development mode (no Supabase credentials)
-let isDevelopment = !process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY || process.env.NODE_ENV === 'development';
+// Check if we're in development mode (no Supabase credentials or placeholder values)
+let isDevelopment = !process.env.SUPABASE_URL ||
+                   !process.env.SUPABASE_SERVICE_KEY ||
+                   process.env.NODE_ENV === 'development' ||
+                   process.env.SUPABASE_URL.includes('your-project.supabase.co') ||
+                   process.env.SUPABASE_SERVICE_KEY.includes('your-service-key-here');
 
 let supabase = null;
 if (!isDevelopment) {
