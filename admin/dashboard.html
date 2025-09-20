@@ -540,14 +540,16 @@
       // Función para cargar datos del dashboard (desarrollo y producción)
       async function loadRealDashboardData() {
         try {
-          // Detectar si estamos en desarrollo
-          const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          // Detectar si estamos en desarrollo local
+          const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
           let data;
+          let isDevelopmentData = false;
 
-          if (isDevelopment) {
+          if (isLocalhost) {
             console.log('🔄 [DEV] Cargando datos del dashboard desde localStorage...');
             data = loadDevelopmentDashboardData();
+            isDevelopmentData = true;
           } else {
             console.log('🔄 [PROD] Cargando datos del dashboard desde API...');
             const response = await fetch('/api/dashboard-stats');
@@ -557,7 +559,18 @@
             }
 
             data = await response.json();
+
+            // Verificar si la API devuelve datos de desarrollo
+            isDevelopmentData = data.development === true;
+
+            // Advertencia si detectamos datos de desarrollo en producción
+            if (!isLocalhost && isDevelopmentData) {
+              console.warn('⚠️ ADVERTENCIA: API funcionando en modo desarrollo. Configuración de Supabase requerida para datos de producción.');
+            }
           }
+
+          // Guardar el estado del tipo de datos para uso en otras funciones
+          window.developmentDataMode = isLocalhost || isDevelopmentData;
 
           // Actualizar estadísticas en el DOM
           updateDashboardStats(data);
@@ -954,9 +967,9 @@
         submitBtn.disabled = true;
 
         try {
-          // Determinar endpoint basado en si estamos en desarrollo
-          const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-          const endpoint = isDevelopment ? '/api/create-candidate-dev' : '/api/create-candidate';
+          // Determinar endpoint basado en el tipo de datos que maneja el sistema
+          const isDevelopmentData = window.developmentDataMode || false;
+          const endpoint = isDevelopmentData ? '/api/create-candidate-dev' : '/api/create-candidate';
 
           // Llamar a la API para crear candidato
           const response = await fetch(endpoint, {
@@ -978,7 +991,7 @@
 
           if (response.ok && result.success) {
             // En desarrollo: guardar candidato en localStorage
-            if (isDevelopment) {
+            if (isDevelopmentData) {
               guardarCandidatoDesarrollo(result.candidato);
               // Recargar datos del dashboard inmediatamente
               setTimeout(() => {

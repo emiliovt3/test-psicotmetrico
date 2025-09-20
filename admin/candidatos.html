@@ -484,20 +484,40 @@
       // Función para cargar candidatos (desarrollo y producción)
       async function cargarCandidatos() {
         try {
-          // Detectar si estamos en desarrollo
-          const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          // Detectar si estamos en desarrollo local
+          const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
           let candidatos = [];
+          let isDevelopmentData = false;
 
-          if (isDevelopment) {
-            // En desarrollo: cargar desde localStorage
+          if (isLocalhost) {
+            // En desarrollo local: cargar desde localStorage
             candidatos = cargarCandidatosDesarrollo();
+            isDevelopmentData = true;
             console.log('🔄 [DEV] Candidatos cargados desde localStorage:', candidatos.length);
           } else {
-            // En producción: cargar desde API
+            // En producción o Netlify: intentar cargar desde API
             candidatos = await cargarCandidatosProduccion();
-            console.log('🔄 [PROD] Candidatos cargados desde API:', candidatos.length);
+
+            // Verificar si la API devuelve datos de desarrollo (detectar por formato de ID)
+            if (candidatos.length > 0) {
+              const primerCandidato = candidatos[0];
+              // Si el ID es un número simple (1, 2, 3) en lugar de UUID, es modo desarrollo
+              isDevelopmentData = typeof primerCandidato.id === 'number' ||
+                                 (typeof primerCandidato.id === 'string' && /^\d+$/.test(primerCandidato.id));
+            }
+
+            const mode = isDevelopmentData ? 'DEV' : 'PROD';
+            console.log(`🔄 [${mode}] Candidatos cargados desde API:`, candidatos.length);
+
+            // Advertencia si detectamos datos de desarrollo en producción
+            if (!isLocalhost && isDevelopmentData) {
+              console.warn('⚠️ ADVERTENCIA: Detectados datos de desarrollo en entorno de producción. Esto indica que la API está funcionando en modo desarrollo (posiblemente falta configuración de Supabase).');
+            }
           }
+
+          // Guardar el estado del tipo de datos para uso en otras funciones
+          window.developmentDataMode = isLocalhost || isDevelopmentData;
 
           // Actualizar estadísticas
           actualizarEstadisticas(candidatos);
@@ -847,9 +867,9 @@
         submitBtn.disabled = true;
 
         try {
-          // Determinar endpoint basado en si estamos en desarrollo
-          const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-          const endpoint = isDevelopment ? '/api/create-candidate-dev' : '/api/create-candidate';
+          // Determinar endpoint basado en el tipo de datos que maneja el sistema
+          const isDevelopmentData = window.developmentDataMode || false;
+          const endpoint = isDevelopmentData ? '/api/create-candidate-dev' : '/api/create-candidate';
 
           // Llamar a la API para crear candidato
           const response = await fetch(endpoint, {
@@ -871,7 +891,7 @@
 
           if (response.ok && result.success) {
             // En desarrollo: guardar candidato en localStorage
-            if (isDevelopment) {
+            if (isDevelopmentData) {
               guardarCandidatoDesarrollo(result.candidato);
               // Recargar lista de candidatos inmediatamente
               setTimeout(() => {
@@ -1466,7 +1486,8 @@
       // Función para eliminar candidato (desarrollo y producción)
       async function eliminarCandidato(candidatoId, nombreCandidato) {
         const btnConfirmar = document.getElementById('btn-confirmar-eliminacion');
-        const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        // Usar el flag global que detecta el tipo de datos reales
+        const isDevelopmentData = window.developmentDataMode || false;
 
         // Mostrar loading en el botón
         const originalHTML = btnConfirmar.innerHTML;
@@ -1482,7 +1503,7 @@
         try {
           console.log('🗑️ Eliminando candidato:', candidatoId);
 
-          if (isDevelopment) {
+          if (isDevelopmentData) {
             // MODO DESARROLLO: Eliminar solo de localStorage
             console.log('🔧 [DEV] Eliminando candidato de localStorage');
 
