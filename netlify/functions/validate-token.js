@@ -11,17 +11,31 @@ const { createClient } = require('@supabase/supabase-js');
 let isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Override to development if we don't have Supabase credentials at all
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
   isDevelopment = true;
 }
 
+console.log('🔍 [validate-token] Environment check:', {
+  hasUrl: !!process.env.SUPABASE_URL,
+  hasKey: !!process.env.SUPABASE_SERVICE_KEY,
+  nodeEnv: process.env.NODE_ENV,
+  isDevelopment: isDevelopment,
+  url: process.env.SUPABASE_URL?.substring(0, 20) + '...'
+});
+
 // Configuración desde variables de entorno
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
 let supabase = null;
 if (!isDevelopment) {
-  supabase = createClient(supabaseUrl, supabaseKey);
+  try {
+    supabase = createClient(supabaseUrl, supabaseKey);
+    console.log('✅ [validate-token] Supabase client initialized for production');
+  } catch (error) {
+    console.warn('⚠️ [validate-token] Could not initialize Supabase client, falling back to development mode');
+    isDevelopment = true;
+  }
 }
 
 exports.handler = async (event, context) => {
@@ -88,6 +102,12 @@ exports.handler = async (event, context) => {
         }
 
         // PRODUCTION MODE - Usar Supabase
+        console.log('🔍 [PROD] Buscando candidato con token:', {
+            token: token.substring(0, 8) + '...',
+            hasSupabase: !!supabase,
+            timestamp: new Date().toISOString()
+        });
+
         // Buscar candidato por token
         const { data: candidato, error } = await supabase
             .from('candidatos')
@@ -95,7 +115,35 @@ exports.handler = async (event, context) => {
             .eq('token', token)
             .single();
 
-        if (error || !candidato) {
+        if (error) {
+            console.error('❌ [PROD] Error en query Supabase:', {
+                error: error.message,
+                code: error.code,
+                details: error.details,
+                hint: error.hint,
+                token: token.substring(0, 8) + '...'
+            });
+
+            return {
+                statusCode: 500,
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    valido: false,
+                    mensaje: 'Error del servidor',
+                    error: error.message
+                })
+            };
+        }
+
+        if (!candidato) {
+            console.log('⚠️ [PROD] Token no encontrado en base de datos:', {
+                token: token.substring(0, 8) + '...',
+                timestamp: new Date().toISOString()
+            });
+
             return {
                 statusCode: 404,
                 headers: {
@@ -108,6 +156,13 @@ exports.handler = async (event, context) => {
                 })
             };
         }
+
+        console.log('✅ [PROD] Candidato encontrado:', {
+            id: candidato.id,
+            nombre: candidato.nombre,
+            estado: candidato.estado,
+            token: token.substring(0, 8) + '...'
+        });
 
         // Verificar expiración
         const ahora = new Date();
