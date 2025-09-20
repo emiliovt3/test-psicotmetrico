@@ -11,13 +11,13 @@ const { createClient } = require('@supabase/supabase-js');
 let isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Override to development if we don't have Supabase credentials at all
-if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
   isDevelopment = true;
 }
 
 // Configuración desde variables de entorno
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_ANON_KEY;
+const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 
 let supabase = null;
 if (!isDevelopment) {

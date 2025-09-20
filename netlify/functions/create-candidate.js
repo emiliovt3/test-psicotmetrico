@@ -106,7 +106,6 @@ exports.handler = async (event, context) => {
           puesto: puesto.trim(),
           token: token,
           estado: 'pendiente',
-          fecha_creacion: new Date().toISOString(),
           fecha_expiracion: fechaExpiracion.toISOString()
         })
         .select()
