@@ -622,7 +622,8 @@
                   console.error('❌ [SYNC] Error sincronizando datos:', syncError);
                 }
               } // Closing brace for if (candidatosExistentes.length === 0)
-          } // Closing brace for if (!isLocalhost && isDevelopmentData)
+            } // Closing brace for if (!isLocalhost && isDevelopmentData)
+          } // Closing brace for else
 
           // Guardar el estado del tipo de datos para uso en otras funciones
           window.developmentDataMode = isLocalhost || isDevelopmentData;
