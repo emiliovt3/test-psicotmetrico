@@ -589,10 +589,19 @@
           const candidatosString = localStorage.getItem('candidatos_desarrollo');
           const candidatos = candidatosString ? JSON.parse(candidatosString) : [];
 
-          // Filtrar candidatos expirados
+          // Filtrar candidatos expirados (48 horas desde fecha_creacion)
           const ahora = new Date();
           const candidatosValidos = candidatos.filter(candidato => {
-            const fechaExpiracion = new Date(candidato.fecha_expiracion);
+            // Usar fecha_creacion o created_at, y calcular expiración de 48 horas
+            const fechaCreacion = new Date(candidato.fecha_creacion || candidato.created_at);
+
+            // Si la fecha no es válida, mantener el candidato para evitar pérdida de datos
+            if (isNaN(fechaCreacion.getTime())) {
+              return true;
+            }
+
+            // Calcular fecha de expiración (48 horas después de creación)
+            const fechaExpiracion = new Date(fechaCreacion.getTime() + (48 * 60 * 60 * 1000));
             return fechaExpiracion > ahora;
           });
 

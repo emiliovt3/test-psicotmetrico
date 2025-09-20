@@ -518,8 +518,29 @@
               // para asegurar que la eliminación funcione correctamente
               try {
                 console.log('🔄 [SYNC] Sincronizando datos de desarrollo de API a localStorage...');
+                console.log('📊 [SYNC] Datos a sincronizar:', candidatos.length, 'candidatos');
+
+                // Verificar que los candidatos tengan la estructura esperada
+                candidatos.forEach((candidato, index) => {
+                  if (!candidato.id) {
+                    console.warn('⚠️ [SYNC] Candidato sin ID en índice', index, candidato);
+                  }
+                  if (!candidato.fecha_creacion && !candidato.created_at) {
+                    console.warn('⚠️ [SYNC] Candidato sin fecha en índice', index, candidato);
+                  }
+                });
+
                 localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatos));
                 console.log('✅ [SYNC] Datos sincronizados exitosamente a localStorage');
+
+                // Verificar que la sincronización funcionó leyendo de vuelta
+                const verificacion = localStorage.getItem('candidatos_desarrollo');
+                if (verificacion) {
+                  const candidatosVerif = JSON.parse(verificacion);
+                  console.log('🔍 [SYNC] Verificación: localStorage contiene', candidatosVerif.length, 'candidatos después de sync');
+                } else {
+                  console.error('❌ [SYNC] Error: localStorage vacío después de sync');
+                }
               } catch (syncError) {
                 console.error('❌ [SYNC] Error sincronizando datos:', syncError);
               }
@@ -546,27 +567,49 @@
       function cargarCandidatosDesarrollo() {
         try {
           const candidatosString = localStorage.getItem('candidatos_desarrollo');
+          console.log('🔍 [DEV] localStorage candidatos_desarrollo:', candidatosString ? 'existe' : 'no existe');
+
           if (!candidatosString) {
             return [];
           }
 
           const candidatos = JSON.parse(candidatosString);
+          console.log('📊 [DEV] Candidatos parseados desde localStorage:', candidatos.length);
 
-          // Filtrar candidatos expirados
+          // Filtrar candidatos expirados (48 horas desde fecha_creacion)
           const ahora = new Date();
           const candidatosValidos = candidatos.filter(candidato => {
-            const fechaExpiracion = new Date(candidato.fecha_expiracion);
-            return fechaExpiracion > ahora;
+            // Usar fecha_creacion o created_at, y calcular expiración de 48 horas
+            const fechaCreacion = new Date(candidato.fecha_creacion || candidato.created_at);
+
+            // Si la fecha no es válida, mantener el candidato para evitar pérdida de datos
+            if (isNaN(fechaCreacion.getTime())) {
+              console.warn('⚠️ [DEV] Fecha inválida para candidato:', candidato.id, candidato.fecha_creacion || candidato.created_at);
+              return true;
+            }
+
+            // Calcular fecha de expiración (48 horas después de creación)
+            const fechaExpiracion = new Date(fechaCreacion.getTime() + (48 * 60 * 60 * 1000));
+            const esValido = fechaExpiracion > ahora;
+
+            if (!esValido) {
+              console.log('🗑️ [DEV] Candidato expirado:', candidato.id, 'creado:', fechaCreacion.toLocaleString());
+            }
+
+            return esValido;
           });
 
-          // Guardar solo los válidos
+          console.log('✅ [DEV] Candidatos válidos después de filtro de expiración:', candidatosValidos.length);
+
+          // Guardar solo los válidos si hubo cambios
           if (candidatosValidos.length !== candidatos.length) {
             localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosValidos));
+            console.log('🧹 [DEV] Limpieza: eliminados', candidatos.length - candidatosValidos.length, 'candidatos expirados');
           }
 
           return candidatosValidos;
         } catch (error) {
-          console.error('Error cargando candidatos de desarrollo:', error);
+          console.error('❌ [DEV] Error cargando candidatos de desarrollo:', error);
           return [];
         }
       }
@@ -1584,10 +1627,17 @@
 
                   if (esDatosDev) {
                     console.log('🔄 [SYNC] Re-sincronizando datos de API a localStorage...');
+                    console.log('📊 [SYNC] Datos de API para re-sync:', candidatosApi.length, 'candidatos');
+
                     localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosApi));
                     candidatos = candidatosApi;
                     candidatoExiste = candidatos.find(c => c.id == candidatoId);
                     console.log('✅ [SYNC] Re-sincronización completada');
+
+                    // Verificar la re-sincronización inmediatamente
+                    const candidatosVerif = cargarCandidatosDesarrollo();
+                    console.log('🔍 [SYNC] Verificación post re-sync: localStorage tiene', candidatosVerif.length, 'candidatos');
+                    console.log('🎯 [SYNC] Candidato objetivo', candidatoId, 'existe después de re-sync:', candidatosVerif.find(c => c.id == candidatoId) ? 'SÍ' : 'NO');
                   }
                 }
               } catch (syncError) {
@@ -1687,22 +1737,69 @@
           const candidatos = cargarCandidatosDesarrollo();
           console.log('🔍 [DEV] Buscando candidato a eliminar:', candidatoId, 'en', candidatos.length, 'candidatos');
 
+          // Mostrar IDs disponibles para debugging
+          if (candidatos.length > 0) {
+            console.log('📋 [DEV] IDs disponibles:', candidatos.map(c => c.id));
+          }
+
+          // Buscar el candidato específico para debug
+          const candidatoEncontrado = candidatos.find(c => c.id == candidatoId);
+          console.log('🎯 [DEV] Candidato encontrado:', candidatoEncontrado ? 'SÍ' : 'NO');
+
           // Filtrar usando comparación flexible (== en lugar de ===) para manejar string vs number
           const candidatosFiltrados = candidatos.filter(c => c.id != candidatoId);
 
           console.log('📝 [DEV] Candidatos antes:', candidatos.length, 'después:', candidatosFiltrados.length);
 
           if (candidatos.length === candidatosFiltrados.length) {
+            // Diagnostics adicionales si no se encontró
+            console.error('🔍 [DEV] Diagnóstico de búsqueda:');
+            console.error('  - ID buscado:', candidatoId, '(tipo:', typeof candidatoId, ')');
+            candidatos.forEach((c, index) => {
+              console.error(`  - Candidato ${index}: ID=${c.id} (tipo: ${typeof c.id}), igualdad: ${c.id == candidatoId}, igualdad estricta: ${c.id === candidatoId}`);
+            });
             throw new Error(`Candidato con ID ${candidatoId} no encontrado en localStorage`);
           }
 
           localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosFiltrados));
           console.log('✅ [DEV] Candidato eliminado de localStorage exitosamente');
+
+          // Verificar que la eliminación funcionó
+          const verificacion = cargarCandidatosDesarrollo();
+          const candidatoAunExiste = verificacion.find(c => c.id == candidatoId);
+          console.log('🔍 [DEV] Verificación post-eliminación: candidato', candidatoId, candidatoAunExiste ? 'AÚN EXISTE' : 'ELIMINADO CORRECTAMENTE');
+
         } catch (error) {
           console.error('❌ [DEV] Error eliminando candidato de localStorage:', error);
           throw error; // Re-throw para que el caller pueda manejar el error
         }
       }
+
+      // Función de debugging para inspeccionar localStorage (disponible globalmente en consola)
+      window.debugLocalStorage = function() {
+        console.log('🔍 [DEBUG] === INSPECCIÓN LOCALSTORAGE ===');
+        const candidatosString = localStorage.getItem('candidatos_desarrollo');
+        console.log('📄 [DEBUG] Raw data:', candidatosString);
+
+        if (candidatosString) {
+          try {
+            const candidatos = JSON.parse(candidatosString);
+            console.log('📊 [DEBUG] Candidatos parseados:', candidatos.length);
+            candidatos.forEach((c, index) => {
+              console.log(`  ${index + 1}. ID: ${c.id} (${typeof c.id}) - Nombre: ${c.nombre} - Fecha: ${c.fecha_creacion || c.created_at}`);
+            });
+          } catch (error) {
+            console.error('❌ [DEBUG] Error parseando JSON:', error);
+          }
+        } else {
+          console.log('❌ [DEBUG] No hay datos en localStorage');
+        }
+
+        // También mostrar candidatos procesados por cargarCandidatosDesarrollo
+        const candidatosProcesados = cargarCandidatosDesarrollo();
+        console.log('🧹 [DEBUG] Candidatos después de filtros:', candidatosProcesados.length);
+        console.log('=== FIN INSPECCIÓN ===');
+      };
 
       // Función para cerrar modal de confirmación
       function cerrarModalConfirmacion() {
