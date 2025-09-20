@@ -610,20 +610,19 @@
                   localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatos));
                   console.log('✅ [SYNC] Sincronización inicial completada');
 
-                // Verificar que la sincronización funcionó leyendo de vuelta
-                const verificacion = localStorage.getItem('candidatos_desarrollo');
-                if (verificacion) {
-                  const candidatosVerif = JSON.parse(verificacion);
-                  console.log('🔍 [SYNC] Verificación: localStorage contiene', candidatosVerif.length, 'candidatos después de sync');
-                } else {
-                  console.error('❌ [SYNC] Error: localStorage vacío después de sync');
+                  // Verificar que la sincronización funcionó leyendo de vuelta
+                  const verificacion = localStorage.getItem('candidatos_desarrollo');
+                  if (verificacion) {
+                    const candidatosVerif = JSON.parse(verificacion);
+                    console.log('🔍 [SYNC] Verificación: localStorage contiene', candidatosVerif.length, 'candidatos después de sync');
+                  } else {
+                    console.error('❌ [SYNC] Error: localStorage vacío después de sync');
+                  }
+                } catch (syncError) {
+                  console.error('❌ [SYNC] Error sincronizando datos:', syncError);
                 }
-              } catch (syncError) {
-                console.error('❌ [SYNC] Error sincronizando datos:', syncError);
-              }
-            } // Closing brace for if (candidatosExistentes.length === 0)
-          }
-        }
+              } // Closing brace for if (candidatosExistentes.length === 0)
+          } // Closing brace for if (!isLocalhost && isDevelopmentData)
 
           // Guardar el estado del tipo de datos para uso en otras funciones
           window.developmentDataMode = isLocalhost || isDevelopmentData;
@@ -1477,6 +1476,64 @@
         }, 3000);
       }
 
+      // Función para crear candidato localmente (sin API)
+      function crearCandidatoLocal(candidateData) {
+        console.log('🔨 [LOCAL] Creando candidato localmente:', candidateData.nombre);
+
+        // Generar token único y seguro
+        const token = generateLocalToken();
+
+        // Calcular fecha de expiración
+        const horasExpiracion = parseInt(candidateData.expiracion) || 48;
+        const fechaExpiracion = new Date();
+        fechaExpiracion.setHours(fechaExpiracion.getHours() + horasExpiracion);
+
+        // Crear candidato con estructura idéntica a la API
+        const candidato = {
+          id: Math.floor(Math.random() * 1000) + 1,
+          nombre: candidateData.nombre.trim(),
+          email: candidateData.email.toLowerCase().trim(),
+          telefono: candidateData.telefono?.trim() || null,
+          puesto: candidateData.puesto.trim(),
+          notas: candidateData.notas?.trim() || null,
+          token: token,
+          estado: 'pendiente',
+          fecha_creacion: new Date().toISOString(),
+          fecha_expiracion: fechaExpiracion.toISOString()
+        };
+
+        // Generar URL del test (local)
+        const baseUrl = window.location.origin; // http://localhost:8888
+        const testUrl = `${baseUrl}/test/index-tabler.html?token=${token}`;
+
+        console.log('✅ [LOCAL] Candidato creado exitosamente:', {
+          nombre: candidato.nombre,
+          email: candidato.email,
+          puesto: candidato.puesto,
+          token: token.substring(0, 8) + '...',
+          testUrl: testUrl
+        });
+
+        return {
+          success: true,
+          candidato: candidato,
+          testUrl: testUrl,
+          token: token,
+          expiraEn: `${horasExpiracion} horas`,
+          development: true
+        };
+      }
+
+      // Función para generar token seguro localmente
+      function generateLocalToken() {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let token = '';
+        for (let i = 0; i < 32; i++) {
+          token += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return token;
+      }
+
       // Función para crear candidato con auto-refresh
       async function crearCandidato() {
         const form = document.querySelector('#modal-new-candidate form');
@@ -1505,31 +1562,53 @@
         submitBtn.disabled = true;
 
         try {
-          // Determinar endpoint basado en el tipo de datos que maneja el sistema
-          const isDevelopmentData = window.developmentDataMode || false;
-          const endpoint = isDevelopmentData ? '/api/create-candidate-dev' : '/api/create-candidate';
+          // Detectar si estamos en modo localhost puro (Python HTTP server)
+          const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+          const isDevelopmentData = window.developmentDataMode || isLocalhost;
 
-          // Llamar a la API para crear candidato
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              nombre: nombre,
-              email: email,
-              telefono: telefono,
-              puesto: puesto,
-              notas: notas,
-              expiracion: '48' // Valor por defecto
-            })
-          });
+          let result;
 
-          const result = await response.json();
+          if (isLocalhost) {
+            // MODO LOCALHOST: Crear candidato localmente sin llamadas a API
+            console.log('🔧 [DEV] Modo localhost detectado: creando candidato localmente');
+            result = crearCandidatoLocal({
+              nombre,
+              email,
+              telefono,
+              puesto,
+              notas,
+              expiracion: '48'
+            });
+          } else {
+            // MODO PRODUCCIÓN/NETLIFY: Llamar a la API
+            const endpoint = isDevelopmentData ? '/api/create-candidate-dev' : '/api/create-candidate';
 
-          if (response.ok && result.success) {
+            console.log('🌐 [PROD] Modo producción: llamando a API:', endpoint);
+            const response = await fetch(endpoint, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                nombre: nombre,
+                email: email,
+                telefono: telefono,
+                puesto: puesto,
+                notas: notas,
+                expiracion: '48' // Valor por defecto
+              })
+            });
+
+            result = await response.json();
+
+            if (!response.ok || !result.success) {
+              throw new Error(result.error || 'Error de API');
+            }
+          }
+
+          if (result.success) {
             // En desarrollo: guardar candidato en localStorage
-            if (isDevelopmentData) {
+            if (isDevelopmentData || isLocalhost) {
               guardarCandidatoDesarrollo(result.candidato);
             }
 
@@ -2646,6 +2725,17 @@
         }, 5000);
       }
 
+      // Event listener para el botón de crear candidato
+      document.addEventListener('DOMContentLoaded', function() {
+        const btnCrearCandidato = document.getElementById('btn-crear-candidato');
+        if (btnCrearCandidato) {
+          btnCrearCandidato.addEventListener('click', function(e) {
+            e.preventDefault();
+            crearCandidato();
+          });
+        }
+      });
+
     </script>
 
     <!-- New Candidate Modal -->
@@ -2696,7 +2786,7 @@
             <a href="#" class="btn btn-link link-secondary" data-bs-dismiss="modal">
               Cancelar
             </a>
-            <a href="#" class="btn btn-primary ms-auto" onclick="crearCandidato()">
+            <a href="#" class="btn btn-primary ms-auto" id="btn-crear-candidato">
               <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                 <line x1="12" y1="5" x2="12" y2="19" />
