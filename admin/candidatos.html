@@ -59,6 +59,63 @@
         from { transform: rotate(0deg); }
         to { transform: rotate(360deg); }
       }
+
+      /* Real-time refresh animations */
+      .refresh-loading-overlay {
+        backdrop-filter: blur(2px);
+        transition: opacity 0.3s ease;
+      }
+
+      .table-refresh-animation {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+
+      .table-refresh-animation.hiding {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      .table-refresh-animation.showing {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Subtle notification styling */
+      #subtle-notifications .alert {
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        font-size: 0.875rem;
+      }
+
+      /* Refresh button animation */
+      #refresh-table-btn:hover .icon {
+        transform: rotate(180deg);
+        transition: transform 0.3s ease;
+      }
+
+      #refresh-table-btn .icon {
+        transition: transform 0.3s ease;
+      }
+
+      /* Enhanced table controls */
+      .gap-2 {
+        gap: 0.5rem !important;
+      }
+
+      /* Statistics card animations */
+      [data-stat] {
+        transition: all 0.3s ease;
+      }
+
+      [data-stat].updating {
+        transform: scale(1.05);
+        color: var(--tblr-primary) !important;
+      }
+
+      /* Last refresh indicator transitions */
+      #last-refresh-indicator {
+        transition: opacity 0.3s ease;
+      }
     </style>
     <script>
       // Theme detection and initialization
@@ -372,6 +429,16 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title">Lista de Candidatos</h3>
+                <div class="card-actions">
+                  <small id="last-refresh-indicator" class="text-muted" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                      <circle cx="12" cy="12" r="9"/>
+                      <polyline points="12,7 12,12 15,15"/>
+                    </svg>
+                    Actualizado: <span id="last-refresh-time">—</span>
+                  </small>
+                </div>
               </div>
               <div class="card-body border-bottom py-3">
                 <div class="d-flex">
@@ -387,10 +454,19 @@
                     </div>
                     entradas
                   </div>
-                  <div class="ms-auto text-secondary">
-                    Buscar:
-                    <div class="ms-2 d-inline-block">
-                      <input type="text" id="search-input" class="form-control form-control-sm" aria-label="Buscar candidato">
+                  <div class="ms-auto d-flex align-items-center gap-2">
+                    <button id="refresh-table-btn" class="btn btn-sm btn-outline-secondary" title="Actualizar tabla (Ctrl+R o F5)" onclick="refreshCandidateTable()">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
+                        <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
+                      </svg>
+                    </button>
+                    <div class="text-secondary">
+                      Buscar:
+                      <div class="ms-2 d-inline-block">
+                        <input type="text" id="search-input" class="form-control form-control-sm" aria-label="Buscar candidato">
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -545,8 +621,9 @@
               } catch (syncError) {
                 console.error('❌ [SYNC] Error sincronizando datos:', syncError);
               }
-            }
+            } // Closing brace for if (candidatosExistentes.length === 0)
           }
+        }
 
           // Guardar el estado del tipo de datos para uso en otras funciones
           window.developmentDataMode = isLocalhost || isDevelopmentData;
@@ -564,6 +641,78 @@
         }
       }
 
+      // Función para limpiar y reparar datos de localStorage
+      function limpiarDatosLocalStorage() {
+        try {
+          const candidatosString = localStorage.getItem('candidatos_desarrollo');
+          if (!candidatosString) {
+            return { reparados: 0, eliminados: 0, candidatos: [] };
+          }
+
+          const candidatos = JSON.parse(candidatosString);
+          let candidatosReparados = 0;
+          let candidatosEliminados = 0;
+          const ahora = new Date();
+
+          console.log('🔧 [CLEANUP] Iniciando limpieza de localStorage con', candidatos.length, 'candidatos');
+
+          // Reparar candidatos con fechas inválidas
+          const candidatosReparados_array = candidatos.map(candidato => {
+            // Verificar si la fecha es inválida o faltante
+            const fechaActual = candidato.fecha_creacion || candidato.created_at;
+            const fechaCreacion = new Date(fechaActual);
+
+            if (isNaN(fechaCreacion.getTime()) || !fechaActual) {
+              // Reparar fecha inválida o faltante
+              const fechaReparacion = new Date().toISOString();
+              const candidatoReparado = {
+                ...candidato,
+                fecha_creacion: fechaReparacion
+              };
+
+              candidatosReparados++;
+              console.log('🔧 [CLEANUP] Fecha reparada para candidato ID:', candidato.id,
+                'Fecha anterior:', fechaActual, '→ Nueva fecha:', fechaReparacion);
+              return candidatoReparado;
+            }
+
+            return candidato;
+          });
+
+          // Filtrar candidatos expirados (48 horas desde fecha_creacion)
+          const candidatosValidos = candidatosReparados_array.filter(candidato => {
+            const fechaCreacion = new Date(candidato.fecha_creacion);
+            const fechaExpiracion = new Date(fechaCreacion.getTime() + (48 * 60 * 60 * 1000));
+            const esValido = fechaExpiracion > ahora;
+
+            if (!esValido) {
+              candidatosEliminados++;
+              console.log('🗑️ [CLEANUP] Candidato expirado eliminado:', candidato.id, 'creado:', fechaCreacion.toLocaleString());
+            }
+
+            return esValido;
+          });
+
+          // Guardar cambios si hubo reparaciones o eliminaciones
+          if (candidatosReparados > 0 || candidatosEliminados > 0) {
+            localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosValidos));
+            console.log('✅ [CLEANUP] Limpieza completada -',
+              'Fechas reparadas:', candidatosReparados,
+              'Candidatos expirados eliminados:', candidatosEliminados,
+              'Candidatos finales:', candidatosValidos.length);
+          }
+
+          return {
+            reparados: candidatosReparados,
+            eliminados: candidatosEliminados,
+            candidatos: candidatosValidos
+          };
+        } catch (error) {
+          console.error('❌ [CLEANUP] Error en limpieza de datos:', error);
+          return { reparados: 0, eliminados: 0, candidatos: [] };
+        }
+      }
+
       // Función para cargar candidatos en desarrollo (localStorage)
       function cargarCandidatosDesarrollo() {
         try {
@@ -574,41 +723,23 @@
             return [];
           }
 
-          const candidatos = JSON.parse(candidatosString);
-          console.log('📊 [DEV] Candidatos parseados desde localStorage:', candidatos.length);
+          console.log('📊 [DEV] Ejecutando limpieza automática de datos...');
 
-          // Filtrar candidatos expirados (48 horas desde fecha_creacion)
-          const ahora = new Date();
-          const candidatosValidos = candidatos.filter(candidato => {
-            // Usar fecha_creacion o created_at, y calcular expiración de 48 horas
-            const fechaCreacion = new Date(candidato.fecha_creacion || candidato.created_at);
+          // Ejecutar limpieza automática antes de cargar
+          const resultadoLimpieza = limpiarDatosLocalStorage();
 
-            // Si la fecha no es válida, mantener el candidato para evitar pérdida de datos
-            if (isNaN(fechaCreacion.getTime())) {
-              console.warn('⚠️ [DEV] Fecha inválida para candidato:', candidato.id, candidato.fecha_creacion || candidato.created_at);
-              return true;
-            }
-
-            // Calcular fecha de expiración (48 horas después de creación)
-            const fechaExpiracion = new Date(fechaCreacion.getTime() + (48 * 60 * 60 * 1000));
-            const esValido = fechaExpiracion > ahora;
-
-            if (!esValido) {
-              console.log('🗑️ [DEV] Candidato expirado:', candidato.id, 'creado:', fechaCreacion.toLocaleString());
-            }
-
-            return esValido;
-          });
-
-          console.log('✅ [DEV] Candidatos válidos después de filtro de expiración:', candidatosValidos.length);
-
-          // Guardar solo los válidos si hubo cambios
-          if (candidatosValidos.length !== candidatos.length) {
-            localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosValidos));
-            console.log('🧹 [DEV] Limpieza: eliminados', candidatos.length - candidatosValidos.length, 'candidatos expirados');
+          if (resultadoLimpieza.reparados > 0) {
+            console.log('✅ [DEV] Fechas inválidas reparadas automáticamente:', resultadoLimpieza.reparados, 'candidatos');
           }
 
-          return candidatosValidos;
+          if (resultadoLimpieza.eliminados > 0) {
+            console.log('🧹 [DEV] Candidatos expirados eliminados:', resultadoLimpieza.eliminados);
+          }
+
+          console.log('✅ [DEV] Candidatos válidos después de limpieza:', resultadoLimpieza.candidatos.length);
+
+          // Retornar candidatos ya limpiados
+          return resultadoLimpieza.candidatos;
         } catch (error) {
           console.error('❌ [DEV] Error cargando candidatos de desarrollo:', error);
           return [];
@@ -632,27 +763,43 @@
         }
       }
 
-      // Función para actualizar estadísticas en las tarjetas
+      // Función para actualizar estadísticas en las tarjetas con animaciones
       function actualizarEstadisticas(candidatos) {
         const total = candidatos.length;
         const completados = candidatos.filter(c => c.estado === 'completado').length;
         const pendientes = candidatos.filter(c => c.estado === 'pendiente').length;
         const enProgreso = candidatos.filter(c => c.estado === 'en_progreso').length;
 
-        // Actualizar tarjetas
-        document.querySelector('[data-stat="total-evaluaciones"]').textContent = total;
-        document.querySelector('[data-stat="pendientes-total"]').textContent = pendientes;
+        // Función helper para actualizar con animación
+        function updateStatWithAnimation(selector, newValue) {
+          const element = document.querySelector(selector);
+          if (element && element.textContent !== newValue.toString()) {
+            element.classList.add('updating');
+            setTimeout(() => {
+              element.textContent = newValue;
+              setTimeout(() => {
+                element.classList.remove('updating');
+              }, 300);
+            }, 150);
+          } else if (element) {
+            element.textContent = newValue;
+          }
+        }
+
+        // Actualizar tarjetas con animaciones
+        updateStatWithAnimation('[data-stat="total-evaluaciones"]', total);
+        updateStatWithAnimation('[data-stat="pendientes-total"]', pendientes);
 
         // Calcular tasa de aprobación (simulada para desarrollo)
         const tasaAprobacion = total > 0 ? Math.round((completados / total) * 100) : 0;
-        document.querySelector('[data-stat="tasa-aprobacion-candidatos"]').textContent = tasaAprobacion + '%';
+        updateStatWithAnimation('[data-stat="tasa-aprobacion-candidatos"]', tasaAprobacion + '%');
 
-        // Estadísticas adicionales
-        document.querySelector('[data-stat="crecimiento-evaluaciones"]').textContent = `+${Math.floor(total * 0.15)}`;
-        document.querySelector('[data-stat="estado-aprobacion"]').textContent = `${completados} de ${total}`;
-        document.querySelector('[data-stat="expiran-hoy"]').textContent = '—';
-        document.querySelector('[data-stat="banderas-rojas"]').textContent = Math.floor(total * 0.05);
-        document.querySelector('[data-stat="porcentaje-banderas"]').textContent = '5%';
+        // Estadísticas adicionales con animaciones
+        updateStatWithAnimation('[data-stat="crecimiento-evaluaciones"]', `+${Math.floor(total * 0.15)}`);
+        updateStatWithAnimation('[data-stat="estado-aprobacion"]', `${completados} de ${total}`);
+        updateStatWithAnimation('[data-stat="expiran-hoy"]', '—');
+        updateStatWithAnimation('[data-stat="banderas-rojas"]', Math.floor(total * 0.05));
+        updateStatWithAnimation('[data-stat="porcentaje-banderas"]', '5%');
       }
 
       // Función para inicializar tabla con datos
@@ -660,32 +807,23 @@
         const tbody = $('#tabla-candidatos tbody');
         tbody.empty();
 
-        if (candidatos.length === 0) {
-          tbody.html(`
-            <tr>
-              <td colspan="9" class="text-center text-muted py-4">
-                Sin candidatos registrados
-              </td>
-            </tr>
-          `);
-          return;
-        }
-
-        // Llenar tabla con candidatos
+        // Llenar tabla con candidatos (DataTable maneja automáticamente las tablas vacías)
         candidatos.forEach(candidato => {
           const fila = crearFilaCandidato(candidato);
           tbody.append(fila);
         });
 
-        // Inicializar DataTable
+        // Inicializar DataTable con manejo robusto
         if ($.fn.DataTable.isDataTable('#tabla-candidatos')) {
-          $('#tabla-candidatos').DataTable().destroy();
+          $('#tabla-candidatos').DataTable().destroy(false);
+          console.log('🧹 [INIT] DataTable destruido para reinicialización');
         }
 
-        $('#tabla-candidatos').DataTable({
+        try {
+          $('#tabla-candidatos').DataTable({
           language: {
             "decimal": "",
-            "emptyTable": "No hay datos disponibles en la tabla",
+            "emptyTable": "Sin candidatos registrados",
             "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
             "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
             "infoFiltered": "(filtrado de _MAX_ entradas totales)",
@@ -713,31 +851,52 @@
           dom: 'rtip', // Simplificar controles
           columnDefs: [
             { orderable: false, targets: -1 } // Última columna (acciones) no ordenable
-          ]
+          ],
+          destroy: true, // Permitir reinicialización
+          retrieve: false // No recuperar instancia existente
         });
+        console.log('✅ [INIT] DataTable inicializado exitosamente con', candidatos.length, 'candidatos');
+        } catch (error) {
+          console.error('❌ [INIT] Error inicializando DataTable:', error);
+          // Fallback básico si falla la inicialización
+          try {
+            $('#tabla-candidatos').DataTable({
+              destroy: true,
+              order: [[3, 'desc']],
+              pageLength: 25,
+              dom: 'rtip',
+              language: {
+                "emptyTable": "Sin candidatos registrados"
+              }
+            });
+            console.log('⚠️ [INIT] DataTable inicializado con configuración mínima');
+          } catch (fallbackError) {
+            console.error('💥 [INIT] Error crítico en DataTable:', fallbackError);
+          }
+        }
 
         // Sincronizar controles personalizados con DataTable
-        const table = $('#tabla-candidatos').DataTable();
+        try {
+          const table = $('#tabla-candidatos').DataTable();
 
-        $('#search-input').off('keyup').on('keyup', function() {
-          table.search(this.value).draw();
-        });
+          $('#search-input').off('keyup').on('keyup', function() {
+            table.search(this.value).draw();
+          });
 
-        $('#entries-select').off('change').on('change', function() {
-          table.page.len(this.value).draw();
-        });
+          $('#entries-select').off('change').on('change', function() {
+            table.page.len(this.value).draw();
+          });
+
+          console.log('🔗 [INIT] Controles personalizados sincronizados');
+        } catch (error) {
+          console.warn('⚠️ [INIT] Error sincronizando controles:', error);
+        }
       }
 
       // Función para inicializar tabla vacía
       function inicializarTablaVacia() {
         const tbody = $('#tabla-candidatos tbody');
-        tbody.html(`
-          <tr>
-            <td colspan="9" class="text-center text-muted py-4">
-              Sin candidatos registrados
-            </td>
-          </tr>
-        `);
+        tbody.empty(); // Limpiar tabla para que DataTable maneje el estado vacío
 
         // Actualizar estadísticas a cero
         document.querySelector('[data-stat="total-evaluaciones"]').textContent = '0';
@@ -748,6 +907,29 @@
         document.querySelector('[data-stat="expiran-hoy"]').textContent = '—';
         document.querySelector('[data-stat="banderas-rojas"]').textContent = '0';
         document.querySelector('[data-stat="porcentaje-banderas"]').textContent = '—';
+
+        // Inicializar DataTable para tabla vacía con configuración básica
+        try {
+          if ($.fn.DataTable.isDataTable('#tabla-candidatos')) {
+            $('#tabla-candidatos').DataTable().destroy(false);
+          }
+
+          $('#tabla-candidatos').DataTable({
+            language: {
+              "emptyTable": "Sin candidatos registrados"
+            },
+            order: [[3, 'desc']],
+            pageLength: 25,
+            dom: 'rtip',
+            columnDefs: [
+              { orderable: false, targets: -1 }
+            ],
+            destroy: true
+          });
+          console.log('✅ [EMPTY] DataTable inicializado para tabla vacía');
+        } catch (error) {
+          console.error('❌ [EMPTY] Error inicializando DataTable vacío:', error);
+        }
       }
 
       // Función para crear fila de candidato
@@ -884,6 +1066,47 @@
       $(document).ready(function() {
         // Cargar candidatos al inicializar la página
         cargarCandidatos();
+
+        // ✨ KEYBOARD SHORTCUTS: Agregar soporte para teclas de atajo
+        document.addEventListener('keydown', function(event) {
+          // Ctrl+R o F5 para refrescar tabla (prevenir el refresh de página)
+          if ((event.ctrlKey && event.key === 'r') || event.key === 'F5') {
+            event.preventDefault();
+            console.log('⌨️ [SHORTCUT] Detectado Ctrl+R o F5, refrescando tabla...');
+            refreshCandidateTable({
+              preserveState: true,
+              showLoadingIndicator: true,
+              animationType: 'fade'
+            });
+          }
+        });
+
+        // ✨ AUTO-REFRESH: Opcional - refrescar cada 5 minutos si está habilitado
+        const enableAutoRefresh = false; // Cambiar a true para habilitar auto-refresh
+        if (enableAutoRefresh) {
+          setInterval(() => {
+            console.log('🔄 [AUTO-REFRESH] Actualizando tabla automáticamente...');
+            refreshCandidateTable({
+              preserveState: true,
+              showLoadingIndicator: false, // Sin indicador para auto-refresh
+              animationType: 'fade'
+            });
+          }, 5 * 60 * 1000); // 5 minutos
+        }
+
+        // ✨ VISIBILITY CHANGE: Refrescar cuando el usuario regresa a la pestaña
+        document.addEventListener('visibilitychange', function() {
+          if (!document.hidden) {
+            console.log('👁️ [VISIBILITY] Usuario regresó a la pestaña, refrescando tabla...');
+            setTimeout(() => {
+              refreshCandidateTable({
+                preserveState: true,
+                showLoadingIndicator: false,
+                animationType: 'fade'
+              });
+            }, 1000); // Delay de 1 segundo para evitar múltiples refreshes
+          }
+        });
       });
       
       
@@ -893,7 +1116,368 @@
         alert('Función de exportación en desarrollo');
       }
       
-      // Función para crear candidato
+      // Función para refrescar tabla de candidatos con animaciones
+      async function refreshCandidateTable(options = {}) {
+        const {
+          preserveState = true,
+          showLoadingIndicator = true,
+          animationType = 'fade'
+        } = options;
+
+        console.log('🔄 [REFRESH] Iniciando actualización de tabla con opciones:', options);
+
+        // Activar indicador en el botón de refresh
+        const refreshBtn = document.getElementById('refresh-table-btn');
+        const refreshIcon = refreshBtn ? refreshBtn.querySelector('.icon') : null;
+        const originalBtnContent = refreshBtn ? refreshBtn.innerHTML : null;
+
+        if (refreshBtn) {
+          refreshBtn.disabled = true;
+          if (refreshIcon) {
+            refreshIcon.classList.add('rotating');
+          }
+        }
+
+        // Obtener estado actual de DataTable si existe y se debe preservar
+        let currentState = null;
+        let table = null;
+
+        if (preserveState && $.fn.DataTable.isDataTable('#tabla-candidatos')) {
+          table = $('#tabla-candidatos').DataTable();
+          currentState = {
+            page: table.page(),
+            pageLength: table.page.len(),
+            searchTerm: table.search(),
+            order: table.order()
+          };
+          console.log('💾 [REFRESH] Estado actual preservado:', currentState);
+        }
+
+        // Mostrar indicador de carga si está habilitado
+        const tableContainer = document.querySelector('#tabla-candidatos_wrapper');
+        let loadingOverlay = null;
+
+        if (showLoadingIndicator && tableContainer) {
+          loadingOverlay = document.createElement('div');
+          loadingOverlay.className = 'refresh-loading-overlay';
+          loadingOverlay.innerHTML = `
+            <div class="d-flex align-items-center justify-content-center h-100">
+              <div class="text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon rotating text-primary mb-2" width="32" height="32" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                  <path d="M12 3a9 9 0 1 0 9 9"/>
+                </svg>
+                <div class="text-muted">Actualizando candidatos...</div>
+              </div>
+            </div>
+          `;
+          loadingOverlay.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+          `;
+
+          tableContainer.style.position = 'relative';
+          tableContainer.appendChild(loadingOverlay);
+        }
+
+        try {
+          // Aplicar animación de salida
+          if (animationType === 'fade') {
+            $('#tabla-candidatos tbody').fadeOut(300);
+          } else if (animationType === 'slide') {
+            $('#tabla-candidatos tbody').slideUp(300);
+          }
+
+          // Esperar a que termine la animación
+          await new Promise(resolve => setTimeout(resolve, 300));
+
+          // Recargar datos
+          const isDevelopmentData = window.developmentDataMode || false;
+          let candidatos = [];
+
+          if (isDevelopmentData) {
+            candidatos = cargarCandidatosDesarrollo();
+            console.log('📊 [REFRESH] Datos cargados desde localStorage:', candidatos.length, 'candidatos');
+          } else {
+            candidatos = await cargarCandidatosProduccion();
+            console.log('📊 [REFRESH] Datos cargados desde API:', candidatos.length, 'candidatos');
+          }
+
+          // Actualizar estadísticas
+          actualizarEstadisticas(candidatos);
+
+          // Destruir DataTable existente completamente
+          if ($.fn.DataTable.isDataTable('#tabla-candidatos')) {
+            // Destruir sin remove para mantener la estructura del DOM
+            $('#tabla-candidatos').DataTable().destroy(false);
+            console.log('🧹 [REFRESH] DataTable destruido correctamente');
+          }
+
+          // Limpiar completamente el tbody
+          const tbody = $('#tabla-candidatos tbody');
+          tbody.empty();
+
+          // Verificar que la estructura de la tabla esté intacta
+          if (!$('#tabla-candidatos thead').length) {
+            console.error('❌ [REFRESH] Error: estructura de tabla corrupta después de destroy');
+            throw new Error('Estructura de tabla corrupta');
+          }
+
+          // Llenar tabla con candidatos (DataTable maneja automáticamente las tablas vacías)
+          candidatos.forEach(candidato => {
+            const fila = crearFilaCandidato(candidato);
+            tbody.append(fila);
+          });
+
+          // Aplicar animación de entrada
+          if (animationType === 'fade') {
+            tbody.hide().fadeIn(500);
+          } else if (animationType === 'slide') {
+            tbody.hide().slideDown(500);
+          } else {
+            tbody.show();
+          }
+
+          // Esperar un momento antes de reinicializar DataTable para asegurar DOM limpio
+          await new Promise(resolve => setTimeout(resolve, 50));
+
+          // Verificar nuevamente que no hay DataTable activo antes de inicializar
+          if ($.fn.DataTable.isDataTable('#tabla-candidatos')) {
+            console.warn('⚠️ [REFRESH] DataTable todavía activo, forzando destrucción');
+            $('#tabla-candidatos').DataTable().destroy(false);
+          }
+
+          // Reinicializar DataTable con configuración y manejo de errores
+          console.log('🔄 [REFRESH] Reinicializando DataTable...');
+          try {
+            const newDataTable = $('#tabla-candidatos').DataTable({
+              language: {
+                "decimal": "",
+                "emptyTable": "Sin candidatos registrados",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                "infoFiltered": "(filtrado de _MAX_ entradas totales)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ entradas",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron registros coincidentes",
+                "paginate": {
+                  "first": "Primero",
+                  "last": "Último",
+                  "next": "Siguiente",
+                  "previous": "Anterior"
+                },
+                "aria": {
+                  "sortAscending": ": activar para ordenar columna ascendente",
+                  "sortDescending": ": activar para ordenar columna descendente"
+                }
+              },
+              order: currentState ? currentState.order : [[3, 'desc']],
+              responsive: true,
+              pageLength: currentState ? currentState.pageLength : 25,
+              dom: 'rtip',
+              columnDefs: [
+                { orderable: false, targets: -1 } // Última columna (acciones) no ordenable
+              ],
+              // Añadir validación adicional
+              destroy: true, // Permitir reinicialización
+              retrieve: false // No recuperar instancia existente
+            });
+            console.log('✅ [REFRESH] DataTable reinicializado exitosamente con', candidatos.length, 'candidatos');
+          } catch (error) {
+            console.error('❌ [REFRESH] Error inicializando DataTable:', error);
+            // Fallback: intentar con configuración mínima
+            try {
+              $('#tabla-candidatos').DataTable({
+                destroy: true,
+                order: [[3, 'desc']],
+                pageLength: 25,
+                dom: 'rtip',
+                language: {
+                  "emptyTable": "Sin candidatos registrados"
+                }
+              });
+              console.log('⚠️ [REFRESH] DataTable inicializado con configuración mínima');
+            } catch (fallbackError) {
+              console.error('💥 [REFRESH] Error crítico en DataTable:', fallbackError);
+              throw new Error('No se pudo inicializar DataTable');
+            }
+          }
+
+          // Restaurar estado si se preservó
+          if (preserveState && currentState) {
+            try {
+              const newTable = $('#tabla-candidatos').DataTable();
+
+              // Restaurar búsqueda
+              if (currentState.searchTerm) {
+                newTable.search(currentState.searchTerm);
+              }
+
+              // Restaurar página
+              if (currentState.page > 0 && currentState.page < newTable.page.info().pages) {
+                newTable.page(currentState.page);
+              }
+
+              // Aplicar cambios
+              newTable.draw();
+
+              console.log('🔄 [REFRESH] Estado restaurado:', currentState);
+            } catch (error) {
+              console.warn('⚠️ [REFRESH] Error restaurando estado:', error);
+            }
+          }
+
+          // Sincronizar controles personalizados
+          try {
+            const finalTable = $('#tabla-candidatos').DataTable();
+
+            $('#search-input').off('keyup').on('keyup', function() {
+              finalTable.search(this.value).draw();
+            });
+
+            $('#entries-select').off('change').on('change', function() {
+              finalTable.page.len(this.value).draw();
+            });
+
+            console.log('🔗 [REFRESH] Controles personalizados sincronizados');
+          } catch (error) {
+            console.warn('⚠️ [REFRESH] Error sincronizando controles:', error);
+          }
+
+          console.log('✅ [REFRESH] Tabla actualizada exitosamente con', candidatos.length, 'candidatos');
+
+          // Actualizar indicador de última actualización
+          updateLastRefreshIndicator();
+
+          // Mostrar notificación de éxito sutil (solo si no es auto-refresh)
+          if (showLoadingIndicator) {
+            showSubtleNotification('Tabla actualizada', 'success');
+          }
+
+        } catch (error) {
+          console.error('❌ [REFRESH] Error actualizando tabla:', error);
+          showSubtleNotification('Error actualizando tabla', 'error');
+        } finally {
+          // Remover overlay de carga
+          if (loadingOverlay) {
+            setTimeout(() => {
+              if (loadingOverlay.parentNode) {
+                loadingOverlay.parentNode.removeChild(loadingOverlay);
+              }
+            }, 200);
+          }
+
+          // Restaurar botón de refresh
+          if (refreshBtn) {
+            refreshBtn.disabled = false;
+            if (refreshIcon) {
+              refreshIcon.classList.remove('rotating');
+            }
+          }
+        }
+      }
+
+      // Función para actualizar indicador de última actualización
+      function updateLastRefreshIndicator() {
+        const indicator = document.getElementById('last-refresh-indicator');
+        const timeSpan = document.getElementById('last-refresh-time');
+
+        if (indicator && timeSpan) {
+          const now = new Date();
+          const timeString = now.toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+          });
+
+          timeSpan.textContent = timeString;
+          indicator.style.display = 'block';
+
+          // Agregar animación sutil de actualización
+          indicator.style.opacity = '0.5';
+          setTimeout(() => {
+            indicator.style.opacity = '1';
+          }, 100);
+        }
+      }
+
+      // Función para mostrar notificaciones sutiles
+      function showSubtleNotification(message, type = 'info') {
+        // Buscar contenedor existente o crear uno
+        let container = document.getElementById('subtle-notifications');
+        if (!container) {
+          container = document.createElement('div');
+          container.id = 'subtle-notifications';
+          container.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 300px;
+          `;
+          document.body.appendChild(container);
+        }
+
+        // Crear notificación
+        const notification = document.createElement('div');
+        const iconMap = {
+          success: '✓',
+          error: '✕',
+          info: 'ℹ'
+        };
+        const colorMap = {
+          success: 'success',
+          error: 'danger',
+          info: 'info'
+        };
+
+        notification.className = `alert alert-${colorMap[type]} alert-dismissible fade show mb-2`;
+        notification.style.cssText = `
+          opacity: 0;
+          transform: translateX(100%);
+          transition: all 0.3s ease;
+        `;
+        notification.innerHTML = `
+          <div class="d-flex align-items-center">
+            <span class="me-2">${iconMap[type]}</span>
+            <span>${message}</span>
+          </div>
+        `;
+
+        container.appendChild(notification);
+
+        // Animar entrada
+        setTimeout(() => {
+          notification.style.opacity = '1';
+          notification.style.transform = 'translateX(0)';
+        }, 10);
+
+        // Auto-remover después de 3 segundos
+        setTimeout(() => {
+          notification.style.opacity = '0';
+          notification.style.transform = 'translateX(100%)';
+          setTimeout(() => {
+            if (notification.parentNode) {
+              notification.parentNode.removeChild(notification);
+            }
+          }, 300);
+        }, 3000);
+      }
+
+      // Función para crear candidato con auto-refresh
       async function crearCandidato() {
         const form = document.querySelector('#modal-new-candidate form');
         const nombre = form.querySelector('input[placeholder="Ingrese nombre completo"]').value;
@@ -947,10 +1531,6 @@
             // En desarrollo: guardar candidato en localStorage
             if (isDevelopmentData) {
               guardarCandidatoDesarrollo(result.candidato);
-              // Recargar lista de candidatos inmediatamente
-              setTimeout(() => {
-                cargarCandidatos();
-              }, 100);
             }
 
             // Mostrar modal con el link generado
@@ -975,6 +1555,16 @@
 
             // Limpiar formulario
             form.reset();
+
+            // ✨ AUTO-REFRESH: Actualizar tabla inmediatamente con animación
+            console.log('🎯 [CREATE] Candidato creado exitosamente, refrescando tabla...');
+            setTimeout(() => {
+              refreshCandidateTable({
+                preserveState: false, // No preservar estado para mostrar el nuevo candidato
+                showLoadingIndicator: true,
+                animationType: 'fade'
+              });
+            }, 500); // Pequeño delay para permitir que se cierre el modal
 
           } else {
             throw new Error(result.error || 'Error desconocido');
@@ -1008,7 +1598,7 @@
                       </svg>
                       <h5 class="modal-title mb-0">Candidato Creado Exitosamente</h5>
                     </div>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close btn-close-white" id="success-modal-close" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
                     <!-- Candidate Summary Section -->
@@ -1254,7 +1844,7 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-outline-secondary" id="success-modal-cancel">
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none">
                         <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
                         <path d="M18 6l-12 12" />
@@ -1298,11 +1888,15 @@
         });
         document.getElementById('success-generated-link').value = url;
 
+        // ✅ CRITICAL FIX: Setup proper modal event handlers BEFORE showing
+        setupSuccessModalEventHandlers(modal);
+
         // Mostrar modal - usar método compatible con Tabler/Bootstrap
         try {
           // Intentar con bootstrap primero
           if (typeof bootstrap !== 'undefined') {
-            new bootstrap.Modal(modal).show();
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
           } else {
             // Fallback: usar atributos data de Bootstrap
             modal.classList.add('show');
@@ -1313,20 +1907,114 @@
             const backdrop = document.createElement('div');
             backdrop.className = 'modal-backdrop fade show';
             document.body.appendChild(backdrop);
-
-            // Agregar evento para cerrar
-            modal.addEventListener('click', function(e) {
-              if (e.target === modal) {
-                modal.classList.remove('show');
-                modal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-                backdrop.remove();
-              }
-            });
           }
         } catch (error) {
           console.error('Error showing modal:', error);
           alert('Candidato creado exitosamente. Link: ' + url);
+        }
+      }
+
+      // ✅ NEW: Function to setup success modal event handlers
+      function setupSuccessModalEventHandlers(modal) {
+        console.log('🔧 Setting up success modal event handlers');
+
+        // Remove any existing event listeners to prevent duplicates
+        const oldCloseBtn = document.getElementById('success-modal-close');
+        const oldCancelBtn = document.getElementById('success-modal-cancel');
+
+        if (oldCloseBtn) {
+          oldCloseBtn.replaceWith(oldCloseBtn.cloneNode(true));
+        }
+        if (oldCancelBtn) {
+          oldCancelBtn.replaceWith(oldCancelBtn.cloneNode(true));
+        }
+
+        // Get fresh references to buttons
+        const closeBtn = document.getElementById('success-modal-close');
+        const cancelBtn = document.getElementById('success-modal-cancel');
+
+        // Setup close button (X) event handler
+        if (closeBtn) {
+          closeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔴 Close button clicked');
+            cerrarModalExito();
+          });
+        }
+
+        // Setup cancel button event handler
+        if (cancelBtn) {
+          cancelBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('🔴 Cancel button clicked');
+            cerrarModalExito();
+          });
+        }
+
+        // Setup backdrop click handler
+        modal.addEventListener('click', function(e) {
+          if (e.target === modal) {
+            console.log('🔴 Backdrop clicked');
+            cerrarModalExito();
+          }
+        });
+
+        // Setup ESC key handler
+        const escHandler = function(e) {
+          if (e.key === 'Escape') {
+            console.log('🔴 ESC key pressed');
+            cerrarModalExito();
+            document.removeEventListener('keydown', escHandler);
+          }
+        };
+        document.addEventListener('keydown', escHandler);
+
+        console.log('✅ Success modal event handlers setup complete');
+      }
+
+      // ✅ NEW: Function to properly close success modal
+      function cerrarModalExito() {
+        console.log('🔄 Closing success modal');
+        const modal = document.getElementById('modal-candidato-creado');
+
+        if (!modal) {
+          console.warn('⚠️ Success modal not found');
+          return;
+        }
+
+        try {
+          if (typeof bootstrap !== 'undefined') {
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            if (modalInstance) {
+              modalInstance.hide();
+            } else {
+              // Manual close if no bootstrap instance
+              modal.classList.remove('show');
+              modal.style.display = 'none';
+              document.body.classList.remove('modal-open');
+              const backdrop = document.querySelector('.modal-backdrop');
+              if (backdrop) backdrop.remove();
+            }
+          } else {
+            // Fallback without Bootstrap
+            modal.classList.remove('show');
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) backdrop.remove();
+          }
+
+          console.log('✅ Success modal closed successfully');
+        } catch (e) {
+          console.error('❌ Error closing success modal:', e);
+
+          // Force close as last resort
+          modal.style.display = 'none';
+          document.body.classList.remove('modal-open');
+          const backdrops = document.querySelectorAll('.modal-backdrop');
+          backdrops.forEach(backdrop => backdrop.remove());
         }
       }
 
@@ -1363,21 +2051,8 @@
       async function copiarLinkYCerrar() {
         await copiarLinkExito();
         setTimeout(() => {
-          const modal = document.getElementById('modal-candidato-creado');
-          try {
-            if (typeof bootstrap !== 'undefined') {
-              const modalInstance = bootstrap.Modal.getInstance(modal);
-              if (modalInstance) modalInstance.hide();
-            } else {
-              modal.classList.remove('show');
-              modal.style.display = 'none';
-              document.body.classList.remove('modal-open');
-              const backdrop = document.querySelector('.modal-backdrop');
-              if (backdrop) backdrop.remove();
-            }
-          } catch (e) {
-            modal.style.display = 'none';
-          }
+          // ✅ UPDATED: Use the new cerrarModalExito function for consistency
+          cerrarModalExito();
           // Recargar candidatos sin hacer reload completo de la página
           cargarCandidatos();
         }, 1000);
@@ -1699,28 +2374,14 @@
           // Mostrar notificación de éxito
           mostrarNotificacionEliminacion(nombreCandidato, true);
 
-          // Recargar lista de candidatos - MODO INTELIGENTE
+          // ✨ AUTO-REFRESH: Actualizar tabla inmediatamente con animación después de eliminación
+          console.log('🎯 [DELETE] Candidato eliminado exitosamente, refrescando tabla...');
           setTimeout(() => {
-            // En desarrollo, recargar solo desde localStorage para evitar sobrescribir eliminaciones
-            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-
-            if (isDevelopmentData && isLocalhost) {
-              // MODO DESARROLLO: Solo actualizar tabla desde localStorage
-              console.log('🔄 [DEV] Actualizando tabla desde localStorage después de eliminación');
-              const candidatos = cargarCandidatosDesarrollo();
-
-              // Actualizar estadísticas
-              actualizarEstadisticas(candidatos);
-
-              // Reinicializar tabla con datos actualizados
-              inicializarTablaConDatos(candidatos);
-
-              console.log('✅ [DEV] Tabla actualizada exitosamente con', candidatos.length, 'candidatos');
-            } else {
-              // MODO PRODUCCIÓN: Recargar desde API
-              console.log('🔄 [PROD] Recargando desde API después de eliminación');
-              cargarCandidatos();
-            }
+            refreshCandidateTable({
+              preserveState: true, // Preservar estado para mantener la posición actual del usuario
+              showLoadingIndicator: true,
+              animationType: 'slide' // Usar slide para diferenciarlo de la creación
+            });
           }, 500);
 
         } catch (error) {
@@ -1831,6 +2492,28 @@
         const candidatosProcesados = cargarCandidatosDesarrollo();
         console.log('🧹 [DEBUG] Candidatos después de filtros:', candidatosProcesados.length);
         console.log('=== FIN INSPECCIÓN ===');
+      };
+
+      // Función manual para limpiar datos corruptos (disponible globalmente en consola)
+      window.limpiarDatosCorruptos = function() {
+        console.log('🔧 [MANUAL] === LIMPIEZA MANUAL DE DATOS ===');
+
+        const resultado = limpiarDatosLocalStorage();
+
+        console.log('📊 [MANUAL] Resultado de limpieza:');
+        console.log(`  - Fechas reparadas: ${resultado.reparados}`);
+        console.log(`  - Candidatos expirados eliminados: ${resultado.eliminados}`);
+        console.log(`  - Candidatos válidos finales: ${resultado.candidatos.length}`);
+
+        if (resultado.reparados > 0 || resultado.eliminados > 0) {
+          console.log('✅ [MANUAL] Datos limpiados exitosamente. Recarga la página para ver los cambios.');
+        } else {
+          console.log('ℹ️ [MANUAL] No se encontraron datos corruptos. localStorage está limpio.');
+        }
+
+        console.log('=== FIN LIMPIEZA MANUAL ===');
+
+        return resultado;
       };
 
       // Función para cerrar modal de confirmación

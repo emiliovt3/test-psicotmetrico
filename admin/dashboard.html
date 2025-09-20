@@ -583,27 +583,99 @@
         }
       }
 
+      // Función para limpiar y reparar datos de localStorage (dashboard)
+      function limpiarDatosLocalStorageDashboard() {
+        try {
+          const candidatosString = localStorage.getItem('candidatos_desarrollo');
+          if (!candidatosString) {
+            return { reparados: 0, eliminados: 0, candidatos: [] };
+          }
+
+          const candidatos = JSON.parse(candidatosString);
+          let candidatosReparados = 0;
+          let candidatosEliminados = 0;
+          const ahora = new Date();
+
+          // Reparar candidatos con fechas inválidas
+          const candidatosReparados_array = candidatos.map(candidato => {
+            // Verificar si la fecha es inválida o faltante
+            const fechaActual = candidato.fecha_creacion || candidato.created_at;
+            const fechaCreacion = new Date(fechaActual);
+
+            if (isNaN(fechaCreacion.getTime()) || !fechaActual) {
+              // Reparar fecha inválida o faltante
+              const fechaReparacion = new Date().toISOString();
+              const candidatoReparado = {
+                ...candidato,
+                fecha_creacion: fechaReparacion
+              };
+
+              candidatosReparados++;
+              console.log('🔧 [DASHBOARD-CLEANUP] Fecha reparada para candidato ID:', candidato.id,
+                'Fecha anterior:', fechaActual, '→ Nueva fecha:', fechaReparacion);
+              return candidatoReparado;
+            }
+
+            return candidato;
+          });
+
+          // Filtrar candidatos expirados (48 horas desde fecha_creacion)
+          const candidatosValidos = candidatosReparados_array.filter(candidato => {
+            const fechaCreacion = new Date(candidato.fecha_creacion);
+            const fechaExpiracion = new Date(fechaCreacion.getTime() + (48 * 60 * 60 * 1000));
+            const esValido = fechaExpiracion > ahora;
+
+            if (!esValido) {
+              candidatosEliminados++;
+              console.log('🗑️ [DASHBOARD-CLEANUP] Candidato expirado eliminado:', candidato.id, 'creado:', fechaCreacion.toLocaleString());
+            }
+
+            return esValido;
+          });
+
+          // Guardar cambios si hubo reparaciones o eliminaciones
+          if (candidatosReparados > 0 || candidatosEliminados > 0) {
+            localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosValidos));
+            console.log('✅ [DASHBOARD-CLEANUP] Limpieza completada -',
+              'Fechas reparadas:', candidatosReparados,
+              'Candidatos expirados eliminados:', candidatosEliminados,
+              'Candidatos finales:', candidatosValidos.length);
+          }
+
+          return {
+            reparados: candidatosReparados,
+            eliminados: candidatosEliminados,
+            candidatos: candidatosValidos
+          };
+        } catch (error) {
+          console.error('❌ [DASHBOARD-CLEANUP] Error en limpieza de datos:', error);
+          return { reparados: 0, eliminados: 0, candidatos: [] };
+        }
+      }
+
       // Función para cargar datos en desarrollo desde localStorage
       function loadDevelopmentDashboardData() {
         try {
           const candidatosString = localStorage.getItem('candidatos_desarrollo');
-          const candidatos = candidatosString ? JSON.parse(candidatosString) : [];
+          if (!candidatosString) {
+            return { total_evaluaciones: 0, pendientes: 0, completadas: 0, evaluaciones_recientes: [] };
+          }
 
-          // Filtrar candidatos expirados (48 horas desde fecha_creacion)
-          const ahora = new Date();
-          const candidatosValidos = candidatos.filter(candidato => {
-            // Usar fecha_creacion o created_at, y calcular expiración de 48 horas
-            const fechaCreacion = new Date(candidato.fecha_creacion || candidato.created_at);
+          console.log('📊 [DASHBOARD] Ejecutando limpieza automática de datos...');
 
-            // Si la fecha no es válida, mantener el candidato para evitar pérdida de datos
-            if (isNaN(fechaCreacion.getTime())) {
-              return true;
-            }
+          // Ejecutar limpieza automática antes de cargar
+          const resultadoLimpieza = limpiarDatosLocalStorageDashboard();
 
-            // Calcular fecha de expiración (48 horas después de creación)
-            const fechaExpiracion = new Date(fechaCreacion.getTime() + (48 * 60 * 60 * 1000));
-            return fechaExpiracion > ahora;
-          });
+          if (resultadoLimpieza.reparados > 0) {
+            console.log('✅ [DASHBOARD] Fechas inválidas reparadas automáticamente:', resultadoLimpieza.reparados, 'candidatos');
+          }
+
+          if (resultadoLimpieza.eliminados > 0) {
+            console.log('🧹 [DASHBOARD] Candidatos expirados eliminados:', resultadoLimpieza.eliminados);
+          }
+
+          // Usar candidatos ya limpiados
+          const candidatosValidos = resultadoLimpieza.candidatos;
 
           // Calcular estadísticas básicas
           const total = candidatosValidos.length;
