@@ -491,7 +491,7 @@
           let isDevelopmentData = false;
 
           if (isLocalhost) {
-            // En desarrollo local: cargar desde localStorage
+            // En desarrollo local: cargar SOLO desde localStorage
             candidatos = cargarCandidatosDesarrollo();
             isDevelopmentData = true;
             console.log('🔄 [DEV] Candidatos cargados desde localStorage:', candidatos.length);
@@ -510,28 +510,29 @@
             const mode = isDevelopmentData ? 'DEV' : 'PROD';
             console.log(`🔄 [${mode}] Candidatos cargados desde API:`, candidatos.length);
 
-            // Advertencia si detectamos datos de desarrollo en producción
+            // SINCRONIZACIÓN INICIAL: Solo sincronizar si localStorage está vacío
             if (!isLocalhost && isDevelopmentData) {
               console.warn('⚠️ ADVERTENCIA: Detectados datos de desarrollo en entorno de producción. Esto indica que la API está funcionando en modo desarrollo (posiblemente falta configuración de Supabase).');
 
-              // SINCRONIZACIÓN CRÍTICA: Si la API devuelve datos de desarrollo, sincronizar con localStorage
-              // para asegurar que la eliminación funcione correctamente
-              try {
-                console.log('🔄 [SYNC] Sincronizando datos de desarrollo de API a localStorage...');
-                console.log('📊 [SYNC] Datos a sincronizar:', candidatos.length, 'candidatos');
+              // Solo sincronizar si localStorage está vacío para evitar sobrescribir eliminaciones
+              const candidatosExistentes = cargarCandidatosDesarrollo();
+              if (candidatosExistentes.length === 0) {
+                try {
+                  console.log('🔄 [SYNC] Sincronización inicial: localStorage vacío, cargando desde API...');
+                  console.log('📊 [SYNC] Datos a sincronizar:', candidatos.length, 'candidatos');
 
-                // Verificar que los candidatos tengan la estructura esperada
-                candidatos.forEach((candidato, index) => {
-                  if (!candidato.id) {
-                    console.warn('⚠️ [SYNC] Candidato sin ID en índice', index, candidato);
-                  }
-                  if (!candidato.fecha_creacion && !candidato.created_at) {
-                    console.warn('⚠️ [SYNC] Candidato sin fecha en índice', index, candidato);
-                  }
-                });
+                  // Verificar que los candidatos tengan la estructura esperada
+                  candidatos.forEach((candidato, index) => {
+                    if (!candidato.id) {
+                      console.warn('⚠️ [SYNC] Candidato sin ID en índice', index, candidato);
+                    }
+                    if (!candidato.fecha_creacion && !candidato.created_at) {
+                      console.warn('⚠️ [SYNC] Candidato sin fecha en índice', index, candidato);
+                    }
+                  });
 
-                localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatos));
-                console.log('✅ [SYNC] Datos sincronizados exitosamente a localStorage');
+                  localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatos));
+                  console.log('✅ [SYNC] Sincronización inicial completada');
 
                 // Verificar que la sincronización funcionó leyendo de vuelta
                 const verificacion = localStorage.getItem('candidatos_desarrollo');
@@ -1614,39 +1615,51 @@
             let candidatoExiste = candidatos.find(c => c.id == candidatoId); // Usar == para comparar string con number
 
             if (!candidatoExiste) {
-              console.warn('⚠️ [DEV] Candidato no encontrado en localStorage, intentando re-sincronizar...');
+              console.warn('⚠️ [DEV] Candidato no encontrado en localStorage');
 
-              // Intentar cargar datos desde API y sincronizar
-              try {
-                const candidatosApi = await cargarCandidatosProduccion();
-                if (candidatosApi.length > 0) {
-                  // Verificar si son datos de desarrollo
-                  const esDatosDev = candidatosApi.some(c =>
-                    typeof c.id === 'number' || (typeof c.id === 'string' && /^\d+$/.test(c.id))
-                  );
+              // En modo desarrollo local (localhost), NO re-sincronizar desde API
+              // El candidato podría no existir porque ya fue eliminado o nunca existió
+              const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
-                  if (esDatosDev) {
-                    console.log('🔄 [SYNC] Re-sincronizando datos de API a localStorage...');
-                    console.log('📊 [SYNC] Datos de API para re-sync:', candidatosApi.length, 'candidatos');
+              if (isLocalhost) {
+                // En localhost puro, simplemente reportar que no existe
+                console.log('📍 [DEV] Modo localhost: no se re-sincroniza desde API');
+                throw new Error(`Candidato con ID ${candidatoId} no encontrado en localStorage`);
+              } else {
+                // Solo en entornos de producción/Netlify con datos de desarrollo, intentar re-sync
+                console.log('🔄 [DEV] Entorno de producción con datos dev: intentando re-sincronizar...');
 
-                    localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosApi));
-                    candidatos = candidatosApi;
-                    candidatoExiste = candidatos.find(c => c.id == candidatoId);
-                    console.log('✅ [SYNC] Re-sincronización completada');
+                try {
+                  const candidatosApi = await cargarCandidatosProduccion();
+                  if (candidatosApi.length > 0) {
+                    // Verificar si son datos de desarrollo
+                    const esDatosDev = candidatosApi.some(c =>
+                      typeof c.id === 'number' || (typeof c.id === 'string' && /^\d+$/.test(c.id))
+                    );
 
-                    // Verificar la re-sincronización inmediatamente
-                    const candidatosVerif = cargarCandidatosDesarrollo();
-                    console.log('🔍 [SYNC] Verificación post re-sync: localStorage tiene', candidatosVerif.length, 'candidatos');
-                    console.log('🎯 [SYNC] Candidato objetivo', candidatoId, 'existe después de re-sync:', candidatosVerif.find(c => c.id == candidatoId) ? 'SÍ' : 'NO');
+                    if (esDatosDev) {
+                      console.log('🔄 [SYNC] Re-sincronizando datos de API a localStorage...');
+                      console.log('📊 [SYNC] Datos de API para re-sync:', candidatosApi.length, 'candidatos');
+
+                      localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosApi));
+                      candidatos = candidatosApi;
+                      candidatoExiste = candidatos.find(c => c.id == candidatoId);
+                      console.log('✅ [SYNC] Re-sincronización completada');
+
+                      // Verificar la re-sincronización inmediatamente
+                      const candidatosVerif = cargarCandidatosDesarrollo();
+                      console.log('🔍 [SYNC] Verificación post re-sync: localStorage tiene', candidatosVerif.length, 'candidatos');
+                      console.log('🎯 [SYNC] Candidato objetivo', candidatoId, 'existe después de re-sync:', candidatosVerif.find(c => c.id == candidatoId) ? 'SÍ' : 'NO');
+                    }
                   }
+                } catch (syncError) {
+                  console.error('❌ [SYNC] Error en re-sincronización:', syncError);
                 }
-              } catch (syncError) {
-                console.error('❌ [SYNC] Error en re-sincronización:', syncError);
-              }
 
-              // Si aún no existe después de la sincronización
-              if (!candidatoExiste) {
-                throw new Error(`Candidato con ID ${candidatoId} no encontrado ni en localStorage ni en API`);
+                // Si aún no existe después de la sincronización
+                if (!candidatoExiste) {
+                  throw new Error(`Candidato con ID ${candidatoId} no encontrado ni en localStorage ni en API`);
+                }
               }
             }
 
@@ -1686,9 +1699,28 @@
           // Mostrar notificación de éxito
           mostrarNotificacionEliminacion(nombreCandidato, true);
 
-          // Recargar lista de candidatos
+          // Recargar lista de candidatos - MODO INTELIGENTE
           setTimeout(() => {
-            cargarCandidatos();
+            // En desarrollo, recargar solo desde localStorage para evitar sobrescribir eliminaciones
+            const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+
+            if (isDevelopmentData && isLocalhost) {
+              // MODO DESARROLLO: Solo actualizar tabla desde localStorage
+              console.log('🔄 [DEV] Actualizando tabla desde localStorage después de eliminación');
+              const candidatos = cargarCandidatosDesarrollo();
+
+              // Actualizar estadísticas
+              actualizarEstadisticas(candidatos);
+
+              // Reinicializar tabla con datos actualizados
+              inicializarTablaConDatos(candidatos);
+
+              console.log('✅ [DEV] Tabla actualizada exitosamente con', candidatos.length, 'candidatos');
+            } else {
+              // MODO PRODUCCIÓN: Recargar desde API
+              console.log('🔄 [PROD] Recargando desde API después de eliminación');
+              cargarCandidatos();
+            }
           }, 500);
 
         } catch (error) {
@@ -1833,6 +1865,9 @@
             if (backdrop) backdrop.remove();
           }
 
+          // LIMPIEZA CRÍTICA: Resetear estado del modal para próxima operación
+          resetModalState();
+
           console.log('✅ Modal cerrado exitosamente');
 
         } catch (e) {
@@ -1844,9 +1879,47 @@
             document.body.classList.remove('modal-open');
             const backdrops = document.querySelectorAll('.modal-backdrop');
             backdrops.forEach(backdrop => backdrop.remove());
+
+            // Asegurar reset del estado incluso en error
+            resetModalState();
           } catch (forceError) {
             console.error('❌ Error forzando cierre del modal:', forceError);
           }
+        }
+      }
+
+      // Función para resetear completamente el estado del modal
+      function resetModalState() {
+        try {
+          const btnConfirmar = document.getElementById('btn-confirmar-eliminacion');
+
+          if (btnConfirmar) {
+            // Restaurar texto y estado del botón
+            btnConfirmar.innerHTML = `
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <line x1="4" y1="7" x2="20" y2="7"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/>
+                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>
+              </svg>
+              Eliminar Candidato
+            `;
+            btnConfirmar.disabled = false;
+            btnConfirmar.classList.remove('btn-loading');
+
+            // Limpiar event handlers anteriores para evitar duplicación
+            const oldHandler = btnConfirmar._deleteHandler;
+            if (oldHandler) {
+              btnConfirmar.removeEventListener('click', oldHandler);
+              btnConfirmar._deleteHandler = null;
+            }
+          }
+
+          console.log('🔄 Estado del modal reseteado');
+        } catch (resetError) {
+          console.error('❌ Error reseteando estado del modal:', resetError);
         }
       }
 
