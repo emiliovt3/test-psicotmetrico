@@ -1,16 +1,12 @@
 const { createClient } = require('@supabase/supabase-js');
 const crypto = require('crypto');
 
-// Force development mode - always use simulated data unless explicitly configured for production
-let isDevelopment = true;
+// Production mode configuration - use real database when NODE_ENV=production
+let isDevelopment = process.env.NODE_ENV !== 'production';
 
-// Only use production mode if we have valid Supabase credentials AND production flag
-if (process.env.SUPABASE_URL &&
-    process.env.SUPABASE_SERVICE_KEY &&
-    !process.env.SUPABASE_URL.includes('your-project.supabase.co') &&
-    !process.env.SUPABASE_SERVICE_KEY.includes('your-service-key-here') &&
-    process.env.NODE_ENV === 'production') {
-  isDevelopment = false;
+// Override to development if we don't have Supabase credentials at all
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
+  isDevelopment = true;
 }
 
 const supabaseUrl = process.env.SUPABASE_URL;
