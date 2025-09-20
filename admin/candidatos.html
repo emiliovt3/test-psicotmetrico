@@ -513,6 +513,16 @@
             // Advertencia si detectamos datos de desarrollo en producción
             if (!isLocalhost && isDevelopmentData) {
               console.warn('⚠️ ADVERTENCIA: Detectados datos de desarrollo en entorno de producción. Esto indica que la API está funcionando en modo desarrollo (posiblemente falta configuración de Supabase).');
+
+              // SINCRONIZACIÓN CRÍTICA: Si la API devuelve datos de desarrollo, sincronizar con localStorage
+              // para asegurar que la eliminación funcione correctamente
+              try {
+                console.log('🔄 [SYNC] Sincronizando datos de desarrollo de API a localStorage...');
+                localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatos));
+                console.log('✅ [SYNC] Datos sincronizados exitosamente a localStorage');
+              } catch (syncError) {
+                console.error('❌ [SYNC] Error sincronizando datos:', syncError);
+              }
             }
           }
 
@@ -1452,6 +1462,37 @@
           `;
           document.body.insertAdjacentHTML('beforeend', modalHtml);
           modal = document.getElementById('modal-confirmar-eliminacion');
+
+          // CONFIGURACIÓN CRÍTICA: Asegurar que los botones de cancelar y cerrar SIEMPRE funcionen
+          const setupModalEventListeners = () => {
+            // Botón de cancelar (data-bs-dismiss)
+            const btnCancelar = modal.querySelector('[data-bs-dismiss="modal"]');
+            if (btnCancelar) {
+              btnCancelar.addEventListener('click', cerrarModalConfirmacion);
+            }
+
+            // Botón X de cerrar
+            const btnCerrar = modal.querySelector('.btn-close');
+            if (btnCerrar) {
+              btnCerrar.addEventListener('click', cerrarModalConfirmacion);
+            }
+
+            // Click en backdrop para cerrar
+            modal.addEventListener('click', (e) => {
+              if (e.target === modal) {
+                cerrarModalConfirmacion();
+              }
+            });
+
+            // Escape key para cerrar
+            document.addEventListener('keydown', (e) => {
+              if (e.key === 'Escape' && modal.style.display !== 'none') {
+                cerrarModalConfirmacion();
+              }
+            });
+          };
+
+          setupModalEventListeners();
         }
 
         // Llenar datos del candidato
@@ -1461,7 +1502,25 @@
 
         // Configurar botón de confirmación
         const btnConfirmar = document.getElementById('btn-confirmar-eliminacion');
-        btnConfirmar.onclick = () => eliminarCandidato(candidatoId, nombreCandidato);
+
+        // SEGURIDAD: Limpiar cualquier handler previo y configurar nuevo
+        btnConfirmar.onclick = null;
+        btnConfirmar.removeEventListener('click', btnConfirmar._deleteHandler);
+
+        // Crear handler específico para este candidato
+        const deleteHandler = async (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+
+          // Prevenir múltiples clicks
+          if (btnConfirmar.disabled) return;
+
+          await eliminarCandidato(candidatoId, nombreCandidato);
+        };
+
+        // Almacenar referencia para poder removerlo después
+        btnConfirmar._deleteHandler = deleteHandler;
+        btnConfirmar.addEventListener('click', deleteHandler);
 
         // Mostrar modal
         try {
@@ -1507,12 +1566,38 @@
             // MODO DESARROLLO: Eliminar solo de localStorage
             console.log('🔧 [DEV] Eliminando candidato de localStorage');
 
-            // Verificar que el candidato existe en localStorage
-            const candidatos = cargarCandidatosDesarrollo();
-            const candidatoExiste = candidatos.find(c => c.id == candidatoId); // Usar == para comparar string con number
+            // VERIFICACIÓN Y SINCRONIZACIÓN AUTOMÁTICA
+            let candidatos = cargarCandidatosDesarrollo();
+            let candidatoExiste = candidatos.find(c => c.id == candidatoId); // Usar == para comparar string con number
 
             if (!candidatoExiste) {
-              throw new Error('Candidato no encontrado en localStorage');
+              console.warn('⚠️ [DEV] Candidato no encontrado en localStorage, intentando re-sincronizar...');
+
+              // Intentar cargar datos desde API y sincronizar
+              try {
+                const candidatosApi = await cargarCandidatosProduccion();
+                if (candidatosApi.length > 0) {
+                  // Verificar si son datos de desarrollo
+                  const esDatosDev = candidatosApi.some(c =>
+                    typeof c.id === 'number' || (typeof c.id === 'string' && /^\d+$/.test(c.id))
+                  );
+
+                  if (esDatosDev) {
+                    console.log('🔄 [SYNC] Re-sincronizando datos de API a localStorage...');
+                    localStorage.setItem('candidatos_desarrollo', JSON.stringify(candidatosApi));
+                    candidatos = candidatosApi;
+                    candidatoExiste = candidatos.find(c => c.id == candidatoId);
+                    console.log('✅ [SYNC] Re-sincronización completada');
+                  }
+                }
+              } catch (syncError) {
+                console.error('❌ [SYNC] Error en re-sincronización:', syncError);
+              }
+
+              // Si aún no existe después de la sincronización
+              if (!candidatoExiste) {
+                throw new Error(`Candidato con ID ${candidatoId} no encontrado ni en localStorage ni en API`);
+              }
             }
 
             // Eliminar de localStorage
@@ -1559,15 +1644,40 @@
         } catch (error) {
           console.error('❌ Error eliminando candidato:', error);
 
-          // Restaurar botón
-          btnConfirmar.innerHTML = originalHTML;
-          btnConfirmar.disabled = false;
+          // RECUPERACIÓN CRÍTICA: Asegurar que la interfaz funcione independientemente del error
+          try {
+            // Restaurar botón
+            btnConfirmar.innerHTML = originalHTML;
+            btnConfirmar.disabled = false;
 
-          // Mostrar error con contexto apropiado
-          const errorMessage = isDevelopment
-            ? `[DEV] ${error.message}`
-            : `[PROD] ${error.message}`;
-          mostrarNotificacionEliminacion(nombreCandidato, false, errorMessage);
+            // Asegurar que el modal pueda cerrarse
+            cerrarModalConfirmacion();
+
+            // Mostrar error con contexto apropiado
+            const errorMessage = isDevelopmentData
+              ? `[DEV] ${error.message}`
+              : `[PROD] ${error.message}`;
+            mostrarNotificacionEliminacion(nombreCandidato, false, errorMessage);
+
+          } catch (recoveryError) {
+            console.error('❌ Error crítico en recuperación del modal:', recoveryError);
+
+            // RECUPERACIÓN DE ÚLTIMO RECURSO: Forzar cierre del modal y mostrar alerta simple
+            try {
+              const modal = document.getElementById('modal-confirmar-eliminacion');
+              if (modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                const backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) backdrop.remove();
+              }
+            } catch (forceCloseError) {
+              console.error('❌ Error forzando cierre del modal:', forceCloseError);
+            }
+
+            // Mostrar alerta de navegador como último recurso
+            alert(`Error eliminando candidato "${nombreCandidato}": ${error.message}\n\nPor favor, recarga la página y vuelve a intentar.`);
+          }
         }
       }
 
@@ -1597,19 +1707,49 @@
       // Función para cerrar modal de confirmación
       function cerrarModalConfirmacion() {
         const modal = document.getElementById('modal-confirmar-eliminacion');
+
+        // VERIFICACIÓN DE SEGURIDAD: Modal debe existir
+        if (!modal) {
+          console.warn('⚠️ Modal de confirmación no encontrado');
+          return;
+        }
+
         try {
           if (typeof bootstrap !== 'undefined') {
             const modalInstance = bootstrap.Modal.getInstance(modal);
-            if (modalInstance) modalInstance.hide();
+            if (modalInstance) {
+              modalInstance.hide();
+            } else {
+              // Si no hay instancia, cerrar manualmente
+              modal.classList.remove('show');
+              modal.style.display = 'none';
+              document.body.classList.remove('modal-open');
+              const backdrop = document.querySelector('.modal-backdrop');
+              if (backdrop) backdrop.remove();
+            }
           } else {
+            // Fallback sin Bootstrap
             modal.classList.remove('show');
             modal.style.display = 'none';
             document.body.classList.remove('modal-open');
             const backdrop = document.querySelector('.modal-backdrop');
             if (backdrop) backdrop.remove();
           }
+
+          console.log('✅ Modal cerrado exitosamente');
+
         } catch (e) {
-          modal.style.display = 'none';
+          console.error('❌ Error cerrando modal:', e);
+
+          // ÚLTIMO RECURSO: Forzar cierre
+          try {
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            const backdrops = document.querySelectorAll('.modal-backdrop');
+            backdrops.forEach(backdrop => backdrop.remove());
+          } catch (forceError) {
+            console.error('❌ Error forzando cierre del modal:', forceError);
+          }
         }
       }
 
