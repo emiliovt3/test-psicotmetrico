@@ -86,8 +86,11 @@ exports.handler = async (event, context) => {
           id: candidato.id,
           nombre: candidato.nombre,
           email: candidato.email,
+          telefono: candidato.telefono,
           puesto: candidato.puesto,
+          notas: candidato.notas,
           estado: candidato.estado,
+          fecha_creacion: candidato.fecha_creacion,
           fecha_expiracion: candidato.fecha_expiracion
         },
         testUrl: testUrl,
