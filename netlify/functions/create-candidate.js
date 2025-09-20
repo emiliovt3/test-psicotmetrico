@@ -1,9 +1,14 @@
-// Check if we're in development mode (no Supabase credentials or placeholder values)
-let isDevelopment = !process.env.SUPABASE_URL ||
-                   !process.env.SUPABASE_SERVICE_KEY ||
-                   process.env.NODE_ENV === 'development' ||
-                   process.env.SUPABASE_URL.includes('your-project.supabase.co') ||
-                   process.env.SUPABASE_SERVICE_KEY.includes('your-service-key-here');
+// Force development mode - always use simulated data unless explicitly configured for production
+let isDevelopment = true;
+
+// Only use production mode if we have valid Supabase credentials AND production flag
+if (process.env.SUPABASE_URL &&
+    process.env.SUPABASE_SERVICE_KEY &&
+    !process.env.SUPABASE_URL.includes('your-project.supabase.co') &&
+    !process.env.SUPABASE_SERVICE_KEY.includes('your-service-key-here') &&
+    process.env.NODE_ENV === 'production') {
+  isDevelopment = false;
+}
 
 let supabase = null;
 if (!isDevelopment) {
